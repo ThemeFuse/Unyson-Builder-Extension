@@ -58,51 +58,6 @@ FwBuilderComponents.ItemView.WidthChanger = Backbone.View.extend({
 	 */
 	modelAttribute: 'width',
 	initialize: function(options) {
-		if (
-			options['widths']
-			&&
-			options['widths'].length
-			&&
-			(
-				typeof options['widths'][0].value != 'undefined'
-				||
-				typeof options['widths'][0].text != 'undefined'
-				||
-				typeof options['widths'][0].itemViewClass != 'undefined'
-			)
-		) {
-			/**
-			 * Old version properties compatibility
-			 *
-			 * Rename old keys to new names:
-			 *  value -> id
-			 *  text -> title
-			 *  itemViewClass -> backend_class
-			 *
-			 * @deprecated
-			 */
-			console.log('[Warning] Item widths contains deprecated properties: value, text, itemViewClass', options['widths'][0]);
-
-			var fixedWidths = [];
-
-			_.each(options['widths'], function(width){
-				fixedWidths.push({
-					id: typeof width.value == 'undefined'
-						? width.id
-						: width.value,
-					title: typeof width.text == 'undefined'
-						? width.title
-						: width.text,
-					backend_class: typeof width.itemViewClass == 'undefined'
-						? width.backend_class
-						: width.itemViewClass,
-					frontend_class: typeof width.frontend_class == 'undefined' ? '' : width.itemViewClass
-				});
-			});
-
-			options.widths = fixedWidths;
-		}
-
 		_.extend(this, _.pick(options,
 			'view',
 			'widths',
