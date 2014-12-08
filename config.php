@@ -3,6 +3,11 @@
 $cfg = array();
 
 /**
+ * Default item widths for all builders
+ *
+ * It is better to use fw_ext_builder_get_item_width() function to retrieve the item widths
+ * because it has a filter and users will be able to customize the widths for a specific builder
+ *
  * @see fw_ext_builder_get_item_width()
  */
 $cfg['default_item_widths'] = array(
