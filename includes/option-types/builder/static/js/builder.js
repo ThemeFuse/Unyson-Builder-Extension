@@ -372,6 +372,7 @@ jQuery(document).ready(function($){
 							}
 
 							this.$el.sortable({
+								helper: 'clone',
 								items: '> .builder-item',
 								connectWith: '#'+ builder.$input.closest('.fw-option-type-builder').attr('id') +' .builder-root-items .builder-items',
 								distance: 10,
