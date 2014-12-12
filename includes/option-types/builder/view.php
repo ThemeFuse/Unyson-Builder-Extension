@@ -9,24 +9,8 @@
  */
 
 {
-	$div_attr = $option['attr'];
-
-	unset(
-		$div_attr['value'],
-		$div_attr['name']
-	);
-
-	if (!(isset($option['fullscreen']) and $option['fullscreen'] === false)) {
-		$div_attr['class'] .= apply_filters('fw_builder_fullscreen_add_classes', ' fw-option-type-builder');
-	} else {
-		$div_attr['class'] .= ' fw-option-type-builder';
-	}
-
-	$div_attr['data-builder-option-type'] = $option_type;
-}
-
-{
 	$tabs_options = array();
+
 	foreach ($thumbnails as $thumbnails_tab_title => &$thumbnails_tab_thumbnails) {
 		$tabs_options[ 'random-'. fw_unique_increment() ] = array(
 			'type'    => 'tab',
@@ -44,6 +28,25 @@
 			),
 		);
 	}
+}
+
+{
+	$div_attr = $option['attr'];
+
+	unset(
+		$div_attr['value'],
+		$div_attr['name']
+	);
+
+	$div_attr['data-builder-option-type'] = $option_type;
+
+	if (!(isset($option['fullscreen']) and $option['fullscreen'] === false)) {
+		$div_attr['class'] .= apply_filters('fw_builder_fullscreen_add_classes', ' fw-option-type-builder');
+	} else {
+		$div_attr['class'] .= ' fw-option-type-builder';
+	}
+
+	$div_attr['class'] .= ' fw-option-type-builder-tabs-count-'. count($tabs_options);
 }
 ?>
 <div <?php echo fw_attr_to_html($div_attr) ?>>

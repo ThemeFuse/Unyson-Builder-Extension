@@ -114,11 +114,20 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	 */
 	protected function _get_defaults()
 	{
-		return array(
+		return $this->fix_base_defaults(array(
 			'value' => array(
-				'json' => '[]'
-			)
-		);
+				'json' => '[]',
+			),
+		));
+	}
+
+	private function fix_base_defaults($option = array())
+	{
+		return array_merge(array(
+			'fullscreen' => true,
+			'template_saving' => true,
+			'history' => true,
+		), $option);
 	}
 
 	private function get_static_uri($append = '')
@@ -132,6 +141,8 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	 */
 	protected function _enqueue_static($id, $option, $data)
 	{
+		$option = $this->fix_base_defaults($option);
+
 		{
 			wp_enqueue_style(
 				'fw-option-builder',
@@ -186,7 +197,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			);
 		}
 
-		if (!(isset($option['fullscreen']) and $option['fullscreen'] === false)) {
+		if ($option['fullscreen']) {
 			wp_enqueue_style(
 				'fw-option-builder-fullscreen',
 				$this->get_static_uri('/css/fullscreen.css'),
@@ -203,7 +214,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			);
 		}
 
-		if (!(isset($option['template_saving']) and $option['template_saving'] === false)) {
+		if ($option['template_saving']) {
 			wp_enqueue_style(
 				'fw-option-builder-template-saving',
 				$this->get_static_uri('/css/template-saving.css'),
@@ -220,7 +231,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			);
 		}
 
-		{
+		if ($option['history']) {
 			wp_enqueue_style(
 				'fw-option-builder-history',
 				$this->get_static_uri('/css/history.css'),

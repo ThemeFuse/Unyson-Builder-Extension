@@ -138,6 +138,10 @@
 	border-top: 1px solid #eeeeee;
 }
 
+.fw-option-type-builder.fw-option-type-builder-tabs-count-0 .builder-root-items {
+	border-top-width: 0;
+}
+
 .fw-option-type-builder .builder-items {
 	padding: 10px;
 }
