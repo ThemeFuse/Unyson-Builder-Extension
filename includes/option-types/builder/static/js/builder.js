@@ -486,7 +486,7 @@ jQuery(document).ready(function($){
 												this.render();
 											}
 										} else {
-											console.error('Invalid item type: '+ incomingItemType);
+											console.error('Unregistered item type: '+ incomingItemType);
 
 											this.render();
 										}
@@ -1029,12 +1029,14 @@ jQuery(document).ready(function($){
 									}, 500)
 								);
 							}
+						} else {
+							console.warn('Item type "'+ itemType +'" is not allowed as first level item');
 						}
 					} else {
-						console.error('Invalid item type: '+ itemType);
+						console.error('Unregistered item type: '+ itemType);
 					}
 				} else {
-					console.error('Cannot extract item type from clicked thumbnail');
+					console.error('Cannot extract item type from element', $itemType);
 				}
 			});
 

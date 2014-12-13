@@ -3,23 +3,34 @@
 abstract class FW_Option_Type_Builder_Item
 {
 	/**
+	 * Specify which builder type this item type belongs to
+	 * @return string
+	 */
+	abstract public function get_builder_type();
+
+	/**
+	 * The item type
 	 * @return string
 	 */
 	abstract public function get_type();
 
 	/**
-	 * @return string The type of the builder to which this item is connected
-	 */
-	abstract public function get_builder_type();
-
-	/**
+	 * The boxes that appear on top and can be dragged down or clicked to create items
 	 * @return array(
 	 *  array(
-	 *      'html' => '<p class="dashicons dashicons-smiley"></p><p>Item Title</p>',
+	 *      'html' =>
+	 *          '<div class="item-type-icon-title">'.
+	 *          '    <div class="item-type-icon"><span class="dashicons dashicons-smiley"></span></div>'.
+	 *          '    <div class="item-type-title">Item Title</div>'.
+	 *          '</div>',
 	 *  ),
 	 *  array(
 	 *      'tab' => __('Tab Title', 'fw'),
-	 *      'html' => '<p class="dashicons dashicons-smartphone"></p><p>Item Title</p>',
+	 *      'html' =>
+	 *          '<div class="item-type-icon-title">'.
+	 *          '    <div class="item-type-icon"><span class="dashicons dashicons-smiley"></span></div>'.
+	 *          '    <div class="item-type-title">Item Title</div>'.
+	 *          '</div>',
 	 *  ),
 	 *  ...
 	 * )
@@ -27,7 +38,7 @@ abstract class FW_Option_Type_Builder_Item
 	abstract public function get_thumbnails();
 
 	/**
-	 * Called when builder is rendered
+	 * Enqueue item type scripts and styles
 	 */
 	abstract public function enqueue_static();
 

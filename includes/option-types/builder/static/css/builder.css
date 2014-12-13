@@ -2,7 +2,7 @@
 	padding: 0;
 }
 
-.fw-option-type-builder .builder-items-types .fw-options-tabs-list ul li:first-child:last-child {
+.fw-option-type-builder.fw-option-type-builder-tabs-count-1 .builder-items-types .fw-options-tabs-list {
 	display: none;
 }
 
