@@ -307,7 +307,6 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 
 	/**
 	 * {@inheritdoc}
-	 * @internal
 	 */
 	protected function _get_value_from_input($option, $input_value)
 	{
