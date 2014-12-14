@@ -688,7 +688,7 @@ jQuery(document).ready(function($){
 						tagName: 'div',
 						className: 'builder-item fw-border-box-sizing fw-col-xs-12',
 						template: _.template([
-							'<div style="border: 1px solid #CCC; padding: 5px; color: #999;">',
+							'<div style="border: 1px solid #CCC; padding: 5px; color: #999; background: #fff;">',
 							'<em class="fw-text-muted">Default View</em>',
 							'<a href="#" onclick="return false;" class="dashicons fw-x"></a>',
 							'<div class="builder-items"></div>',
