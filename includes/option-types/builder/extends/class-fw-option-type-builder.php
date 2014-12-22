@@ -124,9 +124,9 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	private function fix_base_defaults($option = array())
 	{
 		return array_merge(array(
-			'fullscreen' => true,
-			'template_saving' => true,
-			'history' => true,
+			'fullscreen' => false,
+			'template_saving' => false,
+			'history' => false,
 		), $option);
 	}
 
