@@ -24,11 +24,14 @@
 	box-sizing: border-box;
 }
 
-.fw-option-type-builder .builder-item-type:hover,
-.fw-option-type-builder .builder-item-type.ui-draggable-dragging {
+.fw-option-type-builder .builder-item-type:hover {
 	border-color: #8f8f8f;
-	cursor: move;
 	z-index: 9999;
+	cursor: pointer;
+}
+
+.fw-option-type-builder .builder-item-type.ui-draggable-dragging {
+	cursor: move;
 }
 
 .fw-option-type-builder .builder-item-type .item-type-icon-title {
@@ -151,6 +154,13 @@
 	display: inline-block;
 	vertical-align: top;
 	padding: 10px;
+}
+
+.fw-option-type-builder .builder-items .builder-item:hover {
+	cursor: pointer;
+}
+
+.fw-option-type-builder .builder-items .builder-item.ui-sortable-helper {
 	cursor: move;
 }
 
