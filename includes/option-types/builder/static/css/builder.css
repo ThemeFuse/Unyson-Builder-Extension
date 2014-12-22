@@ -141,6 +141,10 @@
 	border-top: 1px solid #eeeeee;
 }
 
+.fw-option-type-builder .builder-root-items > .builder-items {
+	min-height: 200px;
+}
+
 .fw-option-type-builder.fw-option-type-builder-tabs-count-0 .builder-root-items {
 	border-top-width: 0;
 }
@@ -189,10 +193,11 @@
 
 /* allow/deny items in _items */
 
-.fw-option-type-builder .builder-items .builder-item.fw-builder-item-allow-incoming-type > div {
+.fw-option-type-builder .builder-items .builder-item.fw-builder-item-allow-incoming-type > div > .builder-items {
+	background-color: #DDFFD2;
 }
-
-.fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div {
+.fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items {
+	background-color: #FFEFE7;
 }
 
 /* end: allow/deny*/
