@@ -187,7 +187,7 @@ FwBuilderComponents.ItemView.InlineTextEditor = Backbone.View.extend({
 	tagName: 'div',
 	className: 'fw-builder-item-inline-text-editor',
 	template: _.template(
-		'<input type="text" style="width: auto;" value="<%- value %>">&nbsp;<button class="button" onclick="return false;"><%- save %></button>'
+		'<input type="text" style="width: auto;" value="<%- value %>" onclick="return false;">&nbsp;<button class="button" onclick="return false;"><%- save %></button>'
 	),
 	events: {
 		'change input': 'update',
