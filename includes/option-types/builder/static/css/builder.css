@@ -65,6 +65,9 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
+
+	-webkit-transition: border-color .1s ease-in;
+	transition: border-color .1s ease-in;
 }
 
 .fw-option-type-builder .builder-item-type:hover {
@@ -100,6 +103,9 @@
 	display: block;
 	margin: 0 auto;
 	opacity: 0.66;
+
+	-webkit-transition: opacity .1s ease-in;
+	transition: opacity .1s ease-in;
 }
 
 .fw-option-type-builder .builder-item-type:hover .item-type-icon-title .item-type-icon img {
