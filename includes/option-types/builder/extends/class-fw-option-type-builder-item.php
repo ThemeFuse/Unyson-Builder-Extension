@@ -15,7 +15,7 @@ abstract class FW_Option_Type_Builder_Item
 	abstract public function get_type();
 
 	/**
-	 * The boxes that appear on top and can be dragged down or clicked to create items
+	 * The boxes that appear on top of the builder and can be dragged down or clicked to create items
 	 * @return array(
 	 *  array(
 	 *      'html' =>

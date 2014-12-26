@@ -87,8 +87,13 @@
 }
 
 .fw-option-type-builder .builder-item-type .item-type-icon-title .item-type-icon .dashicons {
-	font-size: 30px;
+	font-size: 24px;
 	display: inline-table;
+	color: #b4b4b4;
+}
+
+.fw-option-type-builder .builder-item-type:hover .item-type-icon-title .item-type-icon .dashicons {
+	color: #8c8c8c;
 }
 
 .fw-option-type-builder .builder-item-type .item-type-icon-title .item-type-icon img {
