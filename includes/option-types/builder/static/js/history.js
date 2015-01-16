@@ -99,7 +99,13 @@
 
 
 					if (undoSnapshot !== undefined) {
-						builder.rootItems.reset(JSON.parse(undoSnapshot));
+						var parsedUndoSnaphot = JSON.parse(undoSnapshot);
+						builder.rootItems.reset(parsedUndoSnaphot);
+
+						if ( parsedUndoSnaphot.length === 0 ) {
+							builder.$input.val('[]');
+						}
+
 					} else {
 						utils.disableUndo();
 					}
