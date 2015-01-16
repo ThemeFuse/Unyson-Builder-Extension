@@ -19,6 +19,7 @@
 	float: right;
 	visibility: hidden;
 	margin-top: 3px;
+	text-decoration: none !important;
 }
 
 .fw-templates-wrapper {
@@ -28,7 +29,7 @@
 
 .fw-templates-wrapper .save-template {
 	text-align: left;
-	text-decoration: none;
+	text-decoration: none !important;
 	color: #b1b1b1;
 	float: left;
 	font-style: normal;
