@@ -247,6 +247,12 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				true
 			);
 		}
+
+		foreach ($this->get_item_types() as $item) {
+			/** @var FW_Option_Type_Builder_Item $item */
+
+			$item->enqueue_static();
+		}
 	}
 
 	/**
@@ -271,8 +277,6 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 
 		foreach ($this->get_item_types() as $item) {
 			/** @var FW_Option_Type_Builder_Item $item */
-
-			$item->enqueue_static();
 
 			foreach ($item->get_thumbnails() as $thumbnail) {
 				if (!isset($thumbnail['tab'])) {
