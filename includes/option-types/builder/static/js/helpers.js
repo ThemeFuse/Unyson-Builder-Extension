@@ -103,7 +103,9 @@ FwBuilderComponents.ItemView.WidthChanger = Backbone.View.extend({
 			})
 		);
 	},
-	decreaseWidth: function() {
+	decreaseWidth: function(e) {
+		e.stopPropagation();
+
 		var widthId           = this.model.get(this.modelAttribute);
 		var widthsIds         = _.pluck(this.widths, 'id');
 		var currentWidthIndex = _.indexOf(widthsIds, widthId);
@@ -120,7 +122,9 @@ FwBuilderComponents.ItemView.WidthChanger = Backbone.View.extend({
 
 		this.updateWidth(widthId);
 	},
-	increaseWidth: function() {
+	increaseWidth: function(e) {
+		e.stopPropagation();
+
 		var widthId           = this.model.get(this.modelAttribute);
 		var widthsIds         = _.pluck(this.widths, 'id');
 		var currentWidthIndex = _.indexOf(widthsIds, widthId);
