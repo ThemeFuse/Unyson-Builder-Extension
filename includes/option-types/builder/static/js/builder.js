@@ -438,9 +438,26 @@ jQuery(document).ready(function($){
 											}
 										});
 									}
+
+									//Freeze the container height
+									{
+										var container = builder.$input.closest('.fw-option-type-builder')
+											.find( '.builder-root-items>.builder-items');
+
+										if (container.height() > 200) {
+											container.css("height", container.height() + 100 );
+										}
+									}
 								},
 								stop: function() {
 									itemsRemoveAllowedDeniedClasses();
+									//Freeze the container height
+									{
+										var container = builder.$input.closest('.fw-option-type-builder')
+											.find( '.builder-root-items>.builder-items');
+
+										container.css("height", "inherit");
+									}
 								},
 								receive: function(event, ui) {
 									// sometimes the "stop" event is not triggered and classes remains

@@ -260,9 +260,7 @@
 /* backend fixes */
 
 .fw-backend-option-type-builder {
-	padding-left: 0;
-	padding-top: 0;
-	padding-right: 0;
+	padding: 0;
 }
 
 .fw-backend-option-type-builder > .fw-backend-option-desc {
