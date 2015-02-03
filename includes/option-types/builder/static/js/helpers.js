@@ -233,17 +233,13 @@ FwBuilderComponents.ItemView.InlineTextEditor = Backbone.View.extend({
 		this.render();
 	},
 	update: function() {
-		var value = this.$el.find('input').val();
-
-		if (!jQuery.trim(value).length) {
-			value = ' ';
-		}
+		var val = this.$el.find('input').val();
 
 		var value = this.editAttributeWitoutRoot
-			? fw.ops(this.editAttributeWitoutRoot, value,
+			? fw.ops(this.editAttributeWitoutRoot, val,
 				// clone to not change by reference, else values will be equal and model.set() will not trigger 'change'
 				_.clone(this.model.get(this.editAttributeRoot)))
-			: value;
+			: val;
 
 		this.model.set(this.editAttributeRoot, value);
 	},
@@ -255,5 +251,6 @@ FwBuilderComponents.ItemView.InlineTextEditor = Backbone.View.extend({
 	show: function() {
 		this.$el.removeClass('fw-hidden');
 		this.$el.find('input').focus();
+		return this;
 	}
 });
