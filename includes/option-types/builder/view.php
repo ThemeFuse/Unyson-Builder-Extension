@@ -39,11 +39,10 @@
 	);
 
 	$div_attr['data-builder-option-type'] = $option_type;
+	$div_attr['class'] .= ' fw-option-type-builder';
 
-	if (!(isset($option['fullscreen']) and $option['fullscreen'] === false)) {
-		$div_attr['class'] .= apply_filters('fw_builder_fullscreen_add_classes', ' fw-option-type-builder');
-	} else {
-		$div_attr['class'] .= ' fw-option-type-builder';
+	if ($option['fullscreen']) {
+		$div_attr['class'] .= apply_filters('fw_builder_fullscreen_add_classes', '');
 	}
 
 	$div_attr['class'] .= ' fw-option-type-builder-tabs-count-'. count($tabs_options);
@@ -68,8 +67,8 @@
 </div>
 
 <?php
-//do action once to add one backdrop for all builders in page
-if (!(isset($option['fullscreen']) and $option['fullscreen'] === false and !did_action('fw_builder_fullscreen_add_backdrop'))) {
+// do action once to add one backdrop for all builders in page
+if ($option['fullscreen']) {
 	do_action('fw_builder_fullscreen_add_backdrop');
 }
 ?>

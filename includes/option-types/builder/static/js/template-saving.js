@@ -1,7 +1,5 @@
-(function ($, fwe, _) {
-
+(function ($, fwe, _, localized) {
 	fwe.one('fw:option-type:builder:init', function (data) {
-
 		if (!data.$elements.length) {
 			return;
 		}
@@ -9,32 +7,30 @@
 		var $builders = data.$elements;
 
 		$builders.each(function () {
-
 			var elements = {
 					$builder: $(this),
 					$input: $(this).find('> input:first'),
-					$defaultLi: $('<li class="default-li">0 Templates Saved</li>')
+					$defaultLi: $('<li class="default-li">'+ localized.l10n.no_templates_saved +'</li>')
 				},
 				builderType = $(this).attr('data-builder-option-type');
 
 			elements.$navigation = elements.$builder.find('.builder-root-items .navigation');
-
 
 			if (elements.$navigation.length === 0) {
 				elements.$builder.find('.builder-root-items').append('<div class="navigation"></div>');
 				elements.$navigation = elements.$builder.find('.builder-root-items .navigation');
 			}
 
-			elements.$navigation.append('<div class="template-container"><a class="template-btn">Templates</a></div>');
+			elements.$navigation.append('<div class="template-container"><a class="template-btn">'+ localized.l10n.templates +'</a></div>');
 
 			var utils = {
 				modal: new fw.OptionsModal({
-					title: 'Save Template',
+					title: localized.l10n.save_template,
 					options: [
 						{'template_name': {
 							'type': 'text',
-							'label': 'Template Name',
-							'desc': 'Must have at least 3 characters ( Whitespace, A-Z, 0-9, -_)'
+							'label': localized.l10n.template_name,
+							'desc': localized.l10n.template_name_desc
 						}}
 					],
 					values: ''
@@ -50,33 +46,37 @@
 						var li = $('<li>' + value.title + '<a class="template-delete dashicons fw-x" href="#"></a></li>').data('template-state', {'id': key, 'json': value.json});
 						documentFragment.append(li);
 					});
+
 					return ul.append(documentFragment);
 				}
 			};
 
 			utils.modal.on('change:values', function (modal, values) {
+				$.ajax({
+					type: "post",
+					dataType: "json",
+					url: ajaxurl,
+					data: {
+						'action': 'fw_builder_save_template',
+						'template_name': values.template_name,
+						'builder_json': elements.$input.val(),
+						'builder_type': builderType
+					}
+				}).done(function (json) {
+					if (!json.success) {
+						console.error('Failed to save builder template', json);
+						return;
+					}
 
-				$.ajax(
-					{
-						type: "post",
-						dataType: "json",
-						url: ajaxurl,
-						data: {
-							'action': 'save_builder_template',
-							'template_name': values.template_name,
-							'builder_json': elements.$input.val(),
-							'builder_type': builderType
-						}
-					}).done(function (json) {
-						var li = $('<li>' + json.data.title + '<a class="template-delete dashicons fw-x" href="#"></a></li>').data('template-state', {'id': json.data.id, 'json': json.data.json});
-						elements.qtipApi.elements.tooltip.find('.default-li').remove();
-						elements.qtipApi.elements.tooltip.find('ul').append(li);
-						utils.modal.set('values', {}, {silent: true});
-					})
-					.fail(function (xhr, status, error) {
-					});
+					var li = $(
+						'<li>' + json.data.title + '<a class="template-delete dashicons fw-x" href="#"></a></li>'
+					).data('template-state', {'id': json.data.id, 'json': json.data.json});
+					elements.qtipApi.elements.tooltip.find('.default-li').remove();
+					elements.qtipApi.elements.tooltip.find('ul').append(li);
+					utils.modal.set('values', {}, {silent: true});
+				})
+				.fail(function (xhr, status, error) {});
 			});
-
 
 			var initTooltip = function (content) {
 				elements.$builder.find('.template-btn').qtip({
@@ -106,25 +106,27 @@
 
 								var self = $(this);
 
-								console.log($(this).closest('li').data('template-state').id);
+								$.ajax({
+									type: "post",
+									dataType: "json",
+									url: ajaxurl,
+									data: {
+										'action': 'fw_builder_delete_template',
+										'builder_type': builderType,
+										'uniqid': $(this).closest('li').data('template-state').id
+									}
+								}).done(function (json) {
+									if (!json.success) {
+										console.error('Failed to delete builder template', json);
+										return;
+									}
 
-								$.ajax(
-									{
-										type: "post",
-										dataType: "json",
-										url: ajaxurl,
-										data: {
-											'action': 'delete_builder_template',
-											'builder_type': builderType,
-											'uniqid': $(this).closest('li').data('template-state').id
-										}
-									}).done(function () {
-										if (self.closest('ul').children().length === 1) {
-											self.closest('ul').append(elements.$defaultLi);
-										}
-										self.closest('li').remove();
-										api.reposition();
-									});
+									if (self.closest('ul').children().length === 1) {
+										self.closest('ul').append(elements.$defaultLi);
+									}
+									self.closest('li').remove();
+									api.reposition();
+								});
 							});
 						}
 					},
@@ -142,34 +144,39 @@
 				});
 			};
 
-			$.ajax(
-				{
-					type: "post",
-					dataType: "json",
-					url: ajaxurl,
-					data: {
-						'action': 'load_builder_templates',
-						'builder_type': builderType
-					}
-				})
-				.done(function (json) {
+			$.ajax({
+				type: "post",
+				dataType: "json",
+				url: ajaxurl,
+				data: {
+					'action': 'fw_builder_load_templates',
+					'builder_type': builderType
+				}
+			})
+			.done(function (json) {
+				if (!json.success) {
+					console.error('Failed to load builder templates', json);
+					return;
+				}
 
-					var list = utils.generateList(json.data),
-						$wrapper = $('<div class="fw-templates-wrapper">' +
-							'<div class="navigation"><a href="#" class="save-template">Save Template</a></div>' +
-							'<div class="templates-list">' +
-							'<div class="head-text"><i>Load Template:</i></div>' +
-							'</div>' +
-							'</div>');
+				var list = utils.generateList(json.data.templates),
+					$wrapper = $(
+						'<div class="fw-templates-wrapper">' +
+						'    <div class="navigation"><a href="#" class="save-template">'+ localized.l10n.save_template +'</a></div>' +
+						'    <div class="templates-list">' +
+						'        <div class="head-text"><i>'+ localized.l10n.load_template +':</i></div>' +
+						'    </div>' +
+						'</div>'
+					);
 
-					$wrapper.find('.templates-list').append(list);
+				$wrapper.find('.templates-list').append(list);
 
-					initTooltip($wrapper);
-				});
+				initTooltip($wrapper);
+			});
 
 			fwe.one('fw-builder:' + builderType + ':register-items', function (builder) {
 				elements.builder = builder;
 			});
 		});
 	});
-})(jQuery, fwEvents, _);
+})(jQuery, fwEvents, _, _fw_option_type_builder_templates);

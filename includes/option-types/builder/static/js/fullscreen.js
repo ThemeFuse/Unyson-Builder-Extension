@@ -1,4 +1,4 @@
-(function ($, fwe, _) {
+(function ($, fwe, _, localized) {
 
 	fwe.one('fw:option-type:builder:init', function (data) {
 		if (!data.$elements.length && !$('#post_ID').length) {
@@ -30,7 +30,7 @@
 				var $builder = $(this);
 				elements.$backdrop.removeClass('fw-hidden');
 				$builder.addClass('builder-fullscreen');
-				$builder.find('.fullscreen-btn .text').text('Exit Full Screen');
+				$builder.find('.fullscreen-btn .text').text(localized.l10n.exit_fullscreen);
 				$builder.find('.fullscreen-btn .icon').removeClass('icon-fullscreen-on').addClass('icon-fullscreen-off');
 				$builder.find('.builder-root-items').css({maxHeight: utils.getFullscreenHeight() + 'px'});
 
@@ -39,7 +39,7 @@
 				var $builder = $(this);
 				elements.$backdrop.addClass('fw-hidden');
 				$builder.removeClass('builder-fullscreen');
-				$builder.find('.fullscreen-btn .text').text('Full Screen');
+				$builder.find('.fullscreen-btn .text').text(localized.l10n.fullscreen);
 				$builder.find('.fullscreen-btn .icon').removeClass('icon-fullscreen-off').addClass('icon-fullscreen-on');
 				$builder.find('.builder-root-items').css({maxHeight: ''});
 
@@ -91,10 +91,12 @@
 		elements.$builders.each(function () {
 			var $builder = $(this);
 
-			$builder.find('.fw-options-tabs-list ul').after('<div class="fullscreen-btn"><div class="icon icon-fullscreen-on"></div><div class="text">Full Screen</div></div>');
+			$builder.find('.fw-options-tabs-list ul').after(
+				'<div class="fullscreen-btn"><div class="icon icon-fullscreen-on"></div><div class="text">'+ localized.l10n.fullscreen +'</div></div>'
+			);
 
 			if ($builder.hasClass('builder-fullscreen')) {
-				$builder.find('.fullscreen-btn .text').text('Exit Full Screen');
+				$builder.find('.fullscreen-btn .text').text(localized.l10n.exit_fullscreen);
 				$builder.find('.fullscreen-btn .icon').removeClass('icon-fullscreen-on').addClass('icon-fullscreen-off');
 				$builder.find('.builder-root-items').css({maxHeight: utils.getFullscreenHeight() + 'px'});
 			}
@@ -105,5 +107,5 @@
 			});
 		});
 	});
-})(jQuery, fwEvents, _);
+})(jQuery, fwEvents, _, _fw_option_type_builder_fullscreen);
 

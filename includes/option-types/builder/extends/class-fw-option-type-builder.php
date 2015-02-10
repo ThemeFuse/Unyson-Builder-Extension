@@ -212,6 +212,17 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				fw()->manifest->get_version(),
 				true
 			);
+
+			wp_localize_script(
+				'fw-option-builder-fullscreen',
+				'_fw_option_type_builder_fullscreen',
+				array(
+					'l10n' => array(
+						'fullscreen' => __('Full Screen', 'fw'),
+						'exit_fullscreen' => __('Exit Full Screen', 'fw'),
+					),
+				)
+			);
 		}
 
 		if ($option['template_saving']) {
@@ -228,6 +239,21 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				array('fw-option-builder'),
 				fw()->manifest->get_version(),
 				true
+			);
+
+			wp_localize_script(
+				'fw-option-builder-template-saving',
+				'_fw_option_type_builder_templates',
+				array(
+					'l10n' => array(
+						'templates' => __('Templates', 'fw'),
+						'no_templates_saved' => __('0 Templates Saved', 'fw'),
+						'template_name' => __('Template Name', 'fw'),
+						'template_name_desc' => __('Must have at least 3 characters (Whitespace, A-Z, 0-9, -_)', 'fw'),
+						'save_template' => __('Save Template', 'fw'),
+						'load_template' => __('Load Template', 'fw'),
+					),
+				)
 			);
 		}
 
