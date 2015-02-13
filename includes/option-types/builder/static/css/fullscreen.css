@@ -1,4 +1,4 @@
-#builder-backdrop {
+.fw-option-type-builder-fullscreen-backdrop {
 	position: fixed;
 	top: 32px;
 	left: 0;
@@ -9,12 +9,12 @@
 	background-color: #E1E1E1;
 }
 
-#builder-backdrop .buttons-wrapper {
+.fw-option-type-builder-fullscreen-backdrop .buttons-wrapper {
 	float: right;
 	margin: 10px 20px;
 }
 
-#builder-backdrop .button {
+.fw-option-type-builder-fullscreen-backdrop .button {
 	margin-left: 5px;
 	float: left;
 }
@@ -67,7 +67,7 @@
 
 }
 
-#builder-backdrop .buttons-wrapper .spinner{
+.fw-option-type-builder-fullscreen-backdrop .buttons-wrapper .spinner{
 	float: left;
 	margin-top: 4px;
 	margin-right: 0px;

@@ -75,7 +75,7 @@ final class _FW_Ext_Builder_Fullscreen
 	public static function _action_add_builder_backdrop()
 	{
 		echo
-		'<div id="builder-backdrop" ' . (self::is_fullscreen_on() ? '' : 'class="fw-hidden"') . ' >'.
+		'<div class="fw-option-type-builder-fullscreen-backdrop' . (self::is_fullscreen_on() ? '' : ' fw-hidden') . '" >'.
 		'    <div class="buttons-wrapper">'.
 		'        <span class="spinner"></span>'.
 		'        <a class="preview button">'. __('Preview Changes', 'fw') .'</a>'.
