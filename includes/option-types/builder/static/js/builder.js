@@ -900,6 +900,85 @@ jQuery(document).ready(function($){
 		}
 	});
 
+	var fixedHeaderHelpers = {
+		increment: 0,
+		$adminBar: $('#wpadminbar'),
+		getAdminBarHeight: function() {
+			if (this.$adminBar.length && this.$adminBar.css('position') === 'fixed') {
+				return this.$adminBar.height();
+			} else {
+				return 0;
+			}
+		},
+		fix: function($header, $builder){
+			var topSpace = this.getAdminBarHeight(),
+				$window = $(window),
+				windowHeight = $window.height(),
+				windowScrollTop = $window.scrollTop(),
+				builderHeight = $builder.height(),
+				builderOffsetTop = $builder.offset().top,
+				headerHeight = $header.height();
+
+			do {
+				if (builderHeight / 2 < headerHeight) {
+					// the builder must be at least twice taller than the header
+					break;
+				}
+
+				if (builderHeight < windowHeight - topSpace) {
+					// the builder fits inside page height
+					break;
+				}
+
+				if (builderOffsetTop > windowScrollTop + topSpace) {
+					// page scroll top didn't reached builder
+					break;
+				}
+
+				var headerTopShift = (windowScrollTop + topSpace) - builderOffsetTop;
+
+				if (headerTopShift + headerHeight > builderHeight) {
+					// do not allow header to go outside builder
+					headerTopShift -= headerTopShift + headerHeight - builderHeight;
+				}
+
+				// set fixed header
+				{
+					$builder.css({
+						'position': 'relative',
+						'padding-top': headerHeight +'px' // set ghost space in builder, like the header is still there
+					});
+					$header.css({
+						'position': 'absolute',
+						'width': '100%',
+						'top': headerTopShift +'px',
+						'background-color': '#fff',
+						'z-index': '1'
+					});
+
+					return true;
+				}
+			} while(false);
+
+			// remove fixed header
+			{
+				$builder.css({
+					'position': '',
+					'padding-top': ''
+				});
+				$header.css({
+					'position': '',
+					'width': '',
+					'top': '',
+					'background-color': '',
+					'z-index': ''
+				});
+
+				return false;
+			}
+		}
+	};
+
 	fwEvents.on('fw:options:init', function (data) {
 		var $options = data.$elements.find('.fw-option-type-builder:not(.initialized)');
 
@@ -1079,6 +1158,38 @@ jQuery(document).ready(function($){
 					}
 				});
 			});
+
+			/**
+			 * Make header fixed on page scroll down when it hits window top side
+			 */
+			if ($this.hasClass('fixed-header')) {
+				var fixedHeaderEventsNamespace = '.fw-builder-fixed-header-'+ (++fixedHeaderHelpers.increment),
+					$fixedHeader = $this.find('> .builder-items-types:first');
+
+				$(window)
+					.on('scroll'+ fixedHeaderEventsNamespace, function(){
+						fixedHeaderHelpers.fix($fixedHeader, $this);
+					})
+					.on('resize'+ fixedHeaderEventsNamespace, function(){
+						fixedHeaderHelpers.fix($fixedHeader, $this);
+					});
+
+				/**
+				 * On thumbnails tab change, the new tab may contain more thumbnails that previous
+				 * thus having different height
+				 */
+				$fixedHeader.on('click'+ fixedHeaderEventsNamespace, '.fw-options-tabs-list a', function(){
+					fixedHeaderHelpers.fix($fixedHeader, $this);
+				});
+
+				/**
+				 * Remove events from external elements
+				 * In case the builder is created and remove dynamically multiple times, for e.g. inside fw.OptionsModal
+				 */
+				$this.on('remove', function(){
+					$(window).off(fixedHeaderEventsNamespace);
+				});
+			}
 		});
 
 		$options.addClass('initialized');

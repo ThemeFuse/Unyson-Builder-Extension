@@ -5,7 +5,6 @@
  * @var  array $option
  * @var  array $data
  * @var  array $thumbnails
- * @var string $option_type
  */
 
 {
@@ -37,13 +36,6 @@
 		$div_attr['value'],
 		$div_attr['name']
 	);
-
-	$div_attr['data-builder-option-type'] = $option_type;
-	$div_attr['class'] .= ' fw-option-type-builder';
-
-	if ($option['fullscreen']) {
-		$div_attr['class'] .= apply_filters('fw_builder_fullscreen_add_classes', '');
-	}
 
 	$div_attr['class'] .= ' fw-option-type-builder-tabs-count-'. count($tabs_options);
 }

@@ -127,6 +127,15 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			'fullscreen' => false,
 			'template_saving' => false,
 			'history' => false,
+			/**
+			 * Enable fixed header so it follows you on scroll down.
+			 * It's convenient when you have many elements in builder and it's tedious to:
+			 * scroll up -> add element -> scroll down -> configure it -> scroll up -> ... .
+			 * By default it's disabled because there are some builders like form-builder
+			 * which are used inside OptionsModal where this feature is not wanted.
+			 * So it's better to enable it explicitly when you are sure it is needed.
+			 */
+			'fixed_header' => false,
 		), $option);
 	}
 
@@ -287,6 +296,8 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	 */
 	protected function _render($id, $option, $data)
 	{
+		$option = $this->fix_base_defaults($option);
+
 		/**
 		 * array(
 		 *  'Tab title' => array(
@@ -326,12 +337,26 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			$this->sort_thumbnails($thumbnails);
 		}
 
+		// prepare attr
+		{
+			$option['attr']['data-builder-option-type'] = $this->get_type();
+
+			$option['attr']['class'] .= ' fw-option-type-builder';
+
+			if ($option['fullscreen']) {
+				$option['attr']['class'] .= apply_filters('fw_builder_fullscreen_add_classes', '');
+			}
+
+			if ($option['fixed_header']) {
+				$option['attr']['class'] .= ' fixed-header';
+			}
+		}
+
 		return fw_render_view(dirname(__FILE__) .'/../view.php', array(
 			'id'         => $id,
 			'option'     => $option,
 			'data'       => $data,
 			'thumbnails' => $thumbnails,
-			'option_type'=> $this->get_type()
 		));
 	}
 
