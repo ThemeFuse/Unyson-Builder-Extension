@@ -940,7 +940,7 @@ jQuery(document).ready(function($){
 				}
 
 				if (builderOffsetTop > windowScrollTop + topSpace) {
-					// page scroll top didn't reached builder
+					// page scroll top didn't reached the builder
 					break;
 				}
 
