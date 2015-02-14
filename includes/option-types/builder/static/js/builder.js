@@ -554,7 +554,7 @@ jQuery(document).ready(function($){
 												});
 											}
 										} else {
-											console.log('[Builder] Item move denied');
+											console.warn('[Builder] Item move denied');
 											ui.sender.sortable('cancel');
 										}
 									}
@@ -915,9 +915,9 @@ jQuery(document).ready(function($){
 				$window = $(window),
 				windowHeight = $window.height(),
 				windowScrollTop = $window.scrollTop(),
-				builderHeight = $builder.height(),
+				builderHeight = $builder.get(0).clientHeight,
 				builderOffsetTop = $builder.offset().top,
-				headerHeight = $header.height();
+				headerHeight = $header.get(0).clientHeight;
 
 			do {
 				if (builderHeight / 2 < headerHeight) {
@@ -937,9 +937,9 @@ jQuery(document).ready(function($){
 
 				var headerTopShift = (windowScrollTop + topSpace) - builderOffsetTop;
 
-				if (headerTopShift + headerHeight > builderHeight) {
-					// do not allow header to go outside builder
-					headerTopShift -= headerTopShift + headerHeight - builderHeight;
+				if (headerTopShift + headerHeight + 200 > builderHeight) {
+					// do not allow header to cover last items
+					headerTopShift -= headerTopShift + headerHeight + 200 - builderHeight;
 				}
 
 				// set fixed header
@@ -1160,7 +1160,7 @@ jQuery(document).ready(function($){
 			});
 
 			/**
-			 * Make header fixed on page scroll down when it hits window top side
+			 * Make header follow you when you scroll down
 			 */
 			if ($this.hasClass('fixed-header')) {
 				var fixedHeaderEventsNamespace = '.fw-builder-fixed-header-'+ (++fixedHeaderHelpers.increment),
@@ -1180,7 +1180,25 @@ jQuery(document).ready(function($){
 				 */
 				$fixedHeader.on('click'+ fixedHeaderEventsNamespace, '.fw-options-tabs-list a', function(){
 					fixedHeaderHelpers.fix($fixedHeader, $this);
+
+					/**
+					 * When you scroll down to the last items (to the limit when the fixed header stops and begins to go under page)
+					 * and you switch to a tab with a bigger height, there are some issues with positioning.
+					 * Calling this send time fixes it
+					 */
+					fixedHeaderHelpers.fix($fixedHeader, $this);
 				});
+
+				/**
+				 * Listen builder items change
+				 * For e.g. when you delete an element from the builder (or press undo/redo buttons)
+				 * its height is changed and the fixed header needs repositioning
+				 */
+				builder.rootItems.on(
+					'builder:change',
+					function(){ fixedHeaderHelpers.fix($fixedHeader, $this); },
+					$fixedHeader.get(0) // this is used as unique context to be able to remove all events related to it
+				);
 
 				/**
 				 * Remove events from external elements
@@ -1188,6 +1206,12 @@ jQuery(document).ready(function($){
 				 */
 				$this.on('remove', function(){
 					$(window).off(fixedHeaderEventsNamespace);
+
+					builder.rootItems.off(
+						'builder:change',
+						null,
+						$fixedHeader.get(0)
+					);
 				});
 			}
 		});
