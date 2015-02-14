@@ -1,6 +1,11 @@
 .fw-option-type-builder > .builder-items-types {
 	padding: 0;
 	border-bottom: 1px solid #eeeeee;
+	background-color: #fff;
+
+	/* used when has position:absolution in fixed header mode */
+	width: 100%;
+	z-index: 1;
 }
 
 .fw-option-type-builder .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {

@@ -903,6 +903,10 @@ jQuery(document).ready(function($){
 	var fixedHeaderHelpers = {
 		increment: 0,
 		$adminBar: $('#wpadminbar'),
+		/**
+		 * Do not allow fixed header cover last builder items
+		 */
+		bottomLimit: 200,
 		getAdminBarHeight: function() {
 			if (this.$adminBar.length && this.$adminBar.css('position') === 'fixed') {
 				return this.$adminBar.height();
@@ -925,6 +929,11 @@ jQuery(document).ready(function($){
 					break;
 				}
 
+				if (windowHeight < headerHeight * 2) {
+					// the window must be at least twice taller that the header
+					break;
+				}
+
 				if (builderHeight < windowHeight - topSpace) {
 					// the builder fits inside page height
 					break;
@@ -937,9 +946,9 @@ jQuery(document).ready(function($){
 
 				var headerTopShift = (windowScrollTop + topSpace) - builderOffsetTop;
 
-				if (headerTopShift + headerHeight + 200 > builderHeight) {
+				if (headerTopShift + headerHeight + this.bottomLimit > builderHeight) {
 					// do not allow header to cover last items
-					headerTopShift -= headerTopShift + headerHeight + 200 - builderHeight;
+					headerTopShift -= headerTopShift + headerHeight + this.bottomLimit - builderHeight;
 				}
 
 				// set fixed header
@@ -950,10 +959,7 @@ jQuery(document).ready(function($){
 					});
 					$header.css({
 						'position': 'absolute',
-						'width': '100%',
-						'top': headerTopShift +'px',
-						'background-color': '#fff',
-						'z-index': '1'
+						'top': headerTopShift +'px'
 					});
 
 					return true;
@@ -968,10 +974,7 @@ jQuery(document).ready(function($){
 				});
 				$header.css({
 					'position': '',
-					'width': '',
-					'top': '',
-					'background-color': '',
-					'z-index': ''
+					'top': ''
 				});
 
 				return false;
@@ -1178,7 +1181,7 @@ jQuery(document).ready(function($){
 				 * On thumbnails tab change, the new tab may contain more thumbnails that previous
 				 * thus having different height
 				 */
-				$fixedHeader.on('click'+ fixedHeaderEventsNamespace, '.fw-options-tabs-list a', function(){
+				$fixedHeader.on('click'+ fixedHeaderEventsNamespace, '.fw-options-tabs-list a, .fullscreen-btn', function(){
 					fixedHeaderHelpers.fix($fixedHeader, $this);
 
 					/**
