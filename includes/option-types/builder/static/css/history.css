@@ -21,17 +21,11 @@
 	background-image: url(../img/history/redo_disabled.png);
 }
 
-.fw-option-type-builder .history-container {
-	float: left;
-}
-
 .fw-option-type-builder .history-container a {
-	margin-right: 10px;
 	text-decoration: none;
 }
 
 .fw-option-type-builder .history-container a.disabled {
-	margin-right: 10px;
 	text-decoration: none;
 	color: #b2b2b2;
 }

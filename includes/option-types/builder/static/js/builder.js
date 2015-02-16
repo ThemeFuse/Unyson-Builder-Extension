@@ -987,6 +987,10 @@ jQuery(document).ready(function($){
 
 		$options.closest('.fw-backend-option').addClass('fw-backend-option-type-builder');
 
+		$options.find('> .builder-items-types .fw-options-tabs-list').prepend(
+			'<div class="builder-header-tools fw-clearfix"><!-- Undo/Redo Templates Fullscreen --></div>'
+		);
+
 		fwEvents.trigger('fw:option-type:builder:init', {
 			$elements: $options
 		});

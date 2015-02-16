@@ -8,9 +8,18 @@
 	z-index: 1;
 }
 
-.fw-option-type-builder > .builder-items-types > .fw-builder-header-tools {
-	padding: 20px;
-	border-top: 1px solid #eeeeee;
+.fw-option-type-builder > .builder-items-types .fw-options-tabs-list > ul {
+	float: left;
+}
+
+.fw-option-type-builder > .builder-items-types .fw-options-tabs-list > .builder-header-tools {
+	float: right;
+	margin: -5px 10px 14px 10px;
+}
+
+.fw-option-type-builder > .builder-items-types .fw-options-tabs-list > .builder-header-tools > div {
+	display: inline-block;
+	margin-left: 20px;
 }
 
 .fw-option-type-builder .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {
