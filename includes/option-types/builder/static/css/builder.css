@@ -28,10 +28,6 @@
 	padding: 0 16px;
 }
 
-.fw-option-type-builder.fw-option-type-builder-tabs-count-1 > .builder-items-types .fw-options-tabs-list {
-	display: none;
-}
-
 
 /* tabs */
 
@@ -67,6 +63,12 @@
 
 .fw-option-type-builder.fw-option-type-builder-tabs-count-1 > .builder-items-types .fw-options-tabs-wrapper .fw-options-tabs-contents {
 	margin-top: 0 !important;
+}
+
+@media (max-width: 782px) {
+	.fw-option-type-builder > .builder-items-types .fw-options-tabs-wrapper .fw-options-tabs-list {
+		text-align: center;
+	}
 }
 
 /* end: tabs */

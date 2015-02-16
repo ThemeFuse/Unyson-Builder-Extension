@@ -32,11 +32,9 @@ body.admin-bar .fw-option-type-builder-fullscreen-backdrop {
 
 .fw-option-type-builder > .builder-items-types .fullscreen-btn {
 	float: right;
-	margin-right: 10px;
 	cursor: pointer;
 	color: #0074a2;
-	margin-top: -5px;
-
+	margin: -5px 10px 10px 0;
 }
 
 .fw-option-type-builder > .builder-items-types .fullscreen-btn div {
@@ -60,6 +58,20 @@ body.admin-bar .fw-option-type-builder-fullscreen-backdrop {
 	background-image: url(../img/fullscreen/fullscreen-off.png);
 	background-repeat: no-repeat;
 
+}
+
+@media (max-width: 782px) {
+	.fw-option-type-builder > .builder-items-types .fullscreen-btn {
+		float: none;
+		margin: 0 auto 10px;
+		display: inline-block;
+	}
+}
+
+@media (min-width: 783px) {
+	.fw-option-type-builder > .builder-items-types .fw-options-tabs-wrapper.fw-options-tabs-first-level .fw-options-tabs-list > ul {
+		float: left; /* needed when the Fullscreen button goes on top of tabs when page width is small http://bit.ly/1FSCB7p */
+	}
 }
 
 
