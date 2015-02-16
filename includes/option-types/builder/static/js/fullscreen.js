@@ -19,11 +19,11 @@
 
 		var utils = {
 			toogleFullscreen: function ($builder) {
-				if (!$builder.hasClass('builder-fullscreen')) {
-					utils.fullscreenOn.call($builder);
-				} else {
+				if ($builder.hasClass('builder-fullscreen')) {
 					utils.fullscreenOff.call($builder);
 					utils.unsetStorageItem();
+				} else {
+					utils.fullscreenOn.call($builder);
 				}
 			},
 			getFullscreenHeight: function () {
@@ -35,21 +35,35 @@
 			},
 			fullscreenOn: function () {
 				var $builder = $(this);
+
 				utils.selectBackdrop($builder).removeClass('fw-hidden');
 				$builder.addClass('builder-fullscreen');
-				$builder.find('.fullscreen-btn .text').text(localized.l10n.exit_fullscreen);
-				$builder.find('.fullscreen-btn .icon').removeClass('icon-fullscreen-on').addClass('icon-fullscreen-off');
-				$builder.find('.builder-root-items').css({maxHeight: utils.getFullscreenHeight() + 'px'});
 				$(document.body).css('overflow-y', 'hidden'); // remove body scroll
+
+				$builder.find('> .builder-items-types .fullscreen-btn .text').text(localized.l10n.exit_fullscreen);
+				$builder.find('> .builder-items-types .fullscreen-btn .icon').removeClass('icon-fullscreen-on').addClass('icon-fullscreen-off');
+				$builder.find('> .builder-root-items')
+					.css({'max-height': utils.getFullscreenHeight() + 'px'})
+					.on('scroll.builder-fullscreen', function(){
+						$builder.find('> .builder-items-types').css(
+							'border-bottom-color',
+							$(this).scrollTop() ? '#eee' : ''
+						);
+					});
 			},
 			fullscreenOff: function () {
 				var $builder = $(this);
+
 				utils.selectBackdrop($builder).addClass('fw-hidden');
 				$builder.removeClass('builder-fullscreen');
-				$builder.find('.fullscreen-btn .text').text(localized.l10n.fullscreen);
-				$builder.find('.fullscreen-btn .icon').removeClass('icon-fullscreen-off').addClass('icon-fullscreen-on');
-				$builder.find('.builder-root-items').css({maxHeight: ''});
 				$(document.body).css('overflow-y', '');
+
+				$builder.find('> .builder-items-types .fullscreen-btn .text').text(localized.l10n.fullscreen);
+				$builder.find('> .builder-items-types .fullscreen-btn .icon').removeClass('icon-fullscreen-off').addClass('icon-fullscreen-on');
+				$builder.find('> .builder-root-items')
+					.css({'max-height': ''})
+					.off('.builder-fullscreen');
+				$builder.find('> .builder-items-types').css('border-bottom-color', '');
 			},
 			getPostId: function () {
 				return $('#post_ID').val();
@@ -88,13 +102,7 @@
 				'</div>'
 			);
 
-			if ($builder.hasClass('builder-fullscreen')) {
-				$builder.find('.fullscreen-btn .text').text(localized.l10n.exit_fullscreen);
-				$builder.find('.fullscreen-btn .icon').removeClass('icon-fullscreen-on').addClass('icon-fullscreen-off');
-				$builder.find('.builder-root-items').css({maxHeight: utils.getFullscreenHeight() + 'px'});
-			}
-
-			$builder.find('.fullscreen-btn').on('click', function(e){
+			$builder.find('> .builder-items-types .fullscreen-btn').on('click', function(e){
 				e.preventDefault();
 				utils.toogleFullscreen($builder);
 			});
@@ -112,6 +120,11 @@
 						elements.$saveButton.trigger('click');
 					});
 				});
+
+			if ($builder.hasClass('builder-fullscreen')) {
+				$builder.removeClass('builder-fullscreen');
+				utils.toogleFullscreen($builder);
+			}
 		});
 	});
 })(jQuery, fwEvents, _, _fw_option_type_builder_fullscreen);
