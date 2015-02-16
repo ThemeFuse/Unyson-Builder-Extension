@@ -31,30 +31,37 @@ body.admin-bar .fw-option-type-builder-fullscreen-backdrop {
 
 
 .fw-option-type-builder > .builder-items-types .fullscreen-btn {
+	float: right;
+	margin-right: 10px;
 	cursor: pointer;
 	color: #0074a2;
+	margin-top: -5px;
+
 }
 
 .fw-option-type-builder > .builder-items-types .fullscreen-btn div {
-	display: inline-block;
-}
-
-.fw-option-type-builder > .builder-items-types .fullscreen-btn .icon-fullscreen-on,
-.fw-option-type-builder > .builder-items-types .fullscreen-btn .icon-fullscreen-off {
-	width: 9px;
-	height: 9px;
-	margin-right: 5px;
-	background-position: center;
-	background-repeat: no-repeat;
+	float: left;
 }
 
 .fw-option-type-builder > .builder-items-types .fullscreen-btn .icon-fullscreen-on {
+	width: 9px;
+	height: 18px;
+	margin-right: 5px;
+	background-position: center;
 	background-image: url(../img/fullscreen/fullscreen-on.png);
+	background-repeat: no-repeat;
 }
 
 .fw-option-type-builder > .builder-items-types .fullscreen-btn .icon-fullscreen-off {
+	width: 9px;
+	height: 18px;
+	margin-right: 5px;
+	background-position: center;
 	background-image: url(../img/fullscreen/fullscreen-off.png);
+	background-repeat: no-repeat;
+
 }
+
 
 .fw-option-type-builder .ui-tabs-nav.ui-helper-clearfix:after {
 	clear: none;

@@ -14,15 +14,22 @@
 				saveStateFlag = true,
 				type = $(this).attr('data-builder-option-type');
 
-			elements.$builder.find('> .builder-items-types .builder-header-tools').append(
-				'<div class="history-container">'+
-				'<a class="disabled undo" href="#">Undo</a>'+ // fixme: translate this
-				'<a class="disabled redo" href="#">Redo</a>'+
-				'</div>'
-			);
+			/**
+			 * Create wrapper if not exists
+			 * Note: The same wrapper may be created by the Templates script
+			 */
+			{
+				elements.$navigation = elements.$builder.find('> .builder-items-types > .fw-builder-header-tools');
 
-			elements.$undo = elements.$builder.find('> .builder-items-types .builder-header-tools .history-container .undo');
-			elements.$redo = elements.$builder.find('> .builder-items-types .builder-header-tools .history-container .redo');
+				if (elements.$navigation.length === 0) {
+					elements.$builder.find('> .builder-items-types').append('<div class="fw-builder-header-tools fw-clearfix"></div>');
+					elements.$navigation = elements.$builder.find('> .builder-items-types > .fw-builder-header-tools');
+				}
+			}
+
+			elements.$navigation.append('<div class="history-container"><a class="disabled undo" href="#">Undo</a><a class="disabled redo" href="#">Redo</a></div>');
+			elements.$undo = elements.$navigation.find('.undo');
+			elements.$redo = elements.$navigation.find('.redo');
 
 			var utils = {
 				disableUndo: function () {
