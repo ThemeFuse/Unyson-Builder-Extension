@@ -1,4 +1,4 @@
-(function ($, fwe, _) {
+(function ($, fwe, _, localized) {
 
 	fwe.one('fw:option-type:builder:init', function (data) {
 
@@ -27,7 +27,12 @@
 				}
 			}
 
-			elements.$navigation.append('<div class="history-container"><a class="disabled undo" href="#">Undo</a><a class="disabled redo" href="#">Redo</a></div>');
+			elements.$navigation.append(
+				'<div class="history-container">' +
+				'<a class="disabled undo" href="#">'+ localized.l10n.undo +'</a>' +
+				'<a class="disabled redo" href="#">'+ localized.l10n.redo +'</a>' +
+				'</div>'
+			);
 			elements.$undo = elements.$navigation.find('.undo');
 			elements.$redo = elements.$navigation.find('.redo');
 
@@ -140,4 +145,4 @@
 			});
 		});
 	});
-})(jQuery, fwEvents, _);
+})(jQuery, fwEvents, _, _fw_option_type_builder_history);

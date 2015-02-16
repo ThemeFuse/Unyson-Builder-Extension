@@ -281,6 +281,17 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				fw()->manifest->get_version(),
 				true
 			);
+
+			wp_localize_script(
+				'fw-option-builder-history',
+				'_fw_option_type_builder_history',
+				array(
+					'l10n' => array(
+						'undo' => __('Undo', 'fw'),
+						'redo' => __('Redo', 'fw'),
+					),
+				)
+			);
 		}
 
 		foreach ($this->get_item_types() as $item) {
