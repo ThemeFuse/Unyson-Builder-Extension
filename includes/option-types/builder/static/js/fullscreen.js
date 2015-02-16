@@ -81,7 +81,7 @@
 		data.$elements.each(function(){
 			var $builder = $(this);
 
-			$builder.find('.fw-options-tabs-list ul').after(
+			$builder.find('.fw-options-tabs-list ul').before(
 				'<div class="fullscreen-btn">'+
 				'    <div class="icon icon-fullscreen-on"></div>'+
 				'    <div class="text">'+ localized.l10n.fullscreen +'</div>'+

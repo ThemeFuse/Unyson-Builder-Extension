@@ -6,19 +6,25 @@
 
 		var $builders = data.$elements;
 
-		$builders.each(function () {
+		$builders.each(function(){
 			var elements = {
-					$builder: $(this),
-					$input: $(this).find('> input:first'),
-					$defaultLi: $('<li class="default-li">'+ localized.l10n.no_templates_saved +'</li>')
-				},
-				builderType = $(this).attr('data-builder-option-type');
+				$builder: $(this),
+				$input: $(this).find('> input:first'),
+				$defaultLi: $('<li class="default-li">'+ localized.l10n.no_templates_saved +'</li>')
+			},
+			builderType = $(this).attr('data-builder-option-type');
 
-			elements.$navigation = elements.$builder.find('.builder-root-items .navigation');
+			/**
+			 * Create wrapper if not exists
+			 * Note: The same wrapper may be created by the Undo/Redo script
+			 */
+			{
+				elements.$navigation = elements.$builder.find('> .builder-items-types > .fw-builder-header-tools');
 
-			if (elements.$navigation.length === 0) {
-				elements.$builder.find('.builder-root-items').append('<div class="navigation"></div>');
-				elements.$navigation = elements.$builder.find('.builder-root-items .navigation');
+				if (elements.$navigation.length === 0) {
+					elements.$builder.find('> .builder-items-types').append('<div class="fw-builder-header-tools fw-clearfix"></div>');
+					elements.$navigation = elements.$builder.find('> .builder-items-types > .fw-builder-header-tools');
+				}
 			}
 
 			elements.$navigation.append('<div class="template-container"><a class="template-btn">'+ localized.l10n.templates +'</a></div>');
@@ -161,7 +167,7 @@
 
 				var list = utils.generateList(json.data.templates),
 					$wrapper = $(
-						'<div class="fw-templates-wrapper">' +
+						'<div class="fw-builder-templates-wrapper">' +
 						'    <div class="navigation"><a href="#" class="save-template">'+ localized.l10n.save_template +'</a></div>' +
 						'    <div class="templates-list">' +
 						'        <div class="head-text"><i>'+ localized.l10n.load_template +':</i></div>' +

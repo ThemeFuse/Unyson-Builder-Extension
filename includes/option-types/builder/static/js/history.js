@@ -14,13 +14,19 @@
 				saveStateFlag = true,
 				type = $(this).attr('data-builder-option-type');
 
-			elements.$navigation = elements.$builder.find('.builder-root-items .navigation');
+			/**
+			 * Create wrapper if not exists
+			 * Note: The same wrapper may be created by the Templates script
+			 */
+			{
+				elements.$navigation = elements.$builder.find('> .builder-items-types > .fw-builder-header-tools');
 
-
-			if (elements.$navigation.length === 0) {
-				elements.$builder.find('.builder-root-items').append('<div class="navigation"></div>');
-				elements.$navigation = elements.$builder.find('.builder-root-items .navigation');
+				if (elements.$navigation.length === 0) {
+					elements.$builder.find('> .builder-items-types').append('<div class="fw-builder-header-tools fw-clearfix"></div>');
+					elements.$navigation = elements.$builder.find('> .builder-items-types > .fw-builder-header-tools');
+				}
 			}
+
 			elements.$navigation.append('<div class="history-container"><a class="disabled undo" href="#">Undo</a><a class="disabled redo" href="#">Redo</a></div>');
 			elements.$undo = elements.$navigation.find('.undo');
 			elements.$redo = elements.$navigation.find('.redo');

@@ -15,7 +15,7 @@
 	cursor: pointer;
 }
 
-.fw-templates-wrapper a.template-delete {
+.fw-builder-templates-wrapper a.template-delete {
 	float: right;
 	visibility: hidden;
 	margin-top: 3px;
@@ -23,12 +23,12 @@
 	text-decoration: none !important;
 }
 
-.fw-templates-wrapper {
+.fw-builder-templates-wrapper {
 	padding: 5px;
 	overflow: auto;
 }
 
-.fw-templates-wrapper .save-template {
+.fw-builder-templates-wrapper .save-template {
 	text-align: left;
 	text-decoration: none !important;
 	color: #b1b1b1;
@@ -38,15 +38,15 @@
 	padding-left: 3px;
 }
 
-.fw-templates-wrapper .save-template:hover {
+.fw-builder-templates-wrapper .save-template:hover {
 	color: #eee;
 }
 
-.fw-templates-wrapper .navigation {
+.fw-builder-templates-wrapper .navigation {
 	float: left;
 }
 
-.fw-templates-wrapper .templates-list {
+.fw-builder-templates-wrapper .templates-list {
 	border-top: 1px solid #4b4b4b;
 	border-top: 1px solid rgba(208, 208, 208, 0.15);
 	float: left;
@@ -56,7 +56,7 @@
 	max-height: 300px;
 }
 
-.fw-templates-wrapper .templates-list .head-text {
+.fw-builder-templates-wrapper .templates-list .head-text {
 	text-align: left;
 	float: left;
 	padding: 10px 0px;
@@ -64,13 +64,13 @@
 	color: #707070;
 }
 
-.fw-templates-wrapper ul {
+.fw-builder-templates-wrapper ul {
 	float: left;
 	margin: 0px;
 	width: 100%;
 }
 
-.fw-templates-wrapper ul li {
+.fw-builder-templates-wrapper ul li {
 	font-style: normal;
 	padding-bottom: 10px;
 	margin-bottom: 0px;
@@ -82,22 +82,22 @@
 	cursor: pointer;
 }
 
-.fw-templates-wrapper ul li:last-child {
+.fw-builder-templates-wrapper ul li:last-child {
 	padding-bottom: 0px;
 }
 
-.fw-templates-wrapper .default-li {
+.fw-builder-templates-wrapper .default-li {
 	cursor: text;
 }
 
-.fw-templates-wrapper .default-li:hover {
+.fw-builder-templates-wrapper .default-li:hover {
 	color: #b1b1b1;
 }
 
-.fw-templates-wrapper ul li:hover a.template-delete {
+.fw-builder-templates-wrapper ul li:hover a.template-delete {
 	visibility: visible;
 }
 
-.fw-templates-wrapper ul li:hover {
+.fw-builder-templates-wrapper ul li:hover {
 	color: #eee;
 }

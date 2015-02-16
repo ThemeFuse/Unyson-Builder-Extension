@@ -924,13 +924,8 @@ jQuery(document).ready(function($){
 				headerHeight = $header.get(0).clientHeight;
 
 			do {
-				if (builderHeight / 2 < headerHeight) {
-					// the builder must be at least twice taller than the header
-					break;
-				}
-
-				if (windowHeight < headerHeight * 2) {
-					// the window must be at least twice taller that the header
+				if (builderOffsetTop > windowScrollTop + topSpace) {
+					// page scroll top didn't reached the builder
 					break;
 				}
 
@@ -939,8 +934,13 @@ jQuery(document).ready(function($){
 					break;
 				}
 
-				if (builderOffsetTop > windowScrollTop + topSpace) {
-					// page scroll top didn't reached the builder
+				if (builderHeight < headerHeight * 2) {
+					// the builder must be at least twice taller than the header
+					break;
+				}
+
+				if (windowHeight < headerHeight * 2) {
+					// the window must be at least twice taller that the header
 					break;
 				}
 
@@ -1193,15 +1193,13 @@ jQuery(document).ready(function($){
 				});
 
 				/**
-				 * Listen builder items change
+				 * Listen builder value/items change
 				 * For e.g. when you delete an element from the builder (or press undo/redo buttons)
 				 * its height is changed and the fixed header needs repositioning
 				 */
-				builder.rootItems.on(
-					'builder:change',
-					function(){ fixedHeaderHelpers.fix($fixedHeader, $this); },
-					$fixedHeader.get(0) // this is used as unique context to be able to remove all events related to it
-				);
+				builder.$input.on('fw-builder:input:change'+ fixedHeaderEventsNamespace, function(){
+					fixedHeaderHelpers.fix($fixedHeader, $this);
+				});
 
 				/**
 				 * Remove events from external elements
@@ -1209,12 +1207,6 @@ jQuery(document).ready(function($){
 				 */
 				$this.on('remove', function(){
 					$(window).off(fixedHeaderEventsNamespace);
-
-					builder.rootItems.off(
-						'builder:change',
-						null,
-						$fixedHeader.get(0)
-					);
 				});
 			}
 		});
