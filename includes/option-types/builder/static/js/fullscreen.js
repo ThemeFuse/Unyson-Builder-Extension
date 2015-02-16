@@ -40,7 +40,7 @@
 				$builder.find('.fullscreen-btn .text').text(localized.l10n.exit_fullscreen);
 				$builder.find('.fullscreen-btn .icon').removeClass('icon-fullscreen-on').addClass('icon-fullscreen-off');
 				$builder.find('.builder-root-items').css({maxHeight: utils.getFullscreenHeight() + 'px'});
-
+				$(document.body).css('overflow-y', 'hidden'); // remove body scroll
 			},
 			fullscreenOff: function () {
 				var $builder = $(this);
@@ -49,7 +49,7 @@
 				$builder.find('.fullscreen-btn .text').text(localized.l10n.fullscreen);
 				$builder.find('.fullscreen-btn .icon').removeClass('icon-fullscreen-off').addClass('icon-fullscreen-on');
 				$builder.find('.builder-root-items').css({maxHeight: ''});
-
+				$(document.body).css('overflow-y', '');
 			},
 			getPostId: function () {
 				return $('#post_ID').val();

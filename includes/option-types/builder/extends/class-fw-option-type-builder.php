@@ -348,7 +348,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			}
 
 			if ($option['fixed_header']) {
-				$option['attr']['class'] .= ' fixed-header';
+				$option['attr']['data-fixed-header'] = '~';
 			}
 		}
 

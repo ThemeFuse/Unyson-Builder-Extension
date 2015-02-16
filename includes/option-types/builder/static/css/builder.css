@@ -1,20 +1,31 @@
 .fw-option-type-builder > .builder-items-types {
 	padding: 0;
-	border-bottom: 1px solid #eeeeee;
+	border-bottom: 1px solid #fff;
 	background-color: #fff;
+}
 
-	/* used when has position:absolution in fixed header mode */
+.fw-option-type-builder.fixed-header {
+	position: relative;
+}
+
+.fw-option-type-builder.fixed-header > .builder-items-types {
+	position: absolute;
 	width: 100%;
 	z-index: 1;
+	border-bottom-color: #eeeeee;
+}
+
+.fw-option-type-builder > .builder-items-types > .fw-options-tabs-wrapper {
+	padding-bottom: 15px;
+	border-bottom: 1px solid #eeeeee;
 }
 
 .fw-option-type-builder > .builder-items-types > .fw-builder-header-tools {
 	padding: 20px;
-	border-top: 1px solid #eeeeee;
 }
 
 .fw-option-type-builder .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {
-	padding: 0 16px 13px !important;
+	padding: 0 16px;
 }
 
 .fw-option-type-builder.fw-option-type-builder-tabs-count-1 > .builder-items-types .fw-options-tabs-list {
@@ -25,7 +36,7 @@
 /* tabs */
 
 .fw-option-type-builder > .builder-items-types .fw-options-tabs-wrapper.fw-options-tabs-first-level .fw-options-tabs-contents {
-	margin: 20px 0 15px !important;
+	margin: 20px 0 0 !important;
 }
 
 .fw-option-type-builder > .builder-items-types .fw-options-tabs-wrapper.fw-options-tabs-first-level .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {
@@ -201,15 +212,23 @@
 /* end: builder-item-type */
 
 
-.fw-option-type-builder .builder-root-items {
+.fw-option-type-builder > .builder-root-items {
 	padding-top: 0px;
 }
 
-.fw-option-type-builder .builder-root-items > .builder-items {
+.fw-option-type-builder > .builder-root-items > .builder-items {
 	min-height: 200px;
 }
 
-.fw-option-type-builder.fw-option-type-builder-tabs-count-0 .builder-root-items {
+.fw-option-type-builder.has-header-tools > .builder-root-items > .builder-items {
+	padding-top: 0;
+}
+
+.fw-option-type-builder.has-header-tools > .builder-root-items > .builder-items:before {
+	margin-top: -10px;
+}
+
+.fw-option-type-builder.fw-option-type-builder-tabs-count-0 > .builder-root-items {
 	border-top-width: 0;
 }
 
@@ -249,7 +268,7 @@
 	-ms-animation-iteration-count: 1;
 }
 
-.fw-option-type-builder .builder-root-items .builder-item-type.ui-sortable-placeholder {
+.fw-option-type-builder > .builder-root-items .builder-item-type.ui-sortable-placeholder {
 	display: inline-block;
 	float: none;
 }

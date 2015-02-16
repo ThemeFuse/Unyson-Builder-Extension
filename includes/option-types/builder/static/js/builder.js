@@ -953,12 +953,14 @@ jQuery(document).ready(function($){
 
 				// set fixed header
 				{
+					if (!$builder.hasClass('fixed-header')) {
+						$builder.addClass('fixed-header');
+					}
+
 					$builder.css({
-						'position': 'relative',
 						'padding-top': headerHeight +'px' // set ghost space in builder, like the header is still there
 					});
 					$header.css({
-						'position': 'absolute',
 						'top': headerTopShift +'px'
 					});
 
@@ -968,14 +970,16 @@ jQuery(document).ready(function($){
 
 			// remove fixed header
 			{
-				$builder.css({
-					'position': '',
-					'padding-top': ''
-				});
-				$header.css({
-					'position': '',
-					'top': ''
-				});
+				if ($builder.hasClass('fixed-header')) {
+					$builder.removeClass('fixed-header');
+
+					$builder.css({
+						'padding-top': ''
+					});
+					$header.css({
+						'top': ''
+					});
+				}
 
 				return false;
 			}
@@ -990,6 +994,9 @@ jQuery(document).ready(function($){
 		fwEvents.trigger('fw:option-type:builder:init', {
 			$elements: $options
 		});
+
+		// add special class for builders that has header tools div
+		$options.find('> .builder-items-types .fw-builder-header-tools').closest('.fw-option-type-builder').addClass('has-header-tools');
 
 		$options.each(function(){
 			var $this = $(this);
@@ -1034,7 +1041,7 @@ jQuery(document).ready(function($){
 			/**
 			 * Init draggable thumbnails
 			 */
-			$this.find('.builder-items-types .builder-item-type').draggable({
+			$this.find('> .builder-items-types .builder-item-type').draggable({
 				connectToSortable: '#'+ id +' .builder-root-items .builder-items',
 				helper: 'clone',
 				distance: 10,
@@ -1165,7 +1172,7 @@ jQuery(document).ready(function($){
 			/**
 			 * Make header follow you when you scroll down
 			 */
-			if ($this.hasClass('fixed-header')) {
+			if ($this.attr('data-fixed-header')) {
 				var fixedHeaderEventsNamespace = '.fw-builder-fixed-header-'+ (++fixedHeaderHelpers.increment),
 					$fixedHeader = $this.find('> .builder-items-types:first');
 
