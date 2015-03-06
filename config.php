@@ -16,6 +16,11 @@ $cfg['default_item_widths'] = array(
 		'backend_class'  => 'fw-col-sm-2',
 		'frontend_class' => 'fw-col-xs-12 fw-col-sm-2',
 	),
+	'1_5' => array(
+		'title'          => '1/5',
+		'backend_class'  => 'fw-col-sm-15',
+		'frontend_class' => 'fw-col-xs-12 fw-col-sm-15',
+	),
 	'1_4' => array(
 		'title'          => '1/4',
 		'backend_class'  => 'fw-col-sm-3',
