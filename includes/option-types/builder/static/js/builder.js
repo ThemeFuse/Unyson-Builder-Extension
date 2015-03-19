@@ -404,6 +404,10 @@ jQuery(document).ready(function($){
 											console.warn('Item not found (cid: "'+ movedItemCid +'")');
 											return;
 										}
+
+										if (movedItem.attributes.type != 'column') {
+											ui.item.parents('.builder-root-items').addClass('fw-move-simple-item');
+										}
 									}
 
 									var movedItemType = movedItem.get('type');
@@ -449,8 +453,11 @@ jQuery(document).ready(function($){
 										}
 									}
 								},
-								stop: function() {
+								stop: function(event, ui) {
 									itemsRemoveAllowedDeniedClasses();
+
+									ui.item.parents('.builder-root-items').removeClass('fw-move-simple-item');
+
 									//Freeze the container height
 									{
 										var container = builder.$input.closest('.fw-option-type-builder')

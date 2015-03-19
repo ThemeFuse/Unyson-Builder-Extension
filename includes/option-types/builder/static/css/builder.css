@@ -275,6 +275,10 @@
 	float: none;
 }
 
+.fw-option-type-builder > .builder-root-items.fw-move-simple-item .builder-items>.ui-sortable-placeholder{
+	display: none !important;
+}
+
 
 /* allow/deny items in _items */
 
