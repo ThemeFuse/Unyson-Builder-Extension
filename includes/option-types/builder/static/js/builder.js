@@ -405,7 +405,8 @@ jQuery(document).ready(function($){
 											return;
 										}
 
-										if (movedItem.attributes.type != 'column') {
+										if (movedItem.attributes.type != 'column'
+											&& movedItem.attributes.type != 'section') {
 											ui.item.parents('.builder-root-items').addClass('fw-move-simple-item');
 										}
 									}
