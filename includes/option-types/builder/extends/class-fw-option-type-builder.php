@@ -326,7 +326,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 		foreach ($this->get_item_types() as $item) {
 			/** @var FW_Option_Type_Builder_Item $item */
 
-			foreach ($item->get_thumbnails() as $thumbnail) {
+			foreach ($item->get_thumbnails() as $key => $thumbnail) {
 				if (!isset($thumbnail['tab'])) {
 					$tab_title = '~';
 				} else {
@@ -337,12 +337,17 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 					$thumbnails[$tab_title] = array();
 				}
 
-				$thumbnails[$tab_title][] =
+				$thumbnails[$tab_title][$key] =
 					'<div class="builder-item-type" data-builder-item-type="'. esc_attr($item->get_type()) .'">'.
 						$thumbnail['html'].
 					'</div>';
 			}
 		}
+
+		foreach ( $thumbnails as &$type ) {
+			ksort($type);
+		}
+
 
 		if (method_exists($this, 'sort_thumbnails')) {
 			$this->sort_thumbnails($thumbnails);
