@@ -405,6 +405,7 @@ jQuery(document).ready(function($){
 											return;
 										}
 
+										// fixme: this is hardcode. need to think a better/general solution
 										if (movedItem.attributes.type != 'column'
 											&& movedItem.attributes.type != 'section') {
 											ui.item.parents('.builder-root-items').addClass('fw-move-simple-item');
