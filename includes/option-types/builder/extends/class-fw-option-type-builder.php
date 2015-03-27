@@ -337,10 +337,21 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 					$thumbnails[$tab_title] = array();
 				}
 
-				$thumbnails[$tab_title][$key] =
-					'<div class="builder-item-type" data-builder-item-type="'. esc_attr($item->get_type()) .'">'.
+				if ( empty( $thumbnail['html'] ) ) {
+					continue;
+				}
+
+				if ( ! isset( $thumbnails[ $tab_title ][ $key ] ) ) {
+					$thumbnails[$tab_title][$key] =
+						'<div class="builder-item-type" data-builder-item-type="'. esc_attr($item->get_type()) .'">'.
 						$thumbnail['html'].
-					'</div>';
+						'</div>';
+				} else {
+					$thumbnails[$tab_title][] =
+						'<div class="builder-item-type" data-builder-item-type="'. esc_attr($item->get_type()) .'">'.
+						$thumbnail['html'].
+						'</div>';
+				}
 			}
 		}
 
