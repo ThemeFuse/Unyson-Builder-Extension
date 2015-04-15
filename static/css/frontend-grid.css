@@ -138,16 +138,6 @@ embed {
 	clear: both;
 }
 
-.fw-row:before,
-.fw-row:after {
-	content: " ";
-	display: table;
-}
-
-.fw-row:after {
-	clear: both;
-}
-
 .fw-col-xs-1,
 .fw-col-sm-1,
 .fw-col-md-1,
