@@ -1024,7 +1024,7 @@ jQuery(document).ready(function($){
 					$rootItems: $this.find('.builder-root-items:first')
 				};
 
-				var eventData = $.extend(data, {
+				var eventData = $.extend({}, data, {
 					/**
 					 * In event you can extend (customize/change) and replace this (property) class
 					 */
