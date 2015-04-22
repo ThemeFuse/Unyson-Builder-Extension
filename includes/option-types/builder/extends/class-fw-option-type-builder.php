@@ -130,10 +130,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			/**
 			 * Enable fixed header so it follows you on scroll down.
 			 * It's convenient when you have many elements in builder and it's tedious to:
-			 * scroll up -> add element -> scroll down -> configure it -> scroll up -> ... .
-			 * By default it's disabled because there are some builders like form-builder
-			 * which are used inside OptionsModal where this feature is not wanted.
-			 * So it's better to enable it explicitly when you are sure it is needed.
+			 * scroll up -> add element -> scroll down -> configure it -> scroll up -> ...
 			 */
 			'fixed_header' => false,
 		), $option);
