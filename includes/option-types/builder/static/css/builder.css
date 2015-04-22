@@ -1,6 +1,6 @@
 .fw-option-type-builder > .builder-items-types {
 	padding: 0;
-	border-bottom: 1px solid #fff;
+	margin-bottom: 1px; /* space for border that will appear on fixed header */
 	background-color: #fff;
 }
 
@@ -12,7 +12,10 @@
 	position: absolute;
 	width: 100%;
 	z-index: 1;
-	border-bottom-color: #eeeeee;
+}
+.fw-option-type-builder.fixed-header.has-header-tools > .builder-items-types {
+	margin-bottom: 0;
+	border-bottom: 1px solid #eeeeee;
 }
 
 .fw-option-type-builder > .builder-items-types > .fw-options-tabs-wrapper {
