@@ -951,6 +951,9 @@ jQuery(document).ready(function($){
 				}
 
 				var bottomLimit = Math.floor(scrollParentHeight / 2);
+				if (bottomLimit < headerHeight) {
+					bottomLimit = headerHeight;
+				}
 				if (bottomLimit < 256) {
 					bottomLimit = 256;
 				}
