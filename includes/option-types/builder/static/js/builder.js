@@ -912,10 +912,6 @@ jQuery(document).ready(function($){
 	var fixedHeaderHelpers = {
 		increment: 0,
 		$adminBar: $('#wpadminbar'),
-		/**
-		 * Do not allow fixed header cover last builder items
-		 */
-		bottomLimit: 200,
 		getAdminBarHeight: function() {
 			if (this.$adminBar.length && this.$adminBar.css('position') === 'fixed') {
 				return this.$adminBar.height();
@@ -923,41 +919,56 @@ jQuery(document).ready(function($){
 				return 0;
 			}
 		},
-		fix: function($header, $builder){
+		fix: function($header, $builder, $scrollParent){
 			var topSpace = this.getAdminBarHeight(),
-				$window = $(window),
-				windowHeight = $window.height(),
-				windowScrollTop = $window.scrollTop(),
+				scrollParentHeight = $scrollParent.height(),
+				scrollParentScrollTop = $scrollParent.scrollTop(),
+				scrollParentOffset = $scrollParent.offset(),
 				builderHeight = $builder.get(0).clientHeight,
 				builderOffsetTop = $builder.offset().top,
 				headerHeight = $header.get(0).clientHeight;
 
+			/**
+			 * Fixes inside options modal
+			 */
+			if (scrollParentOffset) {
+				builderOffsetTop -= scrollParentOffset.top;
+
+				if (builderOffsetTop <= 0) {
+					builderOffsetTop = topSpace;
+				}
+			}
+
 			do {
-				if (builderOffsetTop > windowScrollTop + topSpace) {
-					// page scroll top didn't reached the builder
+				if (builderOffsetTop > scrollParentScrollTop + topSpace) {
+					// scroll top didn't reached the builder
 					break;
 				}
 
-				if (builderHeight < windowHeight - topSpace) {
-					// the builder fits inside page height
+				if (builderHeight < scrollParentHeight - topSpace) {
+					// the builder fits inside the scroll element
 					break;
 				}
 
-				if (builderHeight < headerHeight * 2) {
-					// the builder must be at least twice taller than the header
+				var bottomLimit = Math.floor(scrollParentHeight / 2);
+				if (bottomLimit < 256) {
+					bottomLimit = 256;
+				}
+
+				if (builderHeight < headerHeight + bottomLimit) {
 					break;
 				}
 
-				if (windowHeight < headerHeight * 2) {
-					// the window must be at least twice taller that the header
+				if (scrollParentHeight < headerHeight + bottomLimit) {
+					// the scroll element must have space to display header and bottomLimit
 					break;
 				}
 
-				var headerTopShift = (windowScrollTop + topSpace) - builderOffsetTop;
+				var headerTopShift = (scrollParentScrollTop + topSpace) - builderOffsetTop;
 
-				if (headerTopShift + headerHeight + this.bottomLimit > builderHeight) {
+				if (headerTopShift + headerHeight + bottomLimit > builderHeight) {
 					// do not allow header to cover last items
-					headerTopShift -= headerTopShift + headerHeight + this.bottomLimit - builderHeight;
+					headerTopShift -= headerTopShift + headerHeight + bottomLimit - builderHeight;
 				}
 
 				// set fixed header
@@ -1183,29 +1194,47 @@ jQuery(document).ready(function($){
 			 */
 			if ($this.attr('data-fixed-header')) {
 				var fixedHeaderEventsNamespace = '.fw-builder-fixed-header-'+ (++fixedHeaderHelpers.increment),
-					$fixedHeader = $this.find('> .builder-items-types:first');
+					$fixedHeader = $this.find('> .builder-items-types:first'),
+					$scrollParent;
 
-				$(window)
-					.on('scroll'+ fixedHeaderEventsNamespace, function(){
-						fixedHeaderHelpers.fix($fixedHeader, $this);
-					})
-					.on('resize'+ fixedHeaderEventsNamespace, function(){
-						fixedHeaderHelpers.fix($fixedHeader, $this);
-					});
+				$scrollParent = $this.scrollParent();
+				if ($scrollParent.get(0) === document) {
+					$scrollParent = $(window);
+				}
+
+				/**
+				 * Options modal fixed tabs are initialized after options init
+				 */
+				setTimeout(function(){
+					$scrollParent = $this.scrollParent();
+					if ($scrollParent.get(0) === document) {
+						$scrollParent = $(window);
+					}
+
+					$scrollParent
+						.on('scroll'+ fixedHeaderEventsNamespace, function(){
+							fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
+						})
+						.on('resize'+ fixedHeaderEventsNamespace, function(){
+							fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
+						});
+
+					fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
+				}, 0);
 
 				/**
 				 * On thumbnails tab change, the new tab may contain more thumbnails that previous
 				 * thus having different height
 				 */
 				$fixedHeader.on('click'+ fixedHeaderEventsNamespace, '.fw-options-tabs-list a, .fullscreen-btn', function(){
-					fixedHeaderHelpers.fix($fixedHeader, $this);
+					fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
 
 					/**
 					 * When you scroll down to the last items (to the limit when the fixed header stops and begins to go under page)
 					 * and you switch to a tab with a bigger height, there are some issues with positioning.
 					 * Calling this send time fixes it
 					 */
-					fixedHeaderHelpers.fix($fixedHeader, $this);
+					fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
 				});
 
 				/**
@@ -1214,7 +1243,7 @@ jQuery(document).ready(function($){
 				 * its height is changed and the fixed header needs repositioning
 				 */
 				builder.$input.on('fw-builder:input:change'+ fixedHeaderEventsNamespace, function(){
-					fixedHeaderHelpers.fix($fixedHeader, $this);
+					fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
 				});
 
 				/**
@@ -1222,7 +1251,7 @@ jQuery(document).ready(function($){
 				 * In case the builder is created and remove dynamically multiple times, for e.g. inside fw.OptionsModal
 				 */
 				$this.on('remove', function(){
-					$(window).off(fixedHeaderEventsNamespace);
+					$scrollParent.off(fixedHeaderEventsNamespace);
 				});
 			}
 		});
