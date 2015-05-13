@@ -458,16 +458,6 @@ jQuery(document).ready(function($){
 											}
 										});
 									}
-
-									// Freeze the container height
-									{
-										var container = builder.$input.closest('.fw-option-type-builder')
-											.find( '.builder-root-items>.builder-items');
-
-										if (container.height() > 200) {
-											container.css("height", container.height() + 100 );
-										}
-									}
 								},
 								stop: function(event, ui) {
 									itemsRemoveAllowedDeniedClasses();
