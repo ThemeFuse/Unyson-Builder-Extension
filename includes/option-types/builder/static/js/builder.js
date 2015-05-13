@@ -815,6 +815,7 @@ jQuery(document).ready(function($){
 					function saveBuilderValueToInput() {
 						builder.$input.val(JSON.stringify(builder.rootItems));
 						builder.$input.trigger('fw-builder:input:change');
+						builder.$input.trigger('change');
 					}
 
 					/**
