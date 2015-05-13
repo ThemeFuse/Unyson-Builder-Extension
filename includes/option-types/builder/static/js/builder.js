@@ -377,7 +377,21 @@ jQuery(document).ready(function($){
 								connectWith: '#'+ builder.$input.closest('.fw-option-type-builder').attr('id') +' .builder-root-items .builder-items',
 								distance: 10,
 								opacity: 0.6,
+								placeholder: 'fw-builder-placeholder',
 								start: function(event, ui) {
+									{
+										ui.placeholder
+											.addClass(ui.item.attr('class'))
+											.css('padding', ui.item.css('padding'))
+											.css('height', ui.item.css('height'));
+
+										if (ui.item.hasClass('builder-item-type')) {
+											ui.placeholder
+												.removeClass('builder-item-type')
+												.css('width', '100%');
+										}
+									}
+
 									// check if it is an exiting item (and create variables)
 									{
 										// extract cid from view id
@@ -445,7 +459,7 @@ jQuery(document).ready(function($){
 										});
 									}
 
-									//Freeze the container height
+									// Freeze the container height
 									{
 										var container = builder.$input.closest('.fw-option-type-builder')
 											.find( '.builder-root-items>.builder-items');
