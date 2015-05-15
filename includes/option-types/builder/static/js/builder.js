@@ -379,6 +379,7 @@ jQuery(document).ready(function($){
 								opacity: 0.6,
 								scrollSpeed: 10,
 								placeholder: 'fw-builder-placeholder',
+								tolerance: 'pointer',
 								start: function(event, ui) {
 									{
 										ui.placeholder
