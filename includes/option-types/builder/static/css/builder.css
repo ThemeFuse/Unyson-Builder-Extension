@@ -278,7 +278,6 @@
 	float: none;
 	padding: 10px;
 	min-height: 50px;
-	visibility: visible !important;
 	position: relative;
 }
 .fw-option-type-builder > .builder-root-items .fw-builder-placeholder:before {

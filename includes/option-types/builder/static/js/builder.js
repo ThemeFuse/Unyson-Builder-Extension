@@ -377,6 +377,7 @@ jQuery(document).ready(function($){
 								connectWith: '#'+ builder.$input.closest('.fw-option-type-builder').attr('id') +' .builder-root-items .builder-items',
 								distance: 10,
 								opacity: 0.6,
+								scrollSpeed: 10,
 								placeholder: 'fw-builder-placeholder',
 								start: function(event, ui) {
 									{

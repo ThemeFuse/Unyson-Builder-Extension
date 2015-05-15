@@ -148,13 +148,14 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	protected function _enqueue_static($id, $option, $data)
 	{
 		$option = $this->fix_base_defaults($option);
+		$version = fw_ext('builder')->manifest->get_version();
 
 		{
 			wp_enqueue_style(
 				'fw-option-builder',
 				$this->get_static_uri('/css/builder.css'),
 				array('fw'),
-				fw()->manifest->get_version()
+				$version
 			);
 
 			wp_enqueue_script(
@@ -168,7 +169,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 					'backbone',
 					'backbone-relational'
 				),
-				fw()->manifest->get_version(),
+				$version,
 				true
 			);
 		}
@@ -180,14 +181,14 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				'fw-option-builder-helpers',
 				$this->get_static_uri('/css/helpers.css'),
 				array('fw-option-builder'),
-				fw()->manifest->get_version()
+				$version
 			);
 
 			wp_enqueue_script(
 				'fw-option-builder-helpers',
 				$this->get_static_uri('/js/helpers.js'),
 				array('fw-option-builder',),
-				fw()->manifest->get_version(),
+				$version,
 				true
 			);
 
@@ -208,14 +209,14 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				'fw-option-builder-fullscreen',
 				$this->get_static_uri('/css/fullscreen.css'),
 				array('fw-option-builder'),
-				fw()->manifest->get_version()
+				$version
 			);
 
 			wp_enqueue_script(
 				'fw-option-builder-fullscreen',
 				$this->get_static_uri('/js/fullscreen.js'),
 				array('fw-option-builder',),
-				fw()->manifest->get_version(),
+				$version,
 				true
 			);
 
@@ -236,14 +237,14 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				'fw-option-builder-template-saving',
 				$this->get_static_uri('/css/template-saving.css'),
 				array('fw-option-builder'),
-				fw()->manifest->get_version()
+				$version
 			);
 
 			wp_enqueue_script(
 				'fw-option-builder-template-saving',
 				$this->get_static_uri('/js/template-saving.js'),
 				array('fw-option-builder'),
-				fw()->manifest->get_version(),
+				$version,
 				true
 			);
 
@@ -268,14 +269,14 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				'fw-option-builder-history',
 				$this->get_static_uri('/css/history.css'),
 				array('fw-option-builder'),
-				fw()->manifest->get_version()
+				$version
 			);
 
 			wp_enqueue_script(
 				'fw-option-builder-history',
 				$this->get_static_uri('/js/history.js'),
 				array('fw-option-builder',),
-				fw()->manifest->get_version(),
+				$version,
 				true
 			);
 
