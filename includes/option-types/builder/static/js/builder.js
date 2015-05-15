@@ -459,18 +459,26 @@ jQuery(document).ready(function($){
 											}
 										});
 									}
+
+									// Freeze the container height
+									{
+										var container = builder.$input.closest('.fw-option-type-builder')
+											.find( '.builder-root-items > .builder-items');
+
+										container.css('min-height', container.height() );
+									}
 								},
 								stop: function(event, ui) {
 									itemsRemoveAllowedDeniedClasses();
 
 									ui.item.parents('.builder-root-items').removeClass('fw-move-simple-item');
 
-									//Freeze the container height
+									// unfreeze the container height
 									{
 										var container = builder.$input.closest('.fw-option-type-builder')
-											.find( '.builder-root-items>.builder-items');
+											.find( '.builder-root-items > .builder-items');
 
-										container.css("height", "inherit");
+										container.css('min-height', '');
 									}
 								},
 								receive: function(event, ui) {
@@ -784,7 +792,6 @@ jQuery(document).ready(function($){
 
 			this.rootItems = new this.classes.Items;
 
-
 			// prepare this.$input
 			{
 				if (typeof options.$input == 'undefined') {
@@ -796,7 +803,6 @@ jQuery(document).ready(function($){
 				}
 
 				fwEvents.trigger('fw-builder:'+ this.get('type') +':register-items', this);
-
 
 				// recover saved items from input
 				{
