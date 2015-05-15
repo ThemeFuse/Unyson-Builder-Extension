@@ -750,8 +750,6 @@ jQuery(document).ready(function($){
 							 */
 							_items.view.$el.detach();
 
-
-
 							this.$el.html(
 								this.template(
 									templateData || {}
