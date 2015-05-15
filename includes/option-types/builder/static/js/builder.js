@@ -465,7 +465,7 @@ jQuery(document).ready(function($){
 										var container = builder.$input.closest('.fw-option-type-builder')
 											.find( '.builder-root-items > .builder-items');
 
-										container.css('min-height', container.height() );
+										container.css('min-height', container.height() +'px' );
 									}
 								},
 								stop: function(event, ui) {
