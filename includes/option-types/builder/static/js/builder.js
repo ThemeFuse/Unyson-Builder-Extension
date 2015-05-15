@@ -1074,6 +1074,7 @@ jQuery(document).ready(function($){
 				connectToSortable: '#'+ id +' .builder-root-items .builder-items',
 				helper: 'clone',
 				distance: 10,
+				placeholder: 'fw-builder-placeholder',
 				start: function(event, ui) {
 					var movedType = ui.helper.attr('data-builder-item-type');
 
