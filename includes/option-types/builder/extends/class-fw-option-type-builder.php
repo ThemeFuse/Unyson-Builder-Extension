@@ -4,43 +4,57 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 {
 	/**
 	 * Store item types for registration of all builder types, until they will be required
-	 * @var array|false
-	 *      array Can have some pending item types in it
-	 *      false Item types already requested and was registered, so do not use pending anymore
+	 * @var array
 	 */
 	private static $item_types_pending_registration = array();
 
 	/**
 	 * Registered item types of the current builder type
-	 * @var null|array {item-type => item-instance}
+	 * @var array {item-type => item-instance}
 	 */
 	private $item_types = array();
+
+	/**
+	 * @var bool If $this->get_item_types() was called
+	 */
+	private $item_types_accessed = false;
+
+	/**
+	 * @var FW_Access_Key
+	 */
+	private static $access_key;
+
+	private static function get_access_key()
+	{
+		if (!self::$access_key) {
+			self::$access_key = new FW_Access_Key('fw_ext_builder_option_type');
+		}
+
+		return self::$access_key;
+	}
 
 	/**
 	 * @param string|FW_Option_Type_Builder_Item $item_type_class
 	 */
 	final public static function register_item_type($item_type_class)
 	{
-		if (is_array(self::$item_types_pending_registration)) {
-			// Item types never requested. Continue adding to pending
-			self::$item_types_pending_registration[] = $item_type_class;
-		} else {
-			self::$item_types_pending_registration = array($item_type_class);
-
-			self::register_pending_item_types();
-		}
+		self::$item_types_pending_registration[] = $item_type_class;
 	}
 
-	private static function register_pending_item_types()
+	/**
+	 * @param string $type Builder type
+	 */
+	private static function register_pending_item_types($type)
 	{
-		if (!is_array(self::$item_types_pending_registration)) {
-			// all pending item types already registered
-			return;
-		}
-
-		foreach (self::$item_types_pending_registration as $item_type_class) {
+		foreach (self::$item_types_pending_registration as $i => $item_type_class) {
 			if (is_string($item_type_class)) {
 				$item_type_instance = new $item_type_class;
+
+				/**
+				 * If the item will not be registered below/now
+				 * this will prevent creating new instance on next call
+				 */
+				self::$item_types_pending_registration[$i] = $item_type_instance;
 			} else {
 				$item_type_instance = $item_type_class;
 			}
@@ -52,7 +66,15 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				continue;
 			}
 
+			/**
+			 * @var FW_Option_Type_Builder_Item $item_type_instance
+			 */
+
 			$builder_type = $item_type_instance->get_builder_type();
+
+			if ($builder_type !== $type) {
+				continue;
+			}
 
 			/**
 			 * @var FW_Option_Type_Builder $builder_type_instance
@@ -64,10 +86,10 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				continue;
 			}
 
+			unset(self::$item_types_pending_registration[$i]);
+
 			$builder_type_instance->_register_item_type($item_type_instance);
 		}
-
-		self::$item_types_pending_registration = false;
 	}
 
 	/**
@@ -81,6 +103,8 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 		}
 
 		$this->item_types[$item_type_instance->get_type()] = $item_type_instance;
+
+		$item_type_instance->_call_init(self::get_access_key());
 	}
 
 	/**
@@ -88,12 +112,18 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	 */
 	final protected function get_item_types()
 	{
-		if (is_array(self::$item_types_pending_registration)) {
-			/**
-			 * Item types requested first time.
-			 * Register pending item types.
-			 */
-			self::register_pending_item_types();
+		if (empty(self::$item_types_pending_registration)) {
+			$this->item_types_accessed = true;
+		} else {
+			if ($this->item_types_accessed) {
+				/**
+				 * Stop pending items registration if items were already accessed, the registration for this type is done.
+				 * It will be wrong if calling this method multiple times will return different results.
+				 */
+			} else {
+				$this->item_types_accessed = true; // prevents register recursion
+				self::register_pending_item_types($this->get_type());
+			}
 		}
 
 		return $this->item_types;

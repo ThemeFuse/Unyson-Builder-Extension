@@ -45,6 +45,20 @@ abstract class FW_Option_Type_Builder_Item
 	final public function __construct()
 	{
 		// Maybe in the future this method will have some functionality
+	}
+
+	/**
+	 * @param FW_Access_Key $access_key
+	 * @internal
+	 * This must be called right after an instance of builder item type has been created
+	 * and was added to the registered array, so it is available through
+	 * builder->get_item_types()
+	 */
+	final public function _call_init($access_key)
+	{
+		if ($access_key->get_key() !== 'fw_ext_builder_option_type') {
+			trigger_error('Method call not allowed', E_USER_ERROR);
+		}
 
 		if (method_exists($this, '_init')) {
 			$this->_init();
