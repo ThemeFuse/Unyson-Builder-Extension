@@ -128,7 +128,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	/**
 	 * @return FW_Option_Type_Builder_Item[]
 	 */
-	protected function get_item_types()
+	final protected function get_item_types()
 	{
 		if (empty(self::$item_types_pending_registration)) {
 			$this->item_types_accessed = true;
