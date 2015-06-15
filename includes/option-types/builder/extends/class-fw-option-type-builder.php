@@ -15,6 +15,11 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	private $item_types = array();
 
 	/**
+	 * @var array {item-type => ~}
+	 */
+	private $processed_item_types = array();
+
+	/**
 	 * @var bool If $this->get_item_types() was called
 	 */
 	private $item_types_accessed = false;
@@ -94,17 +99,30 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 
 	/**
 	 * @param FW_Option_Type_Builder_Item $item_type_instance
+	 * @return bool If was registered or not
 	 */
 	private function _register_item_type($item_type_instance)
 	{
-		if (isset($this->item_types[$item_type_instance->get_type()])) {
-			trigger_error('Builder item already registered (type: '. $item_type_instance->get_type() .')', E_USER_ERROR);
+		if (isset($this->processed_item_types[$item_type_instance->get_type()])) {
+			trigger_error('Builder item already processed (type: '. $item_type_instance->get_type() .')', E_USER_ERROR);
 			return;
+		}
+
+		$this->processed_item_types[$item_type_instance->get_type()] = true;
+
+		if (apply_filters(
+			'fw_ext_builder:option_type:'. $this->get_type() .':exclude_item_type:'. $item_type_instance->get_type(),
+			false,
+			$item_type_instance
+		)) {
+			return false;
 		}
 
 		$this->item_types[$item_type_instance->get_type()] = $item_type_instance;
 
 		$item_type_instance->_call_init(self::get_access_key());
+
+		return true;
 	}
 
 	/**
