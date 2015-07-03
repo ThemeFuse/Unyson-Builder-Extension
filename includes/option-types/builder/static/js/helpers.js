@@ -254,3 +254,23 @@ FwBuilderComponents.ItemView.InlineTextEditor = Backbone.View.extend({
 		return this;
 	}
 });
+
+FwBuilderComponents.ItemView.iconToHtml = function(icon) {
+	if (/\.(png|jpg|jpeg|gif|svg|webp)$/.test(icon)) {
+		// http://.../image.png
+		return jQuery('<div>').append(
+			jQuery('<img />')
+				.attr('class', 'fw-ext-builder-icon')
+				.attr('src', icon)
+		).html();
+	} else if (/^[a-zA-Z0-9\-_ ]+$/.test(icon)) {
+		// 'font-icon font-icon-class'
+		return jQuery('<div>').append(
+			jQuery('<span></span>')
+				.attr('class', 'fw-ext-builder-icon '+ jQuery.trim(icon))
+		).html();
+	} else {
+		// can't detect. maybe it's raw html '<span ...'
+		return icon;
+	}
+};

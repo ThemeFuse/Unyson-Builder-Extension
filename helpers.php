@@ -50,3 +50,25 @@ function fw_ext_builder_get_item_widths_for_js($builder_type) {
 
 	return $item_widths;
 }
+
+/**
+ * @param string $icon A string that is meant to be an icon (an image, a font icon class, or something else)
+ * @return string
+ */
+function fw_ext_builder_string_to_icon_html($icon) {
+	if (preg_match('/\.(png|jpg|jpeg|gif|svg|webp)$/', $icon)) {
+		// http://.../image.png
+		return fw_html_tag('img', array(
+			'class' => 'fw-ext-builder-icon',
+			'src' => $icon
+		));
+	} elseif (preg_match('/^[a-zA-Z0-9\-_ ]+$/', $icon)) {
+		// 'font-icon font-icon-class'
+		return fw_html_tag('span', array(
+			'class' => 'fw-ext-builder-icon '. trim($icon)
+		), true);
+	} else {
+		// can't detect. maybe it's raw html '<span ...'
+		return $icon;
+	}
+}

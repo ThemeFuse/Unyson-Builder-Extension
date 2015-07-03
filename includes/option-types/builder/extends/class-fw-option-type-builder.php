@@ -202,7 +202,9 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			wp_enqueue_style(
 				'fw-option-builder',
 				$this->get_static_uri('/css/builder.css'),
-				array('fw'),
+				version_compare(fw()->manifest->get_version(), '2.4.0', '<')
+					? array('fw')
+					: array('fw', 'fw-unycon'),
 				$version
 			);
 

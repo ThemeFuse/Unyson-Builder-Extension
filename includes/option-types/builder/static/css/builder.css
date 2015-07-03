@@ -31,6 +31,11 @@
 	padding: 0 16px;
 }
 
+.fw-option-type-builder span.fw-ext-builder-icon {
+	font-size: 16px;
+	color: #b3b3b3;
+}
+
 
 /* tabs */
 
@@ -122,7 +127,8 @@
 	color: #b4b4b4;
 }
 
-.fw-option-type-builder .builder-item-type:hover .item-type-icon-title .item-type-icon .dashicons {
+.fw-option-type-builder .builder-item-type:hover .item-type-icon-title .item-type-icon .dashicons,
+.fw-option-type-builder .builder-item-type:hover span.fw-ext-builder-icon {
 	color: #8c8c8c;
 }
 
@@ -231,6 +237,16 @@
 
 .fw-option-type-builder.has-header-tools > .builder-root-items > .builder-items:before {
 	margin-top: -10px;
+}
+
+.fw-option-type-builder > .builder-root-items > .builder-items span.fw-ext-builder-icon {
+	bottom: -2px; /* fix for text smaller size */
+	position: relative;
+}
+
+.fw-option-type-builder > .builder-root-items > .builder-items span.fw-ext-builder-icon {
+	color: #8c8c8c;
+	margin-right: 9px;
 }
 
 .fw-option-type-builder.fw-option-type-builder-tabs-count-0 > .builder-root-items {
