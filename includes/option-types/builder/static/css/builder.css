@@ -36,6 +36,11 @@
 	color: #b3b3b3;
 }
 
+.fw-option-type-builder span.fw-ext-builder-icon.dashicons {
+	/* dashicons are smaller than font grid (it's like padding), I don't know why the font was created like that */
+	font-size: 20px;
+}
+
 
 /* tabs */
 
@@ -124,7 +129,7 @@
 .fw-option-type-builder .builder-item-type .item-type-icon-title .item-type-icon .dashicons {
 	font-size: 24px;
 	display: inline-table;
-	color: #b4b4b4;
+	color: #b3b3b3;
 }
 
 .fw-option-type-builder .builder-item-type:hover .item-type-icon-title .item-type-icon .dashicons,
@@ -242,6 +247,10 @@
 .fw-option-type-builder > .builder-root-items > .builder-items span.fw-ext-builder-icon {
 	bottom: -2px; /* fix for text smaller size */
 	position: relative;
+}
+
+.fw-option-type-builder > .builder-root-items > .builder-items span.fw-ext-builder-icon.dashicons {
+	bottom: 0;
 }
 
 .fw-option-type-builder > .builder-root-items > .builder-items span.fw-ext-builder-icon {
