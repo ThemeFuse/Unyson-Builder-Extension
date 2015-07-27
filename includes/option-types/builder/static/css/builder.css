@@ -27,6 +27,11 @@
 	padding: 20px;
 }
 
+.fw-option-type-builder > .builder-items-types > .fw-builder-header-tools .fw-builder-header-post-save-button {
+	position: relative;
+	top: -5px;
+}
+
 .fw-option-type-builder .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {
 	padding: 0 16px;
 }

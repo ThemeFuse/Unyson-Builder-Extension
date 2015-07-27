@@ -1030,7 +1030,28 @@ jQuery(document).ready(function($){
 		});
 
 		// add special class for builders that has header tools div
-		$options.find('> .builder-items-types .fw-builder-header-tools').closest('.fw-option-type-builder').addClass('has-header-tools');
+		$options.find('> .builder-items-types .fw-builder-header-tools')
+			.closest('.fw-option-type-builder').addClass('has-header-tools')
+			// Add "Save" post button if the builder is within edit post form
+			.each(function(){
+				var $postForm = $(this).closest('form#post');
+
+				if (!$postForm.length) {
+					return;
+				}
+
+				var $savePostButton = $postForm.find('input#publish');
+				var $savePostBuilderButton = $('<button type="button" class="button button-primary fw-pull-right fw-builder-header-post-save-button" onclick="return false;"></button>')
+					.text($savePostButton.attr('value'))
+					.on('click', function(){
+						$savePostButton.trigger('click');
+						$(this).attr('disabled', 'disabled').off('click');
+					});
+
+				$(this).find('.fw-builder-header-tools:first')
+					.prepend('<span class="pull-right">&nbsp;&nbsp;&nbsp;</span>')
+					.prepend($savePostBuilderButton);
+			});
 
 		$options.each(function(){
 			var $this = $(this);
