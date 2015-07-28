@@ -11,6 +11,7 @@ final class _FW_Ext_Builder_Templates
 		add_action('wp_ajax_fw_builder_load_templates', array(__CLASS__, '_action_ajax_load_templates'));
 		add_action('wp_ajax_fw_builder_save_template', array(__CLASS__, '_action_ajax_save_template'));
 		add_action('wp_ajax_fw_builder_delete_template', array(__CLASS__, '_action_ajax_delete_template'));
+		add_action('fw_ext_builder:option_type:builder:enqueue', array(__CLASS__, '_action_builder_enqueue'));
 	}
 
 	private static function get_templates($builder_type)
@@ -91,6 +92,45 @@ final class _FW_Ext_Builder_Templates
 		self::set_templates($builder_type, $templates);
 
 		wp_send_json_success();
+	}
+
+	public static function _action_builder_enqueue($data)
+	{
+		if (!$data['option']['template_saving']) {
+			return;
+		}
+
+		$uri = $data['uri'] .'/includes/templates/static';
+
+		wp_enqueue_style(
+			'fw-option-builder-template-saving',
+			$uri .'/styles.css',
+			array('fw-option-builder'),
+			$data['version']
+		);
+
+		wp_enqueue_script(
+			'fw-option-builder-template-saving',
+			$uri .'/scripts.js',
+			array('fw-option-builder'),
+			$data['version'],
+			true
+		);
+
+		wp_localize_script(
+			'fw-option-builder-template-saving',
+			'_fw_option_type_builder_templates',
+			array(
+				'l10n' => array(
+					'templates' => __('Templates', 'fw'),
+					'no_templates_saved' => __('0 Templates Saved', 'fw'),
+					'template_name' => __('Template Name', 'fw'),
+					'template_name_desc' => __('Must have at least 3 characters (Whitespace, A-Z, 0-9, -_)', 'fw'),
+					'save_template' => __('Save Template', 'fw'),
+					'load_template' => __('Load Template', 'fw'),
+				),
+			)
+		);
 	}
 }
 

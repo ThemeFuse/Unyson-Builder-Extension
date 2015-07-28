@@ -186,7 +186,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 
 	private function get_static_uri($append = '')
 	{
-		return fw()->extensions->get('builder')->get_declared_URI('/includes/option-types/builder/static'. $append);
+		return fw()->extensions->get('builder')->get_uri('/includes/option-types/builder/static'. $append);
 	}
 
 	/**
@@ -282,38 +282,6 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			);
 		}
 
-		if ($option['template_saving']) {
-			wp_enqueue_style(
-				'fw-option-builder-template-saving',
-				$this->get_static_uri('/css/template-saving.css'),
-				array('fw-option-builder'),
-				$version
-			);
-
-			wp_enqueue_script(
-				'fw-option-builder-template-saving',
-				$this->get_static_uri('/js/template-saving.js'),
-				array('fw-option-builder'),
-				$version,
-				true
-			);
-
-			wp_localize_script(
-				'fw-option-builder-template-saving',
-				'_fw_option_type_builder_templates',
-				array(
-					'l10n' => array(
-						'templates' => __('Templates', 'fw'),
-						'no_templates_saved' => __('0 Templates Saved', 'fw'),
-						'template_name' => __('Template Name', 'fw'),
-						'template_name_desc' => __('Must have at least 3 characters (Whitespace, A-Z, 0-9, -_)', 'fw'),
-						'save_template' => __('Save Template', 'fw'),
-						'load_template' => __('Load Template', 'fw'),
-					),
-				)
-			);
-		}
-
 		if ($option['history']) {
 			wp_enqueue_style(
 				'fw-option-builder-history',
@@ -341,6 +309,12 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				)
 			);
 		}
+
+		do_action('fw_ext_builder:option_type:builder:enqueue', array(
+			'option' => $option,
+			'version' => $version,
+			'uri' => fw()->extensions->get('builder')->get_uri('/includes/option-types/builder')
+		));
 
 		foreach ($this->get_item_types() as $item) {
 			/** @var FW_Option_Type_Builder_Item $item */
