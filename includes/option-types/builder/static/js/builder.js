@@ -1023,7 +1023,13 @@ jQuery(document).ready(function($){
 	fwEvents.on('fw:options:init', function (data) {
 		var $options = data.$elements.find('.fw-option-type-builder:not(.initialized)');
 
+		if (!$options.length) {
+			return;
+		}
+
 		$options.closest('.fw-backend-option').addClass('fw-backend-option-type-builder');
+
+		$options.find('> .builder-items-types').append('<div class="fw-builder-header-tools fw-clearfix fw-hidden"></div>');
 
 		fwEvents.trigger('fw:option-type:builder:init', {
 			$elements: $options
@@ -1290,6 +1296,10 @@ jQuery(document).ready(function($){
 					$scrollParent.off(fixedHeaderEventsNamespace);
 				});
 			}
+
+			$this.trigger('fw:option-type:builder:init', {
+				builder: builder
+			});
 		});
 
 		$options.addClass('initialized');

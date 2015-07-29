@@ -2,16 +2,27 @@
 
 /**
  * Builder templates functionality
- * @internal
  */
-final class _FW_Ext_Builder_Templates
+final class FW_Ext_Builder_Templates
 {
-	public static function init()
+	/**
+	 * @var FW_Ext_Builder_Templates_Component[]
+	 */
+	private static $components;
+
+	private static $registration_is_allowed = false;
+
+	/**
+	 * @internal
+	 */
+	public static function _init()
 	{
 		add_action('wp_ajax_fw_builder_load_templates', array(__CLASS__, '_action_ajax_load_templates'));
 		add_action('wp_ajax_fw_builder_save_template', array(__CLASS__, '_action_ajax_save_template'));
 		add_action('wp_ajax_fw_builder_delete_template', array(__CLASS__, '_action_ajax_delete_template'));
+
 		add_action('fw_ext_builder:option_type:builder:enqueue', array(__CLASS__, '_action_builder_enqueue'));
+		add_action('wp_ajax_fw_builder_templates_render', array(__CLASS__, '_action_ajax_render'));
 	}
 
 	private static function get_templates($builder_type)
@@ -24,6 +35,23 @@ final class _FW_Ext_Builder_Templates
 		fw_set_db_extension_data('builder', 'templates/'. $builder_type, $templates);
 	}
 
+	/**
+	 * @internal
+	 */
+	public static function _action_ajax_render()
+	{
+		if (!current_user_can('edit_posts')) {
+			wp_send_json_error();
+		}
+
+		wp_send_json_success(array(
+			'html' => '<p>Hello World!</p>'
+		));
+	}
+
+	/**
+	 * @internal
+	 */
 	public static function _action_ajax_load_templates()
 	{
 		if (!current_user_can('edit_posts')) {
@@ -35,6 +63,9 @@ final class _FW_Ext_Builder_Templates
 		));
 	}
 
+	/**
+	 * @internal
+	 */
 	public static function _action_ajax_save_template()
 	{
 		if (!current_user_can('edit_posts')) {
@@ -70,6 +101,9 @@ final class _FW_Ext_Builder_Templates
 		wp_send_json_success(array_merge(array('id' => $id), $template));
 	}
 
+	/**
+	 * @internal
+	 */
 	public static function _action_ajax_delete_template()
 	{
 		if (!current_user_can('edit_posts')) {
@@ -94,6 +128,9 @@ final class _FW_Ext_Builder_Templates
 		wp_send_json_success();
 	}
 
+	/**
+	 * @internal
+	 */
 	public static function _action_builder_enqueue($data)
 	{
 		if (!$data['option']['template_saving']) {
@@ -131,7 +168,44 @@ final class _FW_Ext_Builder_Templates
 				),
 			)
 		);
+
+		foreach (self::get_components() as $component) {
+			$component->_enqueue();
+		}
+	}
+
+	public static function register_component(FW_Ext_Builder_Templates_Component $component)
+	{
+		if (!self::$registration_is_allowed) {
+			trigger_error('Registration is not allowed. Tried to register component: '. $component->get_id(), E_USER_ERROR);
+		}
+
+		if (isset(self::$components[ $component->get_id() ])) {
+			trigger_error('Component already registered: '. $component->get_id(), E_USER_ERROR);
+		}
+
+		self::$components[ $component->get_id() ] = $component;
+	}
+
+	/**
+	 * @return FW_Ext_Builder_Templates_Component[]
+	 */
+	private static function get_components()
+	{
+		if (is_null(self::$components)) {
+			self::$components = array();
+
+			self::$registration_is_allowed = true;
+			do_action('fw_ext_builder:template_components_register');
+			self::$registration_is_allowed = false;
+
+			foreach (self::$components as $component) {
+				$component->_init();
+			}
+		}
+
+		return self::$components;
 	}
 }
 
-_FW_Ext_Builder_Templates::init();
+FW_Ext_Builder_Templates::_init();
