@@ -7,12 +7,14 @@
 	cursor: pointer;
 }
 
-.fw-option-type-builder .template-container .template-btn:focus {
+.fw-option-type-builder .template-container a:focus {
 	box-shadow: none;
 }
 
 .fw-builder-templates-tooltip-content {
-	position: relative;
+	text-align: left;
+	padding: 5px;
+	overflow: auto;
 }
 
 .fw-builder-templates-tooltip-content .fw-builder-templates-tooltip-loading {

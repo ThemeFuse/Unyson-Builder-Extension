@@ -1,7 +1,7 @@
 (function($, localized){
 	{
 		var modals = {},
-			getModal = function(builder, tooltipRefreshCallback){
+			getModal = function(builder){
 				if (typeof modals[builder.cid] == 'undefined') {
 					modals[builder.cid] = new fw.OptionsModal({
 						title: localized.l10n.save_template,
@@ -42,8 +42,6 @@
 								}
 
 								modal.set('values', {}, {silent: true});
-
-								tooltipRefreshCallback();
 							})
 							.fail(function (xhr, status, error) {
 								fw.loading.hide(loadingId);
@@ -60,7 +58,7 @@
 	fwEvents.on('fw:option-type:builder:templates:init', function(data){
 		var loading = data.tooltipLoading,
 			builder = data.builder,
-			tooltipRefreshCallback = data.tooltipRefreshCallback;
+			tooltipHideCallback = data.tooltipHideCallback;
 
 		data.$elements.find('.fw-builder-templates-type-full')
 			.on('click', 'a[data-load-template]', function(){
@@ -105,8 +103,9 @@
 
 				console.log(templateId);
 			})
-			.on('click', 'a.save-template', function (e) {
-				getModal(builder, tooltipRefreshCallback).open();
+			.on('click', 'a.save-template', function () {
+				tooltipHideCallback();
+				getModal(builder).open();
 			});
 	});
 })(jQuery, _fw_option_type_builder_templates_full);

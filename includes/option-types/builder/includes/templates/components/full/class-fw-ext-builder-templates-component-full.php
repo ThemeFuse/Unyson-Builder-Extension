@@ -14,25 +14,27 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		foreach ($this->get_templates($data['builder_type']) as $template_id => $template) {
 			$html .=
 				'<li>'
-					. '<a href="#" onclick="return false;" data-load-template="'. fw_htmlspecialchars($template_id) .'">'
-						. fw_htmlspecialchars($template['title'])
-					. '</a>'
-					. ' '
 					. '<a href="#" onclick="return false;" data-delete-template="'. fw_htmlspecialchars($template_id) .'"'
 					. ' class="template-delete dashicons fw-x"></a>'
+					. '<a href="#" onclick="return false;" data-load-template="'. fw_htmlspecialchars($template_id) .'"'
+					. ' class="template-title">'
+						. fw_htmlspecialchars($template['title'])
+					. '</a>'
 				. '</li>';
 		}
 
 		if (empty($html)) {
 			$html = '<p>'. __('0 Templates Saved', 'fw') .'</p>';
 		} else {
-			$html = '<ul>'. $html .'</ul>';
+			$html =
+				'<p class="fw-text-muted load-template-title">'. __('Load Template', 'fw') .':</p>'
+				. '<ul>'. $html .'</ul>';
 		}
 
 		$html =
-			'<p>'
+			'<div class="save-template-wrapper">'
 			. '<a href="#" onclick="return false;" class="save-template">'. __('Save Template', 'fw') .'</a>'
-			. '</p>'
+			. '</div>'
 			. $html;
 
 		return $html;
@@ -66,7 +68,6 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 					'template_name' => __('Template Name', 'fw'),
 					'template_name_desc' => __('Must have at least 3 characters (Whitespace, A-Z, 0-9, -_)', 'fw'),
 					'save_template' => __('Save Template', 'fw'),
-					'load_template' => __('Load Template', 'fw'),
 				),
 			)
 		);

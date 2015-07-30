@@ -18,6 +18,7 @@
 						inst.$el.tooltipLoading.detach();
 					}
 				},
+				tooltipApi: null, // initialized below
 				refresh: function() {
 					if (this.isBusy) {
 						console.log('Working... Try again later');
@@ -55,7 +56,8 @@
 								$elements: this.$el.tooltipContent,
 								builder: this.builder,
 								tooltipLoading: this.tooltipLoading,
-								tooltipRefreshCallback: _.bind(this.refresh, this)
+								tooltipRefreshCallback: _.bind(this.refresh, this),
+								tooltipHideCallback: _.bind(function(){ this.tooltipApi.hide(); }, this)
 							});
 						}, this))
 						.fail(_.bind(function(xhr, status, error){
@@ -75,7 +77,7 @@
 					'</div>'
 				);
 
-			inst.$el.builder
+			inst.tooltipApi = inst.$el.builder
 				.find('> .builder-items-types > .fw-builder-header-tools .template-container .template-btn')
 				.qtip({
 					show: 'click',
@@ -101,7 +103,8 @@
 					content: {
 						text: inst.$el.tooltipContent
 					}
-				});
+				})
+				.qtip('api');
 		});
 	});
 })(jQuery, fwEvents, _, _fw_option_type_builder_templates);
