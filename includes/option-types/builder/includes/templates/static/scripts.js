@@ -8,7 +8,6 @@
 					tooltipContent: $('<div class="fw-builder-templates-tooltip-content"></div>'),
 					tooltipLoading: $('<div class="fw-builder-templates-tooltip-loading"></div>')
 				},
-				builderType: $(e.target).attr('data-builder-option-type'),
 				builder: data.builder,
 				isBusy: false,
 				tooltipLoading: {
@@ -34,7 +33,7 @@
 						url: ajaxurl,
 						data: {
 							'action': 'fw_builder_templates_render',
-							'builder_type': this.builderType
+							'builder_type': this.builder.get('type')
 						}
 					})
 						.done(_.bind(function(json){
@@ -55,8 +54,8 @@
 							fwe.trigger('fw:option-type:builder:templates:init', {
 								$elements: this.$el.tooltipContent,
 								builder: this.builder,
-								builderType: this.builderType,
-								tooltipLoading: this.tooltipLoading
+								tooltipLoading: this.tooltipLoading,
+								tooltipRefreshCallback: _.bind(this.refresh, this)
 							});
 						}, this))
 						.fail(_.bind(function(xhr, status, error){

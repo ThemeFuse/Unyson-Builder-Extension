@@ -29,6 +29,12 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			$html = '<ul>'. $html .'</ul>';
 		}
 
+		$html =
+			'<p>'
+			. '<a href="#" onclick="return false;" class="save-template">'. __('Save Template', 'fw') .'</a>'
+			. '</p>'
+			. $html;
+
 		return $html;
 	}
 
