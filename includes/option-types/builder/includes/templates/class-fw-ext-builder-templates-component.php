@@ -26,5 +26,24 @@ abstract class FW_Ext_Builder_Templates_Component
 	 * @internal
 	 */
 	public function _init() {}
+
+	/**
+	 * @param string $builder_type Builder option type
+	 * @return bool
+	 */
+	protected function builder_type_is_valid($builder_type)
+	{
+		if (
+			empty($builder_type)
+			||
+			!fw()->backend->option_type($builder_type)
+			||
+			!(fw()->backend->option_type($builder_type) instanceof FW_Option_Type_Builder)
+		) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }
 

@@ -19,6 +19,14 @@ final class FW_Ext_Builder_Templates
 	{
 		add_action('fw_ext_builder:option_type:builder:enqueue', array(__CLASS__, '_action_builder_enqueue'));
 		add_action('wp_ajax_fw_builder_templates_render', array(__CLASS__, '_action_ajax_render'));
+
+		if (defined('DOING_AJAX') && DOING_AJAX === true) {
+			/**
+			 * Load and init components
+			 * Some of them may have add_action('wp_ajax_...')
+			 */
+			self::get_components();
+		}
 	}
 
 	/**
@@ -124,5 +132,3 @@ final class FW_Ext_Builder_Templates
 		return self::$components;
 	}
 }
-
-FW_Ext_Builder_Templates::_init();

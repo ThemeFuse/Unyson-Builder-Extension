@@ -5,11 +5,20 @@
 			var inst = {
 				$el: {
 					builder: $(e.target),
-					tooltipContent: $('<div></div>')
+					tooltipContent: $('<div class="fw-builder-templates-tooltip-content"></div>'),
+					tooltipLoading: $('<div class="fw-builder-templates-tooltip-loading"></div>')
 				},
 				builderType: $(e.target).attr('data-builder-option-type'),
 				builder: data.builder,
 				isBusy: false,
+				tooltipLoading: {
+					show: function() {
+						inst.$el.tooltipContent.prepend(inst.$el.tooltipLoading);
+					},
+					hide: function() {
+						inst.$el.tooltipLoading.detach();
+					}
+				},
 				refresh: function() {
 					if (this.isBusy) {
 						console.log('Working... Try again later');
@@ -17,6 +26,7 @@
 					}
 
 					this.isBusy = true;
+					this.tooltipLoading.show();
 
 					$.ajax({
 						type: 'post',
@@ -29,24 +39,30 @@
 					})
 						.done(_.bind(function(json){
 							this.isBusy = false;
+							this.tooltipLoading.hide();
 
 							if (!json.success) {
 								console.error('Failed to render builder templates', json);
 								return;
 							}
 
-							inst.$el.tooltipContent.html(json.data.html);
+							this.$el.tooltipContent.html(json.data.html);
 
 							/**
 							 * Html was replaced
 							 * Components that have html in tooltip, must init js events
 							 */
 							fwe.trigger('fw:option-type:builder:templates:init', {
-								$elements: inst.$el.tooltipContent
+								$elements: this.$el.tooltipContent,
+								builder: this.builder,
+								builderType: this.builderType,
+								tooltipLoading: this.tooltipLoading
 							});
 						}, this))
 						.fail(_.bind(function(xhr, status, error){
 							this.isBusy = false;
+							this.tooltipLoading.hide();
+
 							console.error('Ajax error', error);
 						}, this));
 				}

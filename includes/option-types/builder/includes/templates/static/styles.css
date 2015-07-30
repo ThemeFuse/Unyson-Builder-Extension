@@ -1,15 +1,25 @@
-.fw-option-type-builder .template-container a {
+.fw-option-type-builder .template-container .template-btn {
 	text-decoration: none;
-}
-
-.fw-option-type-builder .template-container a:focus {
-	box-shadow: none;
-}
-
-.fw-option-type-builder .template-btn {
 	background-image: url(img/template.png);
 	background-repeat: no-repeat;
 	padding-left: 14px;
 	background-position: left center;
 	cursor: pointer;
+}
+
+.fw-option-type-builder .template-container .template-btn:focus {
+	box-shadow: none;
+}
+
+.fw-builder-templates-tooltip-content {
+	position: relative;
+}
+
+.fw-builder-templates-tooltip-content .fw-builder-templates-tooltip-loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,.3); /* debug */
 }
