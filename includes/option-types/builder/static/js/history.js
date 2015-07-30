@@ -10,31 +10,20 @@
 
 		$builders.each(function () {
 
-			var elements = {$builder: $(this)},
+			var elements = {
+					$builder: $(this),
+					$undo: $('<a class="disabled undo" href="#">'+ localized.l10n.undo +'</a>'),
+					$redo: $('<a class="disabled redo" href="#">'+ localized.l10n.redo +'</a>')
+				},
 				saveStateFlag = true,
 				type = $(this).attr('data-builder-option-type');
 
-			/**
-			 * Create wrapper if not exists
-			 * Note: The same wrapper may be created by the Templates script
-			 */
-			{
-				elements.$navigation = elements.$builder.find('> .builder-items-types > .fw-builder-header-tools');
-
-				if (elements.$navigation.length === 0) {
-					elements.$builder.find('> .builder-items-types').append('<div class="fw-builder-header-tools fw-clearfix"></div>');
-					elements.$navigation = elements.$builder.find('> .builder-items-types > .fw-builder-header-tools');
-				}
-			}
-
-			elements.$navigation.append(
-				'<div class="history-container">' +
-				'<a class="disabled undo" href="#">'+ localized.l10n.undo +'</a>' +
-				'<a class="disabled redo" href="#">'+ localized.l10n.redo +'</a>' +
-				'</div>'
-			);
-			elements.$undo = elements.$navigation.find('.undo');
-			elements.$redo = elements.$navigation.find('.redo');
+			elements.$builder.find('> .builder-items-types > .fw-builder-header-tools')
+				.removeClass('fw-hidden')
+				.append('<div class="history-container"></div>')
+				.find('> .history-container')
+				.append(elements.$undo)
+				.append(elements.$redo);
 
 			var utils = {
 				disableUndo: function () {

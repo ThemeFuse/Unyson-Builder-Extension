@@ -35,16 +35,25 @@
 								return;
 							}
 
-							inst.$el.tooltipContent.html('AJAX '+ Math.random());
+							inst.$el.tooltipContent.html(json.data.html);
+
+							/**
+							 * Html was replaced
+							 * Components that have html in tooltip, must init js events
+							 */
+							fwe.trigger('fw:option-type:builder:templates:init', {
+								$elements: inst.$el.tooltipContent
+							});
 						}, this))
 						.fail(_.bind(function(xhr, status, error){
 							this.isBusy = false;
+							console.error('Ajax error', error);
 						}, this));
 				}
 			};
 
 			inst.$el.builder.find('> .builder-items-types > .fw-builder-header-tools')
-				.removeClass('fw-hidden') // todo: do this where "Update" button is added and Undo/Redo is initialized
+				.removeClass('fw-hidden')
 				.append(
 					'<div class="template-container">' +
 						'<a class="template-btn" href="#" onclick="return false;">'+ localized.l10n.templates +'</a>' +
