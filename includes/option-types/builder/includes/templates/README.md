@@ -25,7 +25,7 @@
 
 	```javascript
 	fwEvents.on('fw:option-type:builder:templates:init', function(data){
-		data.$elements.find('.fw-builder-template-COMPONENT_ID .whatever-element a').on('click', function(){
+		data.$elements.find('.fw-builder-templates-type-COMPONENT_TYPE .whatever-element a').on('click', function(){
 			alert('Hello World!');
 		});
 	});

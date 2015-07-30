@@ -30,17 +30,23 @@ final class FW_Ext_Builder_Templates
 			wp_send_json_error();
 		}
 
-		$html = array();
+		$builder_type = (string)FW_Request::POST('builder_type');
+
+		if (!fw()->backend->option_type($builder_type)) {
+			wp_send_json_error();
+		}
+
+		$html = '';
 
 		foreach (self::get_components() as $component) {
-			$html[] =
-				'<div class="fw-builder-template-'. esc_attr($component->get_id()) .'">'
-				. $component->_render()
+			$html .=
+				'<div class="fw-builder-templates-type fw-builder-templates-type-'. esc_attr($component->get_type()) .'">'
+				. $component->_render(array('builder_type' => $builder_type))
 				. '</div>';
 		}
 
 		wp_send_json_success(array(
-			'html' => implode('', $html)
+			'html' => $html
 		));
 	}
 
@@ -56,14 +62,14 @@ final class FW_Ext_Builder_Templates
 		$uri = $data['uri'] .'/includes/templates/static';
 
 		wp_enqueue_style(
-			'fw-option-builder-template-saving',
+			'fw-option-builder-templates',
 			$uri .'/styles.css',
 			array('fw-option-builder'),
 			$data['version']
 		);
 
 		wp_enqueue_script(
-			'fw-option-builder-template-saving',
+			'fw-option-builder-templates',
 			$uri .'/scripts.js',
 			array('fw-option-builder'),
 			$data['version'],
@@ -71,7 +77,7 @@ final class FW_Ext_Builder_Templates
 		);
 
 		wp_localize_script(
-			'fw-option-builder-template-saving',
+			'fw-option-builder-templates',
 			'_fw_option_type_builder_templates',
 			array(
 				'l10n' => array(
@@ -88,14 +94,14 @@ final class FW_Ext_Builder_Templates
 	public static function register_component(FW_Ext_Builder_Templates_Component $component)
 	{
 		if (!self::$registration_is_allowed) {
-			trigger_error('Registration is not allowed. Tried to register component: '. $component->get_id(), E_USER_ERROR);
+			trigger_error('Registration is not allowed. Tried to register component: '. $component->get_type(), E_USER_ERROR);
 		}
 
-		if (isset(self::$components[ $component->get_id() ])) {
-			trigger_error('Component already registered: '. $component->get_id(), E_USER_ERROR);
+		if (isset(self::$components[ $component->get_type() ])) {
+			trigger_error('Component already registered: '. $component->get_type(), E_USER_ERROR);
 		}
 
-		self::$components[ $component->get_id() ] = $component;
+		self::$components[ $component->get_type() ] = $component;
 	}
 
 	/**

@@ -3,16 +3,17 @@
 abstract class FW_Ext_Builder_Templates_Component
 {
 	/**
-	 * Unique id
+	 * Unique type
 	 * @return string
 	 */
-	abstract public function get_id();
+	abstract public function get_type();
 
 	/**
+	 * @param array $data {'builder_type': '...'}
 	 * @return string HTML for tooltip
 	 * @internal
 	 */
-	abstract public function _render();
+	abstract public function _render($data);
 
 	/**
 	 * Enqueue css and js

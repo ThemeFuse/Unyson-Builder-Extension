@@ -55,7 +55,7 @@
 			inst.$el.builder.find('> .builder-items-types > .fw-builder-header-tools')
 				.removeClass('fw-hidden')
 				.append(
-					'<div class="template-container">' +
+					'<div class="template-container fw-pull-right">' +
 						'<a class="template-btn" href="#" onclick="return false;">'+ localized.l10n.templates +'</a>' +
 					'</div>'
 				);

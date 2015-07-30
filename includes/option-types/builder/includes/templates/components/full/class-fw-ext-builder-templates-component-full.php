@@ -2,40 +2,82 @@
 
 class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_Component
 {
-	public function get_id()
+	public function get_type()
 	{
 		return 'full';
 	}
 
-	public function _render()
+	public function _render($data)
 	{
-		return 'Hello';
+		$html = '';
+
+		foreach ($this->get_templates($data['builder_type']) as $template_id => $template) {
+			$html .=
+				'<li>'
+					. '<a href="#" onclick="return false;" data-load-template="'. fw_htmlspecialchars($template_id) .'">'
+						. fw_htmlspecialchars($template['title'])
+					. '</a>'
+					. ' '
+					. '<a href="#" onclick="return false;" data-delete-template="'. fw_htmlspecialchars($template_id) .'"'
+					. ' class="template-delete dashicons fw-x"></a>'
+				. '</li>';
+		}
+
+		if (empty($html)) {
+			$html = '<p>'. __('0 Templates Saved', 'fw') .'</p>';
+		} else {
+			$html = '<ul>'. $html .'</ul>';
+		}
+
+		return $html;
 	}
 
 	public function _enqueue()
 	{
-		array(
-			'no_templates_saved' => __('0 Templates Saved', 'fw'),
-			'template_name' => __('Template Name', 'fw'),
-			'template_name_desc' => __('Must have at least 3 characters (Whitespace, A-Z, 0-9, -_)', 'fw'),
-			'save_template' => __('Save Template', 'fw'),
-			'load_template' => __('Load Template', 'fw'),
+		$uri = fw_ext('builder')->get_uri('/includes/option-types/builder/includes/templates/components/full');
+		$version = fw_ext('builder')->manifest->get_version();
+
+		wp_enqueue_style(
+			'fw-option-builder-templates-full',
+			$uri .'/styles.css',
+			array('fw-option-builder-templates'),
+			$version
+		);
+
+		wp_enqueue_script(
+			'fw-option-builder-templates-full',
+			$uri .'/scripts.js',
+			array('fw-option-builder-templates'),
+			$version,
+			true
+		);
+
+		wp_localize_script(
+			'fw-option-builder-templates-full',
+			'_fw_option_type_builder_templates_full',
+			array(
+				'l10n' => array(
+					'template_name' => __('Template Name', 'fw'),
+					'template_name_desc' => __('Must have at least 3 characters (Whitespace, A-Z, 0-9, -_)', 'fw'),
+					'save_template' => __('Save Template', 'fw'),
+					'load_template' => __('Load Template', 'fw'),
+				),
+			)
 		);
 	}
 
 	public function _init()
 	{
-		add_action('wp_ajax_fw_builder_load_templates', array(__CLASS__, '_action_ajax_load_templates'));
-		add_action('wp_ajax_fw_builder_save_template', array(__CLASS__, '_action_ajax_save_template'));
-		add_action('wp_ajax_fw_builder_delete_template', array(__CLASS__, '_action_ajax_delete_template'));
+		add_action('wp_ajax_fw_builder_templates_full_save',   array($this, '_action_ajax_save_template'));
+		add_action('wp_ajax_fw_builder_templates_full_delete', array($this, '_action_ajax_delete_template'));
 	}
 
-	private static function get_templates($builder_type)
+	private function get_templates($builder_type)
 	{
 		return fw_get_db_extension_data('builder', 'templates/'. $builder_type, array());
 	}
 
-	private static function set_templates($builder_type, $templates)
+	private function set_templates($builder_type, $templates)
 	{
 		fw_set_db_extension_data('builder', 'templates/'. $builder_type, $templates);
 	}
@@ -43,21 +85,21 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 	/**
 	 * @internal
 	 */
-	public static function _action_ajax_load_templates()
+	public function _action_ajax_load_templates()
 	{
 		if (!current_user_can('edit_posts')) {
 			wp_send_json_error();
 		}
 
 		wp_send_json_success(array(
-			'templates' => self::get_templates((string)FW_Request::POST('builder_type'))
+			'templates' => $this->get_templates((string)FW_Request::POST('builder_type'))
 		));
 	}
 
 	/**
 	 * @internal
 	 */
-	public static function _action_ajax_save_template()
+	public function _action_ajax_save_template()
 	{
 		if (!current_user_can('edit_posts')) {
 			wp_send_json_error();
@@ -74,20 +116,25 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			wp_send_json_error();
 		}
 
-		$post_title = trim((string)FW_Request::POST('template_name'));
-		$post_title = empty($post_title) ? __('No Title', 'fw') : $post_title;
+		$template = array(
+			'title' => trim((string)FW_Request::POST('template_name')),
+			'json' => trim((string)FW_Request::POST('builder_json'))
+		);
 
-		$template = array('title' => $post_title, 'json' => (string)FW_Request::POST('builder_json'));
 		if (empty($template['json'])) {
 			wp_send_json_error();
 		}
 
-		$templates = self::get_templates($builder_type);
+		if (empty($template['title'])) {
+			$template['title'] = __('No Title', 'fw');
+		}
+
+		$templates = $this->get_templates($builder_type);
 
 		$id = uniqid() .':'. time();
 		$templates[$id] = $template;
 
-		self::set_templates($builder_type, $templates);
+		$this->set_templates($builder_type, $templates);
 
 		wp_send_json_success(array_merge(array('id' => $id), $template));
 	}
@@ -95,7 +142,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 	/**
 	 * @internal
 	 */
-	public static function _action_ajax_delete_template()
+	public function _action_ajax_delete_template()
 	{
 		if (!current_user_can('edit_posts')) {
 			wp_send_json_error();
@@ -112,9 +159,9 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			wp_send_json_error();
 		}
 
-		$templates = self::get_templates($builder_type);
+		$templates = $this->get_templates($builder_type);
 		unset($templates[ (string)FW_Request::POST('uniqid') ]);
-		self::set_templates($builder_type, $templates);
+		$this->set_templates($builder_type, $templates);
 
 		wp_send_json_success();
 	}

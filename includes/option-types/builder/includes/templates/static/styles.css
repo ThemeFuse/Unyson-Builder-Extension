@@ -1,10 +1,9 @@
 .fw-option-type-builder .template-container a {
 	text-decoration: none;
-	float: right;
 }
 
-.fw-option-type-builder .template-container {
-	float: right;
+.fw-option-type-builder .template-container a:focus {
+	box-shadow: none;
 }
 
 .fw-option-type-builder .template-btn {
@@ -13,91 +12,4 @@
 	padding-left: 14px;
 	background-position: left center;
 	cursor: pointer;
-}
-
-.fw-builder-templates-wrapper a.template-delete {
-	float: right;
-	visibility: hidden;
-	margin-top: 3px;
-	margin-right: 10px;
-	text-decoration: none !important;
-}
-
-.fw-builder-templates-wrapper {
-	padding: 5px;
-	overflow: auto;
-}
-
-.fw-builder-templates-wrapper .save-template {
-	text-align: left;
-	text-decoration: none !important;
-	color: #b1b1b1;
-	float: left;
-	font-style: normal;
-	padding-bottom: 10px;
-	padding-left: 3px;
-}
-
-.fw-builder-templates-wrapper .save-template:hover {
-	color: #eee;
-}
-
-.fw-builder-templates-wrapper .navigation {
-	float: left;
-}
-
-.fw-builder-templates-wrapper .templates-list {
-	border-top: 1px solid #4b4b4b;
-	border-top: 1px solid rgba(208, 208, 208, 0.15);
-	float: left;
-	clear: both;
-	width: 100%;
-	overflow: auto;
-	max-height: 300px;
-}
-
-.fw-builder-templates-wrapper .templates-list .head-text {
-	text-align: left;
-	float: left;
-	padding: 10px 0px;
-	margin-left: 3px;
-	color: #707070;
-}
-
-.fw-builder-templates-wrapper ul {
-	float: left;
-	margin: 0px;
-	width: 100%;
-}
-
-.fw-builder-templates-wrapper ul li {
-	font-style: normal;
-	padding-bottom: 10px;
-	margin-bottom: 0px;
-	list-style: disc inside none;
-	margin-left: 4px;
-	text-align: left;
-	line-height: 18px;
-	color: #b1b1b1;
-	cursor: pointer;
-}
-
-.fw-builder-templates-wrapper ul li:last-child {
-	padding-bottom: 0px;
-}
-
-.fw-builder-templates-wrapper .default-li {
-	cursor: text;
-}
-
-.fw-builder-templates-wrapper .default-li:hover {
-	color: #b1b1b1;
-}
-
-.fw-builder-templates-wrapper ul li:hover a.template-delete {
-	visibility: visible;
-}
-
-.fw-builder-templates-wrapper ul li:hover {
-	color: #eee;
 }
