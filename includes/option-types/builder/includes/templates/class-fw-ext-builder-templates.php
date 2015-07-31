@@ -19,7 +19,14 @@ final class FW_Ext_Builder_Templates
 	{
 		add_action('fw_ext_builder:option_type:builder:enqueue', array(__CLASS__, '_action_builder_enqueue'));
 		add_action('wp_ajax_fw_builder_templates_render', array(__CLASS__, '_action_ajax_render'));
+		add_action('init', array(__CLASS__, '_action_init'));
+	}
 
+	/**
+	 * @internal
+	 */
+	public static function _action_init()
+	{
 		if (defined('DOING_AJAX') && DOING_AJAX === true) {
 			/**
 			 * Load and init components

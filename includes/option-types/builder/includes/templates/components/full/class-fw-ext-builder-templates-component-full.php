@@ -24,16 +24,16 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		}
 
 		if (empty($html)) {
-			$html = '<div class="fw-text-muted">'. __('No Templates Saved', 'fw') .'</div>';
+			$html = '<div class="fw-text-muted">'. __('No Builder Templates Saved', 'fw') .'</div>';
 		} else {
 			$html =
-				'<p class="fw-text-muted load-template-title">'. __('Load Template', 'fw') .':</p>'
+				'<p class="fw-text-muted load-template-title">'. __('Load Builder Template', 'fw') .':</p>'
 				. '<ul>'. $html .'</ul>';
 		}
 
 		$html =
 			'<div class="save-template-wrapper">'
-			. '<a href="#" onclick="return false;" class="save-template">'. __('Save Template', 'fw') .'</a>'
+			. '<a href="#" onclick="return false;" class="save-template">'. __('Save Builder Template', 'fw') .'</a>'
 			. '</div>'
 			. $html;
 
@@ -66,8 +66,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			array(
 				'l10n' => array(
 					'template_name' => __('Template Name', 'fw'),
-					'template_name_desc' => __('Must have at least 3 characters (Whitespace, A-Z, 0-9, -_)', 'fw'),
-					'save_template' => __('Save Template', 'fw'),
+					'save_template' => __('Save Builder Template', 'fw'),
 				),
 			)
 		);
@@ -138,9 +137,15 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			'json' => trim((string)FW_Request::POST('builder_json'))
 		);
 
-		if (empty($template['json'])) {
+		if (
+			empty($template['json'])
+			||
+			($decoded_json = json_decode($template['json'], true)) === null
+		) {
 			wp_send_json_error();
 		}
+
+		unset($decoded_json);
 
 		if (empty($template['title'])) {
 			$template['title'] = __('No Title', 'fw');
