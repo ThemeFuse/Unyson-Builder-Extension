@@ -24,7 +24,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		}
 
 		if (empty($html)) {
-			$html = '<p>'. __('0 Templates Saved', 'fw') .'</p>';
+			$html = '<div class="fw-text-muted">'. __('No Templates Saved', 'fw') .'</div>';
 		} else {
 			$html =
 				'<p class="fw-text-muted load-template-title">'. __('Load Template', 'fw') .':</p>'
@@ -148,12 +148,12 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 
 		$templates = $this->get_templates($builder_type);
 
-		$id = uniqid() .':'. time();
-		$templates[$id] = $template;
+		$template_id = md5($template['json']);
+		$templates[$template_id] = $template;
 
 		$this->set_templates($builder_type, $templates);
 
-		wp_send_json_success(array_merge(array('id' => $id), $template));
+		wp_send_json_success();
 	}
 
 	/**
@@ -166,18 +166,21 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		}
 
 		$builder_type = (string)FW_Request::POST('builder_type');
-		if (
-			empty($builder_type)
-			||
-			!fw()->backend->option_type($builder_type)
-			||
-			!(fw()->backend->option_type($builder_type) instanceof FW_Option_Type_Builder)
-		) {
+
+		if (!$this->builder_type_is_valid($builder_type)) {
 			wp_send_json_error();
 		}
 
 		$templates = $this->get_templates($builder_type);
-		unset($templates[ (string)FW_Request::POST('uniqid') ]);
+
+		$template_id = (string)FW_Request::POST('template_id');
+
+		if (!isset($templates[$template_id])) {
+			wp_send_json_error();
+		}
+
+		unset($templates[$template_id]);
+
 		$this->set_templates($builder_type, $templates);
 
 		wp_send_json_success();

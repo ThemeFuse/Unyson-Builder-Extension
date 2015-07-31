@@ -58,7 +58,8 @@
 	fwEvents.on('fw:option-type:builder:templates:init', function(data){
 		var loading = data.tooltipLoading,
 			builder = data.builder,
-			tooltipHideCallback = data.tooltipHideCallback;
+			tooltipHideCallback = data.tooltipHideCallback,
+			tooltipRefreshCallback = data.tooltipRefreshCallback;
 
 		data.$elements.find('.fw-builder-templates-type-full')
 			.on('click', 'a[data-load-template]', function(){
@@ -90,7 +91,7 @@
 							builder.rootItems.reset(JSON.parse(json.data.json));
 						}
 
-						// todo: hide tooltip
+						tooltipHideCallback();
 					})
 					.fail(function(xhr, status, error){
 						loading.hide();
@@ -101,7 +102,33 @@
 			.on('click', 'a[data-delete-template]', function(){
 				var templateId = $(this).attr('data-delete-template');
 
-				console.log(templateId);
+				loading.show();
+
+				$.ajax({
+					type: 'post',
+					dataType: 'json',
+					url: ajaxurl,
+					data: {
+						'action': 'fw_builder_templates_full_delete',
+						'builder_type': builder.get('type'),
+						'template_id': templateId
+					}
+				})
+					.done(function(json){
+						loading.hide();
+
+						if (!json.success) {
+							console.error('Failed to delete builder template', json);
+							return;
+						}
+
+						tooltipRefreshCallback();
+					})
+					.fail(function(xhr, status, error){
+						loading.hide();
+
+						console.error('Ajax error', error);
+					});
 			})
 			.on('click', 'a.save-template', function () {
 				tooltipHideCallback();
