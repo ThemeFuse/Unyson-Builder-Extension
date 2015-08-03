@@ -55,3 +55,60 @@
 	padding-top: 10px;
 	margin-top: 10px;
 }
+
+.fw-builder-templates-types > .fw-builder-templates-type > .fw-builder-templates-type-content .load-template-title {
+	margin: 10px 0;
+}
+
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std {
+	margin: 0;
+	width: 100%;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li {
+	font-style: normal;
+	padding-bottom: 10px;
+	margin-bottom: 0px;
+	list-style: disc inside none;
+	margin-left: 4px;
+	text-align: left;
+	line-height: 18px;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li a.template-title {
+	display: block;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li,
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li a {
+	color: #b1b1b1 !important;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li:hover,
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li:hover a {
+	color: #eee !important;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li a {
+	text-decoration: none !important;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li a:focus {
+	box-shadow: none;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li:last-child {
+	padding-bottom: 0px;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li a.template-delete {
+	float: right;
+	visibility: hidden;
+	margin-top: 3px;
+	text-decoration: none !important;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li:hover a.template-delete {
+	visibility: visible;
+}

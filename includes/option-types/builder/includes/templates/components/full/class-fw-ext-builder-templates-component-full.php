@@ -33,12 +33,14 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		} else {
 			$html =
 				'<p class="fw-text-muted load-template-title">'. __('Load Template', 'fw') .':</p>'
-				. '<ul>'. $html .'</ul>';
+				. '<ul class="std">'. $html .'</ul>';
 		}
 
 		$html =
 			'<div class="save-template-wrapper">'
-			. '<a href="#" onclick="return false;" class="save-template button button-primary">'. __('Save Template', 'fw') .'</a>'
+				. '<a href="#" onclick="return false;" class="save-template button button-primary">'
+					. __('Save Template', 'fw')
+				. '</a>'
 			. '</div>'
 			. $html;
 
