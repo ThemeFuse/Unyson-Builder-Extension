@@ -39,7 +39,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		$html =
 			'<div class="save-template-wrapper">'
 				. '<a href="#" onclick="return false;" class="save-template button button-primary">'
-					. __('Save Template', 'fw')
+					. __('Save current builder', 'fw')
 				. '</a>'
 			. '</div>'
 			. $html;
