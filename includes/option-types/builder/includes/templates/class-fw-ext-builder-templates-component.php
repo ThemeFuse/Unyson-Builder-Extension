@@ -9,6 +9,11 @@ abstract class FW_Ext_Builder_Templates_Component
 	abstract public function get_type();
 
 	/**
+	 * @return string
+	 */
+	abstract public function get_title();
+
+	/**
 	 * @param array $data {'builder_type': '...'}
 	 * @return string HTML for tooltip
 	 * @internal

@@ -51,14 +51,26 @@ final class FW_Ext_Builder_Templates
 			wp_send_json_error();
 		}
 
-		$html = '';
+		$first = true;
+
+		$html = '<div class="fw-builder-templates-types">';
 
 		foreach (self::get_components() as $component) {
 			$html .=
-				'<div class="fw-builder-templates-type fw-builder-templates-type-'. esc_attr($component->get_type()) .'">'
-				. $component->_render(array('builder_type' => $builder_type))
+				'<div class="fw-builder-templates-type fw-builder-templates-type-'. esc_attr($component->get_type()) .'"'.
+					' data-type="'. esc_attr($component->get_type()) .'">'
+					. '<a class="fw-builder-templates-type-title" href="#" onclick="return false;">'
+						. $component->get_title()
+					. '</a>'
+					. '<div class="fw-builder-templates-type-content'. ($first ? '' : ' fw-hidden') .'">'
+						. $component->_render(array('builder_type' => $builder_type))
+					. '</div>'
 				. '</div>';
+
+			$first = false;
 		}
+
+		$html .= '</div>';
 
 		wp_send_json_success(array(
 			'html' => $html

@@ -7,6 +7,11 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		return 'full';
 	}
 
+	public function get_title()
+	{
+		return __('Full Templates', 'fw');
+	}
+
 	public function _render($data)
 	{
 		$html = '';
@@ -24,16 +29,16 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		}
 
 		if (empty($html)) {
-			$html = '<div class="fw-text-muted">'. __('No Builder Templates Saved', 'fw') .'</div>';
+			$html = '<div class="fw-text-muted">'. __('No Templates Saved', 'fw') .'</div>';
 		} else {
 			$html =
-				'<p class="fw-text-muted load-template-title">'. __('Load Builder Template', 'fw') .':</p>'
+				'<p class="fw-text-muted load-template-title">'. __('Load Template', 'fw') .':</p>'
 				. '<ul>'. $html .'</ul>';
 		}
 
 		$html =
 			'<div class="save-template-wrapper">'
-			. '<a href="#" onclick="return false;" class="save-template">'. __('Save Builder Template', 'fw') .'</a>'
+			. '<a href="#" onclick="return false;" class="save-template button button-primary">'. __('Save Template', 'fw') .'</a>'
 			. '</div>'
 			. $html;
 

@@ -59,6 +59,8 @@
 								tooltipRefreshCallback: _.bind(this.refresh, this),
 								tooltipHideCallback: _.bind(function(){ this.tooltipApi.hide(); }, this)
 							});
+
+							this.$el.tooltipContent.trigger('fw:option-type:builder:templates:after-html-replace');
 						}, this))
 						.fail(_.bind(function(xhr, status, error){
 							this.isBusy = false;
@@ -105,6 +107,75 @@
 					}
 				})
 				.qtip('api');
+
+			/**
+			 * Accordion
+			 */
+			inst.$el.tooltipContent
+				.on(
+					'click',
+					'.fw-builder-templates-types > .fw-builder-templates-type > .fw-builder-templates-type-title',
+					function() {
+						var $wrapper = $(this).closest('.fw-builder-templates-type'),
+							$content = $wrapper.find('> .fw-builder-templates-type-content'),
+							$root = $wrapper.closest('.fw-builder-templates-types'),
+							specialClass = 'current';
+
+						if ($root.hasClass('is-busy')) {
+							return;
+						} else {
+							$root.addClass('is-busy');
+						}
+
+						$content.addClass(specialClass);
+
+						$root
+							.find('> .fw-builder-templates-type > .fw-builder-templates-type-content:not(.'+specialClass+'):not(.fw-hidden)')
+							.slideUp(function(){
+								$(this).addClass('fw-hidden').removeAttr('style');
+							});
+
+						$content.removeClass(specialClass);
+
+						inst.$el.tooltipContent.removeAttr('data-open-type');
+
+						if ($content.hasClass('fw-hidden')) {
+							$content
+								.css('display', 'none')
+								.removeClass('fw-hidden')
+								.slideDown(function(){
+									$root.removeClass('is-busy');
+
+									$(this).removeAttr('style');
+
+									inst.$el.tooltipContent.attr('data-open-type', $wrapper.attr('data-type'));
+								});
+						} else {
+							$content
+								.slideUp(function(){
+									$root.removeClass('is-busy');
+
+									$(this).addClass('fw-hidden').removeAttr('style');
+								});
+						}
+					}
+				)
+				.on('fw:option-type:builder:templates:after-html-replace', function(){
+					// reopen accordion type that was open before tooltip html replace
+					{
+						var openType = inst.$el.tooltipContent.attr('data-open-type');
+
+						if (openType) {
+							inst.$el.tooltipContent // close all
+								.find('.fw-builder-templates-types > .fw-builder-templates-type > .fw-builder-templates-type-content')
+								.addClass('fw-hidden');
+
+							inst.$el.tooltipContent // open one
+								.find('.fw-builder-templates-types > .fw-builder-templates-type-'+ openType +' > .fw-builder-templates-type-content')
+								.removeClass('fw-hidden');
+						}
+					}
+				});
 		});
 	});
 })(jQuery, fwEvents, _, _fw_option_type_builder_templates);
