@@ -64,6 +64,8 @@
 .fw-builder-templates-types > .fw-builder-templates-type ul.std {
 	margin: 0;
 	width: 100%;
+	max-height: 280px;
+	overflow: auto;
 }
 
 .fw-builder-templates-types > .fw-builder-templates-type ul.std li {
