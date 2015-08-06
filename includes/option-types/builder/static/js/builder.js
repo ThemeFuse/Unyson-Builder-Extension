@@ -1289,17 +1289,49 @@ jQuery(document).ready(function($){
 					return;
 				}
 
-				var $savePostButton = $postForm.find('input#publish');
-				var $savePostBuilderButton = $('<button type="button" class="button button-primary fw-pull-right fw-builder-header-post-save-button" onclick="return false;"></button>')
-					.text($savePostButton.attr('value'))
-					.on('click', function(){
-						$savePostButton.trigger('click');
-						$(this).attr('disabled', 'disabled').off('click');
-					});
+				var isLocalStorageAvailable = function(){
+						var test = 'test';
+						try {
+							localStorage.setItem(test, test);
+							localStorage.removeItem(test);
+							return true;
+						} catch(e) {
+							return false;
+						}
+					},
+					localStorageKey = 'fw-ext-builder-save-scroll-position',
+					$savePostButton = $postForm.find('input#publish'),
+					$savePostBuilderButton = $(
+						'<button'+
+							' type="button"'+
+							' class="button button-primary fw-pull-right fw-builder-header-post-save-button"'+
+							' onclick="return false;">' +
+						'</button>')
+						.text($savePostButton.attr('value'))
+						.on('click', function(){
+							$(this).attr('disabled', 'disabled').off('click');
+
+							if (isLocalStorageAvailable()) {
+								localStorage.setItem(localStorageKey, $(window).scrollTop());
+							}
+
+							$savePostButton.trigger('click');
+						});
 
 				$(this).find('.fw-builder-header-tools:first')
 					.prepend('<span class="pull-right">&nbsp;&nbsp;&nbsp;&nbsp;</span>')
 					.prepend($savePostBuilderButton);
+
+				if (isLocalStorageAvailable()) {
+					var scrollTopOnLastSave = localStorage.getItem(localStorageKey);
+
+					if (scrollTopOnLastSave !== null) {
+						localStorage.removeItem(localStorageKey);
+
+						// http://stackoverflow.com/a/16475234/1794248
+						$('html, body').animate({scrollTop: scrollTopOnLastSave}, '100', 'swing');
+					}
+				}
 			});
 
 		$options.addClass('initialized');
