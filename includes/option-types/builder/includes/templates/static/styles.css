@@ -56,6 +56,10 @@
 	margin-top: 10px;
 }
 
+.fw-builder-templates-types > .fw-builder-templates-type > .fw-builder-templates-type-content .no-full-templates {
+	margin-top: 10px;
+}
+
 .fw-builder-templates-types > .fw-builder-templates-type > .fw-builder-templates-type-content .load-template-title {
 	margin: 10px 0;
 }

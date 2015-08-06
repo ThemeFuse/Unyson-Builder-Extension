@@ -29,7 +29,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		}
 
 		if (empty($html)) {
-			$html = '<div class="fw-text-muted">'. __('No Templates Saved', 'fw') .'</div>';
+			$html = '<div class="fw-text-muted no-full-templates">'. __('No Templates Saved', 'fw') .'</div>';
 		} else {
 			$html =
 				'<p class="fw-text-muted load-template-title">'. __('Load Template', 'fw') .':</p>'
