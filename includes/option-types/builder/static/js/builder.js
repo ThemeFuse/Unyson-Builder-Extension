@@ -1213,10 +1213,13 @@ jQuery(document).ready(function($){
 			if ($this.attr('data-fixed-header')) {
 				var fixedHeaderEventsNamespace = '.fw-builder-fixed-header-'+ (++fixedHeaderHelpers.increment),
 					$fixedHeader = $this.find('> .builder-items-types:first'),
+					/**
+					 * In OptionsModal we must track the modal scroll not the window scroll
+					 */
 					$scrollParent;
 
 				$scrollParent = $this.scrollParent();
-				if ($scrollParent.get(0) === document) {
+				if ($scrollParent.get(0) === document || $scrollParent.get(0) === document.body) {
 					$scrollParent = $(window);
 				}
 
@@ -1225,7 +1228,7 @@ jQuery(document).ready(function($){
 				 */
 				setTimeout(function(){
 					$scrollParent = $this.scrollParent();
-					if ($scrollParent.get(0) === document) {
+					if ($scrollParent.get(0) === document || $scrollParent.get(0) === document.body) {
 						$scrollParent = $(window);
 					}
 
