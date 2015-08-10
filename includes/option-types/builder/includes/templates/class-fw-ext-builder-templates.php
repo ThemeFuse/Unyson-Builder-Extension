@@ -56,6 +56,12 @@ final class FW_Ext_Builder_Templates
 		$html = '<div class="fw-builder-templates-types">';
 
 		foreach (self::get_components() as $component) {
+			$component_html = $component->_render(array('builder_type' => $builder_type));
+
+			if (empty($component_html)) {
+				continue;
+			}
+
 			$html .=
 				'<div class="fw-builder-templates-type fw-builder-templates-type-'. esc_attr($component->get_type()) .'"'.
 					' data-type="'. esc_attr($component->get_type()) .'">'
@@ -63,11 +69,13 @@ final class FW_Ext_Builder_Templates
 						. $component->get_title()
 					. '</a>'
 					. '<div class="fw-builder-templates-type-content'. ($first ? '' : ' fw-hidden') .'">'
-						. $component->_render(array('builder_type' => $builder_type))
+						. $component_html
 					. '</div>'
 				. '</div>';
 
 			$first = false;
+
+			unset($component_html);
 		}
 
 		$html .= '</div>';
@@ -114,7 +122,7 @@ final class FW_Ext_Builder_Templates
 		);
 
 		foreach (self::get_components() as $component) {
-			$component->_enqueue();
+			$component->_enqueue(array('builder_type' => $data['option']['type']));
 		}
 	}
 

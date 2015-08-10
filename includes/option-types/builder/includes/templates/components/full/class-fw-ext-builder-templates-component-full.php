@@ -47,7 +47,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		return $html;
 	}
 
-	public function _enqueue()
+	public function _enqueue($data)
 	{
 		$uri = fw_ext('builder')->get_uri('/includes/option-types/builder/includes/templates/components/full');
 		$version = fw_ext('builder')->manifest->get_version();

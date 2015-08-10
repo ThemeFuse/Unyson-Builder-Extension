@@ -22,9 +22,10 @@ abstract class FW_Ext_Builder_Templates_Component
 
 	/**
 	 * Enqueue css and js
+	 * @param array $data {'builder_type': '...'}
 	 * @internal
 	 */
-	abstract public function _enqueue();
+	abstract public function _enqueue($data);
 
 	/**
 	 * Called right after the component was fully registered
