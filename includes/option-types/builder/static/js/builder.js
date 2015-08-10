@@ -1173,6 +1173,24 @@ jQuery(document).ready(function($){
 									}, 500)
 								);
 							}
+
+							// scroll to the bottom of the builder
+							setTimeout(function(){
+								var $builderOption = $this,
+									$scrollParent = $builderOption.scrollParent();
+
+								if ($scrollParent.get(0) === document || $scrollParent.get(0) === document.body) {
+									$scrollParent = $(window);
+								}
+
+								$scrollParent.scrollTop(
+									$builderOption.offset().top
+									+
+									$builderOption.outerHeight()
+									-
+									$scrollParent.height()
+								);
+							}, 0);
 						} else {
 							console.warn('Item type "'+ itemType +'" is not allowed as first level item');
 						}
