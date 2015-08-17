@@ -62,6 +62,40 @@ jQuery(document).ready(function($){
 			return true;
 		},
 		/**
+		 * Find Item instance recursive in Items collection
+		 * @param {Object} itemAttr (can be specified cid)
+		 * @param {this.classes.Items} [items]
+		 * @return {this.classes.Item|null}
+		 */
+		findItemRecursive: function (itemAttr, items) {
+			if (arguments.length < 2) {
+				items = this.rootItems;
+			}
+
+			var item = items.get(itemAttr);
+
+			if (item) {
+				return item;
+			}
+
+			var that = this;
+
+			items.each(function(_item){
+				if (item) {
+					// stop search if item found
+					return false;
+				}
+
+				/** @var {builder.classes.Item} _item */
+				item = that.findItemRecursive(
+					itemAttr,
+					_item.get('_items')
+				);
+			});
+
+			return item;
+		},
+		/**
 		 * ! Do not rewrite this (it's final)
 		 * @private
 		 *
@@ -103,35 +137,6 @@ jQuery(document).ready(function($){
 
 			/** Define private functions accessible only within this method */
 			{
-				/**
-				 * Find Item instance recursive in Items collection
-				 * @param {this.classes.Items} collection
-				 * @param {Object} itemAttr
-				 * @return {this.classes.Item|null}
-				 */
-				function findItemRecursive(items, itemAttr) {
-					var item = items.get(itemAttr);
-
-					if (item) {
-						return item;
-					}
-
-					items.each(function(_item){
-						if (item) {
-							// stop search if item found
-							return false;
-						}
-
-						/** @var {builder.classes.Item} _item */
-						item = findItemRecursive(
-							_item.get('_items'),
-							itemAttr
-						);
-					});
-
-					return item;
-				}
-
 				/**
 				 * (Re)Create Items from json
 				 *
@@ -411,10 +416,7 @@ jQuery(document).ready(function($){
 											return;
 										}
 
-										var movedItem = findItemRecursive(
-											builder.rootItems,
-											{cid: movedItemCid}
-										);
+										var movedItem = builder.findItemRecursive({cid: movedItemCid});
 
 										if (!movedItem) {
 											console.warn('Item not found (cid: "'+ movedItemCid +'")');
@@ -541,10 +543,7 @@ jQuery(document).ready(function($){
 										// extract cid from view id
 										var incomingItemCid = ui.item.attr('id').split('-').pop();
 
-										var incomingItem = findItemRecursive(
-											builder.rootItems,
-											{cid: incomingItemCid}
-										);
+										var incomingItem = builder.findItemRecursive({cid: incomingItemCid});
 
 										if (!incomingItem) {
 											console.warn('Item not found (cid: "'+ incomingItemCid +'")');
@@ -616,10 +615,7 @@ jQuery(document).ready(function($){
 									// extract cid from view id
 									var itemCid = ui.item.attr('id').split('-').pop();
 
-									var item = findItemRecursive(
-										builder.rootItems,
-										{cid: itemCid}
-									);
+									var item = builder.findItemRecursive({cid: itemCid});
 
 									if (!item) {
 										console.warn('Item not found (cid: "'+ itemCid +'")');
@@ -1293,6 +1289,18 @@ jQuery(document).ready(function($){
 					$scrollParent.off(fixedHeaderEventsNamespace);
 				});
 			}
+
+			$this.on('fw:option-type:builder:dump-json', function(e, data){
+				if (typeof data != 'undefined' && typeof data.cid != 'undefined') {
+					console.log('[Builder JSON Dump] Item '+ data.cid +'\n\n'+
+						JSON.stringify(builder.findItemRecursive({cid: data.cid}))
+					);
+				} else {
+					console.log('[Builder JSON Dump] Full\n\n'+
+						JSON.stringify(builder.rootItems)
+					);
+				}
+			});
 
 			$this.trigger('fw:option-type:builder:init', {
 				builder: builder
