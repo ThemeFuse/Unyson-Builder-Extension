@@ -199,4 +199,22 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 
 		wp_send_json_success();
 	}
+
+	/**
+	 * @param $builder_type
+	 * @return mixed|null
+	 */
+	protected function get_db_templates($builder_type)
+	{
+		return fw_get_db_extension_data('builder', 'templates/'. $builder_type, array());
+	}
+
+	/**
+	 * @param $builder_type
+	 * @param $templates
+	 */
+	protected function set_db_templates($builder_type, $templates)
+	{
+		fw_set_db_extension_data('builder', 'templates/'. $builder_type, $templates);
+	}
 }
