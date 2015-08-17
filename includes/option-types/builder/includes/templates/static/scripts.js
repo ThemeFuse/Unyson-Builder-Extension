@@ -6,7 +6,11 @@
 				$el: {
 					builder: $(e.target),
 					tooltipContent: $('<div class="fw-builder-templates-tooltip-content"></div>'),
-					tooltipLoading: $('<div class="fw-builder-templates-tooltip-loading"></div>')
+					tooltipLoading: $(
+						'<div class="fw-builder-templates-tooltip-loading">'+
+							'<div class="loading-icon fw-animation-rotate-reverse-180 unycon unycon-unyson-o"></div>'+
+						'</div>'
+					)
 				},
 				builder: data.builder,
 				isBusy: false,
