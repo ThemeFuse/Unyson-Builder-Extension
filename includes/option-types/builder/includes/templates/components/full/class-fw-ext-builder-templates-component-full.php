@@ -16,11 +16,20 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 	{
 		$html = '';
 
-		foreach ($this->get_templates($data['builder_type']) as $template_id => $template) {
+		foreach (array_merge(
+			$this->get_templates($data['builder_type']),
+			$this->get_predefined_templates($data['builder_type'])
+		) as $template_id => $template) {
+			if (isset($template['type']) && $template['type'] === 'predefined') {
+				$delete_btn = '';
+			} else {
+				$delete_btn = '<a href="#" onclick="return false;" data-delete-template="'. fw_htmlspecialchars($template_id) .'"'
+				              . ' class="template-delete dashicons fw-x"></a>';
+			}
+
 			$html .=
 				'<li>'
-					. '<a href="#" onclick="return false;" data-delete-template="'. fw_htmlspecialchars($template_id) .'"'
-					. ' class="template-delete dashicons fw-x"></a>'
+					. $delete_btn
 					. '<a href="#" onclick="return false;" data-load-template="'. fw_htmlspecialchars($template_id) .'"'
 					. ' class="template-title">'
 						. fw_htmlspecialchars($template['title'])
@@ -158,12 +167,10 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			$template['title'] = __('No Title', 'fw');
 		}
 
-		$templates = $this->get_templates($builder_type);
-
-		$template_id = md5($template['json']);
-		$templates[$template_id] = $template;
-
-		$this->set_templates($builder_type, $templates);
+		$this->set_templates(
+			$builder_type,
+			array(md5($template['json']) => $template) + $this->get_templates($builder_type)
+		);
 
 		wp_send_json_success();
 	}

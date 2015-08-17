@@ -51,5 +51,42 @@ abstract class FW_Ext_Builder_Templates_Component
 			return true;
 		}
 	}
+
+	/**
+	 * @param string $builder_type
+	 * @return array|mixed
+	 */
+	protected function get_predefined_templates($builder_type)
+	{
+		$cache_id = 'fw_ext_builder/predefined_templates/'. $builder_type .'/'. $this->get_type();
+
+		try {
+			return FW_Cache::get($cache_id);
+		} catch (FW_Cache_Not_Found_Exception $e) {
+			$templates = array();
+
+			foreach(apply_filters('fw_ext_builder:predefined_templates:'. $builder_type .':'. $this->get_type(), array(
+				// 'id' => array('title' => 'Title', 'json' => '[]')
+			)) as $id => $template) {
+				if (
+					isset($template['title']) && is_string($template['title'])
+					&&
+					isset($template['json']) && is_string($template['json']) && null !== json_decode($template['json'])
+				) {
+					$templates[ $id ] = array(
+						'title' => $template['title'],
+						'json' => $template['json'],
+						'type' => 'predefined'
+					);
+				} else {
+					trigger_error('Invalid predefined template: '. $id, E_USER_WARNING);
+				}
+			}
+
+			FW_Cache::set($cache_id, $templates);
+
+			return $templates;
+		}
+	}
 }
 
