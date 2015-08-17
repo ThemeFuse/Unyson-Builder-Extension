@@ -16,10 +16,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 	{
 		$html = '';
 
-		foreach (array_merge(
-			$this->get_templates($data['builder_type']),
-			$this->get_predefined_templates($data['builder_type'])
-		) as $template_id => $template) {
+		foreach ($this->get_templates($data['builder_type']) as $template_id => $template) {
 			if (isset($template['type']) && $template['type'] === 'predefined') {
 				$delete_btn = '';
 			} else {
@@ -38,7 +35,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		}
 
 		if (empty($html)) {
-			$html = '<div class="fw-text-muted no-full-templates">'. __('No Templates Saved', 'fw') .'</div>';
+			$html = '<div class="fw-text-muted no-'. $this->get_type() .'-templates">'. __('No Templates Saved', 'fw') .'</div>';
 		} else {
 			$html =
 				'<p class="fw-text-muted load-template-title">'. __('Load Template', 'fw') .':</p>'
@@ -58,18 +55,18 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 
 	public function _enqueue($data)
 	{
-		$uri = fw_ext('builder')->get_uri('/includes/option-types/builder/includes/templates/components/full');
+		$uri = fw_ext('builder')->get_uri('/includes/option-types/builder/includes/templates/components/'. $this->get_type());
 		$version = fw_ext('builder')->manifest->get_version();
 
 		wp_enqueue_style(
-			'fw-option-builder-templates-full',
+			'fw-option-builder-templates-'. $this->get_type(),
 			$uri .'/styles.css',
 			array('fw-option-builder-templates'),
 			$version
 		);
 
 		wp_enqueue_script(
-			'fw-option-builder-templates-full',
+			'fw-option-builder-templates-'. $this->get_type(),
 			$uri .'/scripts.js',
 			array('fw-option-builder-templates'),
 			$version,
@@ -77,8 +74,8 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		);
 
 		wp_localize_script(
-			'fw-option-builder-templates-full',
-			'_fw_option_type_builder_templates_full',
+			'fw-option-builder-templates-'. $this->get_type(),
+			'_fw_option_type_builder_templates_'. $this->get_type(),
 			array(
 				'l10n' => array(
 					'template_name' => __('Template Name', 'fw'),
@@ -90,19 +87,17 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 
 	public function _init()
 	{
-		add_action('wp_ajax_fw_builder_templates_full_load',   array($this, '_action_ajax_load_template'));
-		add_action('wp_ajax_fw_builder_templates_full_save',   array($this, '_action_ajax_save_template'));
-		add_action('wp_ajax_fw_builder_templates_full_delete', array($this, '_action_ajax_delete_template'));
+		add_action('wp_ajax_fw_builder_templates_'. $this->get_type() .'_load',   array($this, '_action_ajax_load_template'));
+		add_action('wp_ajax_fw_builder_templates_'. $this->get_type() .'_save',   array($this, '_action_ajax_save_template'));
+		add_action('wp_ajax_fw_builder_templates_'. $this->get_type() .'_delete', array($this, '_action_ajax_delete_template'));
 	}
 
 	private function get_templates($builder_type)
 	{
-		return fw_get_db_extension_data('builder', 'templates/'. $builder_type, array());
-	}
-
-	private function set_templates($builder_type, $templates)
-	{
-		fw_set_db_extension_data('builder', 'templates/'. $builder_type, $templates);
+		return array_merge(
+			$this->get_db_templates($builder_type),
+			$this->get_predefined_templates($builder_type)
+		);
 	}
 
 	/**
@@ -167,9 +162,9 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			$template['title'] = __('No Title', 'fw');
 		}
 
-		$this->set_templates(
+		$this->set_db_templates(
 			$builder_type,
-			array(md5($template['json']) => $template) + $this->get_templates($builder_type)
+			array(md5($template['json']) => $template) + $this->get_db_templates($builder_type)
 		);
 
 		wp_send_json_success();
@@ -190,7 +185,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			wp_send_json_error();
 		}
 
-		$templates = $this->get_templates($builder_type);
+		$templates = $this->get_db_templates($builder_type);
 
 		$template_id = (string)FW_Request::POST('template_id');
 
@@ -200,7 +195,7 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 
 		unset($templates[$template_id]);
 
-		$this->set_templates($builder_type, $templates);
+		$this->set_db_templates($builder_type, $templates);
 
 		wp_send_json_success();
 	}

@@ -34,6 +34,26 @@ abstract class FW_Ext_Builder_Templates_Component
 	public function _init() {}
 
 	/**
+	 * @param $builder_type
+	 * @return mixed|null
+	 * @since 1.1.14
+	 */
+	protected function get_db_templates($builder_type)
+	{
+		return fw_get_db_extension_data('builder', 'templates:'. $this->get_type() .'/'. $builder_type, array());
+	}
+
+	/**
+	 * @param $builder_type
+	 * @param $templates
+	 * @since 1.1.14
+	 */
+	protected function set_db_templates($builder_type, $templates)
+	{
+		fw_set_db_extension_data('builder', 'templates:'. $this->get_type() .'/'. $builder_type, $templates);
+	}
+
+	/**
 	 * @param string $builder_type Builder option type
 	 * @return bool
 	 */
@@ -55,6 +75,7 @@ abstract class FW_Ext_Builder_Templates_Component
 	/**
 	 * @param string $builder_type
 	 * @return array|mixed
+	 * @since 1.1.14
 	 */
 	protected function get_predefined_templates($builder_type)
 	{
