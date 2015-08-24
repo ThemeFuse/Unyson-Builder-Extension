@@ -70,6 +70,12 @@
 							this.isBusy = false;
 							this.tooltipLoading.hide();
 
+							fw.soleModal.show(
+								'fw-builder-templates-error',
+								'<h4>Ajax Error</h4>'+
+								'<p class="fw-text-danger">'+ error +'</p>',
+								{showCloseButton:false}
+							);
 							console.error('Ajax error', error);
 						}, this));
 				}

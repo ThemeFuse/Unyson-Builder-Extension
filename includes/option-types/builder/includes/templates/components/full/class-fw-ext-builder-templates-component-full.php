@@ -16,7 +16,11 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 	{
 		$html = '';
 
-		foreach ($this->get_templates($data['builder_type']) as $template_id => $template) {
+		$templates = $this->get_templates($data['builder_type']);
+
+		uasort($templates, array($this, 'sort_templates'));
+
+		foreach ($templates as $template_id => $template) {
 			if (isset($template['type']) && $template['type'] === 'predefined') {
 				$delete_btn = '';
 			} else {
@@ -94,10 +98,24 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 
 	private function get_templates($builder_type)
 	{
-		return array_merge(
-			$this->get_db_templates($builder_type),
-			$this->get_predefined_templates($builder_type)
-		);
+		return $this->get_db_templates($builder_type) + $this->get_predefined_templates($builder_type);
+	}
+
+	private function get_wp_option_prefix($builder_type)
+	{
+		return 'fw:bt:f:'. $builder_type .':';
+	}
+
+	private function sort_templates($a, $b)
+	{
+		$at = isset($a['created']) ? $a['created'] : 0;
+		$bt = isset($b['created']) ? $b['created'] : 0;
+
+		if ($at == $bt) {
+			return 0;
+		}
+
+		return ($at > $bt) ? -1 : 1;
 	}
 
 	/**
@@ -145,7 +163,8 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 
 		$template = array(
 			'title' => trim((string)FW_Request::POST('template_name')),
-			'json' => trim((string)FW_Request::POST('builder_json'))
+			'json' => trim((string)FW_Request::POST('builder_json')),
+			'created' => time(),
 		);
 
 		if (
@@ -162,10 +181,26 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			$template['title'] = __('No Title', 'fw');
 		}
 
-		$this->set_db_templates(
-			$builder_type,
-			array(md5($template['json']) => $template) + $this->get_db_templates($builder_type)
+		$template_id = md5($template['json']);
+
+		update_option(
+			$this->get_wp_option_prefix($builder_type) . $template_id,
+			$template,
+			false
 		);
+
+		/**
+		 * Remove from old storage (to prevent array key merge with old value on get)
+		 */
+		{
+			$old_templates = fw_get_db_extension_data('builder', 'templates/'. $builder_type, array());
+
+			unset($old_templates[$template_id]);
+
+			fw_set_db_extension_data('builder', 'templates/'. $builder_type, $old_templates);
+
+			unset($old_templates);
+		}
 
 		wp_send_json_success();
 	}
@@ -185,17 +220,22 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 			wp_send_json_error();
 		}
 
-		$templates = $this->get_db_templates($builder_type);
-
 		$template_id = (string)FW_Request::POST('template_id');
 
-		if (!isset($templates[$template_id])) {
-			wp_send_json_error();
+		delete_option($this->get_wp_option_prefix($builder_type) . $template_id);
+
+		/**
+		 * Remove from old storage
+		 */
+		{
+			$old_templates = fw_get_db_extension_data('builder', 'templates/'. $builder_type, array());
+
+			unset($old_templates[$template_id]);
+
+			fw_set_db_extension_data('builder', 'templates/'. $builder_type, $old_templates);
+
+			unset($old_templates);
 		}
-
-		unset($templates[$template_id]);
-
-		$this->set_db_templates($builder_type, $templates);
 
 		wp_send_json_success();
 	}
@@ -203,18 +243,40 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 	/**
 	 * @param $builder_type
 	 * @return mixed|null
+	 *
+	 * Note: Templates can be very big and saving them in a single wp option can throw mysql error on update query
 	 */
 	protected function get_db_templates($builder_type)
 	{
-		return fw_get_db_extension_data('builder', 'templates/'. $builder_type, array());
-	}
+		$templates = array();
 
-	/**
-	 * @param $builder_type
-	 * @param $templates
-	 */
-	protected function set_db_templates($builder_type, $templates)
-	{
-		fw_set_db_extension_data('builder', 'templates/'. $builder_type, $templates);
+		/**
+		 * Note: 'prefix + name' max length should be 64
+		 */
+		$option_prefix = $this->get_wp_option_prefix($builder_type); // + md5 (length=32)
+
+		/**
+		 * @var WPDB $wpdb
+		 */
+		global $wpdb;
+
+		foreach ((array)$wpdb->get_results($wpdb->prepare(
+			"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
+			$wpdb->esc_like( $option_prefix ) .'%'
+		), ARRAY_A) as $row) {
+			$templates[
+				// extract (suffix) md5 used as id
+				preg_replace('/^'. preg_quote($option_prefix, '/') .'/', '', $row['option_name'])
+			] = get_option($row['option_name']);
+		}
+
+		$templates +=
+			/**
+			 * Append old templates
+			 * This can't be removed because a lot of installations already use this
+			 */
+			fw_get_db_extension_data('builder', 'templates/'. $builder_type, array());
+
+		return $templates;
 	}
 }
