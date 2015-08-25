@@ -14,6 +14,7 @@
 .fw-builder-templates-tooltip-content {
 	text-align: left;
 	padding: 5px;
+	min-height: 70px; /* space for loading */
 }
 
 .fw-builder-templates-tooltip-content .fw-builder-templates-tooltip-loading {
@@ -23,11 +24,6 @@
 	width: 100%;
 	height: 100%;
 	background-color: #333333;
-
-	-webkit-animation-name: fwFadeIn;
-	animation-name: fwFadeIn;
-	-webkit-animation-duration: 300ms;
-	animation-duration: 300ms;
 }
 .fw-builder-templates-tooltip-content .fw-builder-templates-tooltip-loading .loading-icon {
 	display: block;
