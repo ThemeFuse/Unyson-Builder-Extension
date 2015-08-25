@@ -18,6 +18,15 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 
 		$templates = $this->get_templates($data['builder_type']);
 
+		{
+			$this->fake_created_value = 0;
+
+			$templates = array_map( // make this to keep elements order after applying uasort()
+				array($this, 'array_map_add_fake_created_key'),
+				$templates
+			);
+		}
+
 		uasort($templates, array($this, 'sort_templates'));
 
 		foreach ($templates as $template_id => $template) {
@@ -94,6 +103,22 @@ class FW_Ext_Builder_Templates_Component_Full extends FW_Ext_Builder_Templates_C
 		add_action('wp_ajax_fw_builder_templates_'. $this->get_type() .'_load',   array($this, '_action_ajax_load_template'));
 		add_action('wp_ajax_fw_builder_templates_'. $this->get_type() .'_save',   array($this, '_action_ajax_save_template'));
 		add_action('wp_ajax_fw_builder_templates_'. $this->get_type() .'_delete', array($this, '_action_ajax_delete_template'));
+	}
+
+	private $fake_created_value;
+
+	private function array_map_add_fake_created_key($el)
+	{
+		if (!isset($el['created'])) {
+			/**
+			 * Before 1.1.14 templates were appended
+			 * After 1.1.14 templates are prepended
+			 * So reverse old templates to be in the same order as the new ones
+			 */
+			$el['created'] = (++$this->fake_created_value);
+		}
+
+		return $el;
 	}
 
 	private function get_templates($builder_type)
