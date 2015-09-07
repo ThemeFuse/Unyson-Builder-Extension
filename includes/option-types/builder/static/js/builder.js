@@ -1179,6 +1179,14 @@ jQuery(document).ready(function($){
 									$scrollParent = $(window);
 								}
 
+								if ($builderOption.height() <= $scrollParent.height() + 300) {
+									/**
+									 * Do not scroll if the builder can fit or is almost entirely visible
+									 * To prevent "jumping" https://github.com/ThemeFuse/Unyson/issues/815
+									 */
+									return;
+								}
+
 								$scrollParent.scrollTop(
 									$builderOption.offset().top
 									+
