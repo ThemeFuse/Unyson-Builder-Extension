@@ -198,6 +198,11 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 		$option = $this->fix_base_defaults($option);
 		$version = fw_ext('builder')->manifest->get_version();
 
+		do_action('fw_ext_builder:option_type:builder:before_enqueue', array(
+			'option' => $option,
+			'version' => $version,
+		));
+
 		{
 			wp_enqueue_style(
 				'fw-option-builder',
