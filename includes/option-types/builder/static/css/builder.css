@@ -88,6 +88,20 @@
 	.fw-option-type-builder > .builder-items-types .fw-options-tabs-wrapper .fw-options-tabs-list {
 		text-align: center;
 	}
+
+	body.rtl .fw-option-type-builder > .builder-items-types .fw-options-tabs-wrapper.fw-options-tabs-first-level .fw-options-tabs-list > ul {
+		float: none;
+	}
+
+	body.rtl .fw-option-type-builder > .builder-items-types .fullscreen-btn {
+		float: none;
+	}
+}
+
+@media (min-width: 782px) {
+	body.rtl .fw-option-type-builder > .builder-items-types .fw-options-tabs-wrapper.fw-options-tabs-first-level .fw-options-tabs-list > ul {
+		float: right;
+	}
 }
 
 /* end: tabs */
@@ -111,6 +125,10 @@
 
 	-webkit-transition: border-color .1s ease-in;
 	transition: border-color .1s ease-in;
+}
+
+body.rtl .fw-option-type-builder .builder-item-type {
+	float: right;
 }
 
 .fw-option-type-builder .builder-item-type:hover {

@@ -2,6 +2,10 @@
 	float: left;
 }
 
+body.rtl .fw-option-type-builder .history-container {
+	float: right;
+}
+
 .fw-option-type-builder .history-container a {
 	margin-right: 10px;
 	text-decoration: none;

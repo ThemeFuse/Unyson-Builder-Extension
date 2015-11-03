@@ -1,3 +1,7 @@
+body.rtl .fw-option-type-builder .template-container {
+	float: left;
+}
+
 .fw-option-type-builder .template-container .template-btn {
 	text-decoration: none;
 	background-image: url(img/template.png);

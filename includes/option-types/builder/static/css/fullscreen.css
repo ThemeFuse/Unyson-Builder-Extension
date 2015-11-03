@@ -37,6 +37,10 @@ body.admin-bar .fw-option-type-builder-fullscreen-backdrop {
 	margin: -5px 10px 10px 0;
 }
 
+body.rtl .fw-option-type-builder > .builder-items-types .fullscreen-btn {
+	float: left;
+}
+
 .fw-option-type-builder > .builder-items-types .fullscreen-btn div {
 	float: left;
 }
