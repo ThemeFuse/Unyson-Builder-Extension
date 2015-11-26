@@ -297,6 +297,22 @@ body.rtl .fw-option-type-builder .builder-item-type {
 	padding: 10px;
 }
 
+.fw-option-type-builder .builder-items .builder-item .controls > * {
+	vertical-align: middle;
+}
+
+.fw-option-type-builder .builder-items .builder-item .controls .unycon,
+.fw-option-type-builder .builder-items .builder-item .controls .fa {
+	margin-left: 4px;
+	margin-right: 4px;
+	font-size: 14px;
+}
+
+.fw-option-type-builder .builder-items .builder-item .controls .dashicons {
+	height: 16px;
+	line-height: 14px;
+}
+
 .fw-option-type-builder .builder-items .builder-item:hover {
 	cursor: pointer;
 }
