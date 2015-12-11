@@ -3,5 +3,5 @@
 $manifest = array();
 
 $manifest['name'] = __( 'Builder', 'fw' );
-$manifest['version'] = '1.1.16';
+$manifest['version'] = '1.1.17';
 $manifest['github_update'] = 'ThemeFuse/Unyson-Builder-Extension';
