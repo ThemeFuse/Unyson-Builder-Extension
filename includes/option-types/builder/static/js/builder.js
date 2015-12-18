@@ -118,7 +118,78 @@ jQuery(document).ready(function($){
 		 * - $input
 		 */
 		initialize: function(attributes, options) {
-			var builder = this;
+			var builder = this,
+				drake = dragula([ /* fixme: maybe cleanup on interval by checking if exists in DOM? */ ], {
+					mirrorDelay: 200,
+					accepts: function (el, target, source, sibling) {
+						var movedItem, targetItem;
+
+						if (
+							(movedItem = el.attributes.id.value)
+							&&
+							(movedItem = movedItem.split('-').pop())
+							&&
+							(movedItem = builder.findItemRecursive({cid: movedItem}))
+						) {
+							// ok
+						} else {
+							return false;
+						}
+
+						if (
+							(targetItem = $(target).closest('.builder-item').get(0))
+							&&
+							(targetItem = targetItem.attributes.id.value)
+							&&
+							(targetItem = targetItem.split('-').pop())
+							&&
+							(targetItem = builder.findItemRecursive({cid: targetItem}))
+						) {
+							// ok
+						} else {
+							if ($(target).closest('.builder-root-items').length) {
+								if (movedItem.allowDestinationType(null)) {
+									builder.rootItems.view.$el
+										.removeClass('fw-builder-item-deny-incoming-type')
+										.addClass('fw-builder-item-allow-incoming-type');
+									return true;
+								} else {
+									builder.rootItems.view.$el
+										.removeClass('fw-builder-item-allow-incoming-type')
+										.addClass('fw-builder-item-deny-incoming-type');
+									return false;
+								}
+							} else {
+								return false;
+							}
+						}
+
+						if (movedItem == targetItem) {
+							return false; // prevent errors in dragula.js
+						}
+
+						if (
+							targetItem.allowIncomingType(movedItem.get('type'))
+							&&
+							movedItem.allowDestinationType(targetItem.get('type'))
+						) {
+							targetItem.view.$el
+								.removeClass('fw-builder-item-deny-incoming-type')
+								.addClass('fw-builder-item-allow-incoming-type');
+							return true;
+						} else {
+							targetItem.view.$el
+								.removeClass('fw-builder-item-allow-incoming-type')
+								.addClass('fw-builder-item-deny-incoming-type');
+							return false;
+						}
+					}
+				}).on('dragend', function(){
+					builder.rootItems.view.$el
+						.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type')
+						.find('.builder-item')
+						.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
+				});
 
 			/**
 			 * todo: To be able to extend and customize for e.g. only Item class. To not rewrite entire .initialize()
@@ -316,6 +387,8 @@ jQuery(document).ready(function($){
 						defaultInitialize: function() {
 							this.listenTo(this.collection, 'add change remove reset', this.render);
 
+							drake.containers.push(this.$el.get(0));
+
 							this.render();
 						},
 						render: function() {
@@ -323,37 +396,17 @@ jQuery(document).ready(function($){
 							 * First .detach() elements
 							 * to prevent them to be removed (reset) on .html('...') replace
 							 */
-							{
-								this.collection.each(function(item) {
-									item.view.$el.detach();
-								});
-							}
-
-							if (this.$el.hasClass('ui-sortable')) {
-								this.$el.sortable('destroy');
-							}
+							this.collection.each(function(item) {
+								item.view.$el.detach();
+							});
 
 							this.$el.html(this.template({
 								items: this.collection
 							}));
 
-							var that = this;
-
-							this.collection.each(function(item) {
-								that.$el.append(item.view.$el);
-							});
-
-							/**
-							 * init sortable with delay, after element added to DOM
-							 * fixes bug: sortable sometimes not initialized if element is not in DOM
-							 */
-							{
-								clearTimeout(this.initSortableTimeout);
-
-								this.initSortableTimeout = setTimeout(function(){
-									that.initSortable();
-								}, 12);
-							}
+							this.collection.each(_.bind(function(item) {
+								this.$el.append(item.view.$el);
+							}, this));
 
 							return this;
 						},
@@ -386,83 +439,6 @@ jQuery(document).ready(function($){
 								placeholder: 'fw-builder-placeholder',
 								tolerance: 'pointer',
 								start: function(event, ui) {
-									{
-										ui.placeholder
-											.addClass(ui.item.attr('class'))
-											.css('padding', ui.item.css('padding'))
-											.css('height', ui.item.css('height'));
-
-										if (ui.item.hasClass('builder-item-type')) {
-											ui.placeholder
-												.removeClass('builder-item-type')
-												.css('width', '100%');
-										}
-									}
-
-									// check if it is an exiting item (and create variables)
-									{
-										// extract cid from view id
-										var movedItemCid = ui.item.attr('id');
-
-										if (!movedItemCid) {
-											// not an existing item, it's a thumbnail from draggable
-											return;
-										}
-
-										movedItemCid = movedItemCid.split('-').pop();
-
-										if (!movedItemCid) {
-											// not an existing item, it's a thumbnail from draggable
-											return;
-										}
-
-										var movedItem = builder.findItemRecursive({cid: movedItemCid});
-
-										if (!movedItem) {
-											console.warn('Item not found (cid: "'+ movedItemCid +'")');
-											return;
-										}
-
-										// fixme: this is hardcode. need to think a better/general solution
-										if (movedItem.attributes.type != 'column'
-											&& movedItem.attributes.type != 'section') {
-											ui.item.parents('.builder-root-items').addClass('fw-move-simple-item');
-										}
-									}
-
-									var movedItemType = movedItem.get('type');
-
-									/**
-									 * add "allowed" classes to items vies where allowIncomingType(movedItemType) returned true
-									 * else add "denied" class
-									 */
-									{
-										{
-											if (movedItem.allowDestinationType(null)) {
-												builder.rootItems.view.$el.addClass('fw-builder-item-allow-incoming-type');
-											} else {
-												builder.rootItems.view.$el.addClass('fw-builder-item-deny-incoming-type');
-											}
-										}
-
-										forEachItemRecursive(builder.rootItems, function(item){
-											if (item.cid === movedItemCid) {
-												// this is current moved item
-												return;
-											}
-
-											if (
-												item.allowIncomingType(movedItemType)
-												&&
-												movedItem.allowDestinationType(item.get('type'))
-											) {
-												item.view.$el.addClass('fw-builder-item-allow-incoming-type');
-											} else {
-												item.view.$el.addClass('fw-builder-item-deny-incoming-type');
-											}
-										});
-									}
-
 									// Freeze the container height
 									{
 										var container = builder.$input.closest('.fw-option-type-builder')
