@@ -121,7 +121,7 @@ jQuery(document).ready(function($){
 			var builder = this,
 				drake = dragula([ /* fixme: maybe cleanup on interval by checking if exists in DOM? */ ], {
 					mirrorDelay: 200,
-					accepts: function (el, target, source, sibling) {
+					accepts: function (el, target, source, sibling) { // fixme: this is called too often (on mouse move)
 						var movedItem, targetItem;
 
 						if (
@@ -184,11 +184,13 @@ jQuery(document).ready(function($){
 							return false;
 						}
 					}
-				}).on('dragend', function(){
+				}).on('dragend', function(el){
 					builder.rootItems.view.$el
 						.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type')
 						.find('.builder-item')
 						.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
+				}).on('drop', function(el, target, source, sibling){
+					console.log('drop');
 				});
 
 			/**
@@ -450,6 +452,7 @@ jQuery(document).ready(function($){
 								stop: function(event, ui) {
 									itemsRemoveAllowedDeniedClasses();
 
+									// fixme: hardcode
 									ui.item.parents('.builder-root-items').removeClass('fw-move-simple-item');
 
 									// unfreeze the container height
