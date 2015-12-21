@@ -118,118 +118,7 @@ jQuery(document).ready(function($){
 		 * - $input
 		 */
 		initialize: function(attributes, options) {
-			var builder = this,
-				drake = dragula([ /* fixme: maybe cleanup on interval by checking if exists in DOM? */ ], {
-					mirrorDelay: 200,
-					isContainer: function(el){
-						return el.classList.contains('builder-items');
-					},
-					accepts: function (el, target, source, sibling) { // fixme: this is called too often (on mouse move)
-						var movedItem, targetItem;
-
-						if (
-							(movedItem = el.attributes.id.value)
-							&&
-							(movedItem = movedItem.split('-').pop())
-							&&
-							(movedItem = builder.findItemRecursive({cid: movedItem}))
-						) {
-							// ok
-						} else {
-							return false;
-						}
-
-						if (
-							(targetItem = $(target).closest('.builder-item').get(0))
-							&&
-							(targetItem = targetItem.attributes.id.value)
-							&&
-							(targetItem = targetItem.split('-').pop())
-							&&
-							(targetItem = builder.findItemRecursive({cid: targetItem}))
-						) {
-							// ok
-						} else {
-							if ($(target).closest('.builder-root-items').length) {
-								if (movedItem.allowDestinationType(null)) {
-									builder.rootItems.view.$el
-										.removeClass('fw-builder-item-deny-incoming-type')
-										.addClass('fw-builder-item-allow-incoming-type');
-									return true;
-								} else {
-									builder.rootItems.view.$el
-										.removeClass('fw-builder-item-allow-incoming-type')
-										.addClass('fw-builder-item-deny-incoming-type');
-									return false;
-								}
-							} else {
-								return false;
-							}
-						}
-
-						if (movedItem == targetItem) {
-							return false; // prevent errors in dragula.js
-						}
-
-						if (
-							targetItem.allowIncomingType(movedItem.get('type'))
-							&&
-							movedItem.allowDestinationType(targetItem.get('type'))
-						) {
-							targetItem.view.$el
-								.removeClass('fw-builder-item-deny-incoming-type')
-								.addClass('fw-builder-item-allow-incoming-type');
-							return true;
-						} else {
-							targetItem.view.$el
-								.removeClass('fw-builder-item-allow-incoming-type')
-								.addClass('fw-builder-item-deny-incoming-type');
-							return false;
-						}
-					}
-				}).on('dragend', function(el){
-					builder.rootItems.view.$el
-						.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type')
-						.find('.builder-item')
-						.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
-				}).on('drop', function(el, target, source, sibling){
-					var movedItem, targetItem;
-
-					if (
-						(movedItem = el.attributes.id.value)
-						&&
-						(movedItem = movedItem.split('-').pop())
-						&&
-						(movedItem = builder.findItemRecursive({cid: movedItem}))
-					) {
-						// ok
-					} else {
-						return false;
-					}
-
-					if (
-						(targetItem = $(target).closest('.builder-item').get(0))
-						&&
-						(targetItem = targetItem.attributes.id.value)
-						&&
-						(targetItem = targetItem.split('-').pop())
-						&&
-						(targetItem = builder.findItemRecursive({cid: targetItem}))
-					) {
-						// ok
-					} else {
-						return false;
-					}
-
-					var at = $(el).index();
-
-					// prevent 'remove', that will remove all events from the element
-					movedItem.view.$el.detach();
-
-					movedItem.collection.remove(movedItem);
-
-					targetItem.get('_items').add(movedItem, {at: at});
-				});
+			var builder = this;
 
 			/**
 			 * todo: To be able to extend and customize for e.g. only Item class. To not rewrite entire .initialize()
@@ -804,6 +693,136 @@ jQuery(document).ready(function($){
 
 			this.rootItems = new this.classes.Items;
 
+			var itemTypesContainers = options.$itemTypes.parent().toArray();
+			var drake = dragula([
+				this.rootItems.view.$el.get(0)
+			].concat(itemTypesContainers), {
+				mirrorDelay: 200,
+				isContainer: function(el){
+					return el.classList.contains('builder-items') || _.indexOf(drake.containers, el) != -1;
+				},
+				accepts: function (el, target, source, sibling) { // fixme: this is called too often (on mouse move)
+					if (_.indexOf(itemTypesContainers, target) != -1) {
+						return false; // can't move items in thumbnails
+					}
+
+					var movedItem, targetItem;
+
+					if (
+						el.attributes.id
+						&&
+						(movedItem = el.attributes.id.value)
+						&&
+						(movedItem = movedItem.split('-').pop())
+						&&
+						(movedItem = builder.findItemRecursive({cid: movedItem}))
+					) {
+						// ok
+					} else {
+						return false;
+					}
+
+					if (
+						(targetItem = $(target).closest('.builder-item').get(0))
+						&&
+						targetItem.attributes.id
+						&&
+						(targetItem = targetItem.attributes.id.value)
+						&&
+						(targetItem = targetItem.split('-').pop())
+						&&
+						(targetItem = builder.findItemRecursive({cid: targetItem}))
+					) {
+						// ok
+					} else {
+						if ($(target).closest('.builder-root-items').length) {
+							if (movedItem.allowDestinationType(null)) {
+								builder.rootItems.view.$el
+									.removeClass('fw-builder-item-deny-incoming-type')
+									.addClass('fw-builder-item-allow-incoming-type');
+								return true;
+							} else {
+								builder.rootItems.view.$el
+									.removeClass('fw-builder-item-allow-incoming-type')
+									.addClass('fw-builder-item-deny-incoming-type');
+								return false;
+							}
+						} else {
+							return false;
+						}
+					}
+
+					if (movedItem == targetItem) {
+						return false; // prevent errors in dragula.js
+					}
+
+					if (
+						targetItem.allowIncomingType(movedItem.get('type'))
+						&&
+						movedItem.allowDestinationType(targetItem.get('type'))
+					) {
+						targetItem.view.$el
+							.removeClass('fw-builder-item-deny-incoming-type')
+							.addClass('fw-builder-item-allow-incoming-type');
+						return true;
+					} else {
+						targetItem.view.$el
+							.removeClass('fw-builder-item-allow-incoming-type')
+							.addClass('fw-builder-item-deny-incoming-type');
+						return false;
+					}
+				},
+				copy: function (el, source) {
+					return _.indexOf(itemTypesContainers, source) != -1;
+				}
+			}).on('dragend', function(el){
+				builder.rootItems.view.$el
+					.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type')
+					.find('.builder-item')
+					.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
+			}).on('drop', function(el, target, source, sibling){
+				var movedItem, targetItem;
+
+				if (
+					el.attributes.id
+					&&
+					(movedItem = el.attributes.id.value)
+					&&
+					(movedItem = movedItem.split('-').pop())
+					&&
+					(movedItem = builder.findItemRecursive({cid: movedItem}))
+				) {
+					// ok
+				} else {
+					return false;
+				}
+
+				if (
+					(targetItem = $(target).closest('.builder-item').get(0))
+					&&
+					targetItem.attributes.id
+					&&
+					(targetItem = targetItem.attributes.id.value)
+					&&
+					(targetItem = targetItem.split('-').pop())
+					&&
+					(targetItem = builder.findItemRecursive({cid: targetItem}))
+				) {
+					// ok
+				} else {
+					return false;
+				}
+
+				var at = $(el).index();
+
+				// prevent 'remove', that will remove all events from the element
+				movedItem.view.$el.detach();
+
+				movedItem.collection.remove(movedItem);
+
+				targetItem.get('_items').add(movedItem, {at: at});
+			});
+
 			// prepare this.$input
 			{
 				if (typeof options.$input == 'undefined') {
@@ -1078,7 +1097,8 @@ jQuery(document).ready(function($){
 						type: data.type
 					},
 					{
-						$input: data.$input
+						$input: data.$input,
+						$itemTypes: $this.find('> .builder-items-types .builder-item-type')
 					}
 				);
 
@@ -1089,8 +1109,9 @@ jQuery(document).ready(function($){
 
 			/**
 			 * Init draggable thumbnails
+			 * fixme
 			 */
-			$this.find('> .builder-items-types .builder-item-type').draggable({
+			$('<div>').draggable({fake: true} || {
 				connectToSortable: '#'+ id +' .builder-root-items .builder-items',
 				helper: 'clone',
 				distance: 10,
