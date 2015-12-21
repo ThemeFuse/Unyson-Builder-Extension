@@ -1004,27 +1004,26 @@ jQuery(document).ready(function($){
 
 		$options.closest('.fw-backend-option').addClass('fw-backend-option-type-builder');
 
-		$options.find('> .builder-items-types').append('<div class="fw-builder-header-tools fw-clearfix fw-hidden"></div>');
-
 		fwEvents.trigger('fw:option-type:builder:init', {
 			$elements: $options
 		});
 
 		$options.each(function(){
-			var $this = $(this);
-			var id    = $this.attr('id');
-			var type  = $this.attr('data-builder-option-type');
+			var $this = $(this),
+				id    = $this.attr('id'),
+				type  = $this.attr('data-builder-option-type');
 
 			/**
 			 * Create instance of Builder
 			 */
 			{
 				var data = {
-					type:       type,
-					$option:    $this,
-					$input:     $this.find('> input:first'),
-					$types:     $this.find('.builder-items-types:first'),
-					$rootItems: $this.find('.builder-root-items:first')
+					type:         type,
+					$option:      $this,
+					$input:       $this.find('> input:first'),
+					$types:       $this.find('.builder-items-types:first'),
+					$rootItems:   $this.find('.builder-root-items:first'),
+					$headerTools: $('<div class="fw-builder-header-tools fw-clearfix fw-hidden"></div>')
 				};
 
 				var eventData = $.extend({}, data, {
@@ -1035,6 +1034,8 @@ jQuery(document).ready(function($){
 				});
 
 				fwEvents.trigger('fw-builder:'+ type +':before-create', eventData);
+
+				$this.find('> .builder-items-types').append(data.$headerTools);
 
 				var builder = new eventData.Builder(
 					{
@@ -1289,9 +1290,9 @@ jQuery(document).ready(function($){
 				}
 			});
 
-			$this.trigger('fw:option-type:builder:init', {
+			$this.trigger('fw:option-type:builder:init', $.extend({}, eventData, {
 				builder: builder
-			});
+			}));
 		});
 
 		// add special class for builders that has header tools div

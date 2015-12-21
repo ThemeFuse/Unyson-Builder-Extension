@@ -10,7 +10,8 @@
 						'<div class="fw-builder-templates-tooltip-loading">'+
 							'<div class="loading-icon fw-animation-rotate-reverse-180 unycon unycon-unyson-o"></div>'+
 						'</div>'
-					)
+					),
+					headerTools: data.$headerTools
 				},
 				builder: data.builder,
 				isBusy: false,
@@ -81,7 +82,7 @@
 				}
 			};
 
-			inst.$el.builder.find('> .builder-items-types > .fw-builder-header-tools')
+			inst.$el.headerTools
 				.removeClass('fw-hidden')
 				.append(
 					'<div class="template-container fw-pull-right">' +
@@ -89,8 +90,8 @@
 					'</div>'
 				);
 
-			inst.tooltipApi = inst.$el.builder
-				.find('> .builder-items-types > .fw-builder-header-tools .template-container .template-btn')
+			inst.tooltipApi = inst.$el.headerTools
+				.find('.template-container .template-btn')
 				.qtip({
 					show: 'click',
 					hide: 'unfocus',
