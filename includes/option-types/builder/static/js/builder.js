@@ -121,6 +121,9 @@ jQuery(document).ready(function($){
 			var builder = this,
 				drake = dragula([ /* fixme: maybe cleanup on interval by checking if exists in DOM? */ ], {
 					mirrorDelay: 200,
+					isContainer: function(el){
+						return el.classList.contains('builder-items');
+					},
 					accepts: function (el, target, source, sibling) { // fixme: this is called too often (on mouse move)
 						var movedItem, targetItem;
 
@@ -190,7 +193,42 @@ jQuery(document).ready(function($){
 						.find('.builder-item')
 						.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
 				}).on('drop', function(el, target, source, sibling){
-					console.log('drop');
+					var movedItem, targetItem;
+
+					if (
+						(movedItem = el.attributes.id.value)
+						&&
+						(movedItem = movedItem.split('-').pop())
+						&&
+						(movedItem = builder.findItemRecursive({cid: movedItem}))
+					) {
+						// ok
+					} else {
+						return false;
+					}
+
+					if (
+						(targetItem = $(target).closest('.builder-item').get(0))
+						&&
+						(targetItem = targetItem.attributes.id.value)
+						&&
+						(targetItem = targetItem.split('-').pop())
+						&&
+						(targetItem = builder.findItemRecursive({cid: targetItem}))
+					) {
+						// ok
+					} else {
+						return false;
+					}
+
+					var at = $(el).index();
+
+					// prevent 'remove', that will remove all events from the element
+					movedItem.view.$el.detach();
+
+					movedItem.collection.remove(movedItem);
+
+					targetItem.get('_items').add(movedItem, {at: at});
 				});
 
 			/**
@@ -388,8 +426,6 @@ jQuery(document).ready(function($){
 						 */
 						defaultInitialize: function() {
 							this.listenTo(this.collection, 'add change remove reset', this.render);
-
-							drake.containers.push(this.$el.get(0));
 
 							this.render();
 						},
@@ -1322,7 +1358,7 @@ jQuery(document).ready(function($){
 						'<button'+
 							' type="button"'+
 							' class="button button-primary fw-pull-right fw-builder-header-post-save-button"'+
-							' onclick="return false;">' +
+							' onclick="return false;">'+
 						'</button>')
 						.text($savePostButton.attr('value'))
 						.on('click', function(){
