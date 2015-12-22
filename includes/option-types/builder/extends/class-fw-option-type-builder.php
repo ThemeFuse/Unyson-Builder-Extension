@@ -205,16 +205,15 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 
 		{
 			wp_enqueue_style(
-				'fw-option-builder-dragula-delay',
-				'http://bevacqua.github.io/dragula/dist/dragula.css',
+				'dragula',
+				$this->get_static_uri('/libs/dragula/dragula.css'),
 				array(),
 				$version
 			);
 
 			wp_enqueue_script(
-				'fw-option-builder-dragula-delay',
-				//'https://rawgit.com/juanj/dragula/master/dist/dragula.js',
-				'https://rawgit.com/bevacqua/dragula/v3.5.4/dist/dragula.js',
+				'dragula',
+				$this->get_static_uri('/libs/dragula/dragula.js'),
 				array(),
 				$version,
 				true
@@ -226,8 +225,8 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 				'fw-option-builder',
 				$this->get_static_uri('/css/builder.css'),
 				version_compare(fw()->manifest->get_version(), '2.4.0', '<')
-					? array('fw', 'fw-option-builder-dragula-delay')
-					: array('fw', 'fw-option-builder-dragula-delay', 'fw-unycon'),
+					? array('fw', 'dragula')
+					: array('fw', 'dragula', 'fw-unycon'),
 				$version
 			);
 
@@ -241,7 +240,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 					'fw-events',
 					'backbone',
 					'backbone-relational',
-					'fw-option-builder-dragula-delay'
+					'dragula'
 				),
 				$version,
 				true
