@@ -477,10 +477,69 @@ jQuery(document).ready(function($){
 
 			this.rootItems = new this.classes.Items;
 
-			var itemTypesContainers = options.$itemTypes.parent().toArray();
-			var drake = dragula([
-				this.rootItems.view.$el.get(0)
-			].concat(itemTypesContainers), {
+			var dragulaHelpers = {
+				/**
+				 * object - item instance
+				 * string - item type
+				 */
+				detectMoved: function(el) {
+					var temp;
+
+					if (!el) {
+						return false;
+					} else if (
+						el.attributes.id
+						&&
+						(temp = el.attributes.id.value)
+						&&
+						(temp = temp.split('-').pop())
+						&&
+						(temp = builder.findItemRecursive({cid: temp}))
+					) { // item instance
+						return temp;
+					} else if (
+						el.classList.contains('builder-item-type')
+						&&
+						el.attributes['data-builder-item-type']
+						&&
+						(temp = el.attributes['data-builder-item-type'].value)
+					) { // item type (thumbnail)
+						return temp;
+					}
+
+					return false; // can't detect
+				},
+				/**
+				 * object - item instance
+				 * true - root items
+				 */
+				detectContainer: function(el) {
+					var temp;
+
+					if (!el) {
+						return false;
+					} else if (
+						(temp = $(el).closest('.builder-item').get(0))
+						&&
+						temp.attributes.id
+						&&
+						(temp = temp.attributes.id.value)
+						&&
+						(temp = temp.split('-').pop())
+						&&
+						(temp = builder.findItemRecursive({cid: temp}))
+					) { // item instance
+						return temp;
+					} else if (
+						el.parentElement.classList.contains('builder-root-items')
+					) { // root items
+						return true;
+					}
+
+					return false; // can't detect
+				}
+			}, itemTypesContainers = options.$itemTypes.parent().toArray();
+			var drake = dragula([this.rootItems.view.$el.get(0)].concat(itemTypesContainers), {
 				mirrorDelay: 200,
 				isContainer: function(el){
 					return el.classList.contains('builder-items') || _.indexOf(drake.containers, el) != -1;
@@ -490,86 +549,34 @@ jQuery(document).ready(function($){
 						return false; // can't move items in thumbnails
 					}
 
-					var temp = null; // often we need a temporary variable
+					var item = {
+						moved: dragulaHelpers.detectMoved(el),
+						container: dragulaHelpers.detectContainer(target)
+					};
 
-					{
-						var item = {
-							/**
-							 * object - item instance
-							 * string - item type
-							 */
-							moved: false,
-							/**
-							 * object - item instance
-							 * empty - root items
-							 */
-							target: false
-						};
-
-						if (
-							el.attributes.id
-							&&
-							(temp = el.attributes.id.value)
-							&&
-							(temp = temp.split('-').pop())
-							&&
-							(item.moved = builder.findItemRecursive({cid: temp}))
-						) {
-							// item
-						} else if (
-							el.classList.contains('builder-item-type')
-							&&
-							el.attributes['data-builder-item-type']
-							&&
-							(item.moved = el.attributes['data-builder-item-type'].value)
-						) {
-							// item type (thumbnail)
-						} else {
-							return false; // can't detect
-						}
-
-						if (
-							(temp = $(target).closest('.builder-item').get(0))
-							&&
-							temp.attributes.id
-							&&
-							(temp = temp.attributes.id.value)
-							&&
-							(temp = temp.split('-').pop())
-							&&
-							(item.target = builder.findItemRecursive({cid: temp}))
-						) {
-							// item
-						} else if (target.parentElement.classList.contains('builder-root-items')) {
-							// root items
-						} else {
-							return false; // can't detect
-						}
-
-						if (item.moved === item.target) {
-							return false; // prevent errors in dragula.js
-						}
+					if (!item.moved || !item.container || item.moved === item.container) {
+						return false;
 					}
 
 					if (typeof item.moved == 'object') {
-						if (typeof item.target == 'object') {
-							item.target.view.$el
+						if (typeof item.container == 'object') {
+							item.container.view.$el
 								.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
 
 							if (
-								item.target.allowIncomingType(item.moved.get('type'))
+								item.container.allowIncomingType(item.moved.get('type'))
 								&&
-								item.moved.allowDestinationType(item.target.get('type'))
+								item.moved.allowDestinationType(item.container.get('type'))
 							) {
-								item.target.view.$el
+								item.container.view.$el
 									.addClass('fw-builder-item-allow-incoming-type');
 								return true;
 							} else {
-								item.target.view.$el
+								item.container.view.$el
 									.addClass('fw-builder-item-deny-incoming-type');
 								return false;
 							}
-						} else {
+						} else if (item.container === true) {
 							builder.rootItems.view.$el
 								.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
 
@@ -591,24 +598,24 @@ jQuery(document).ready(function($){
 							return false;
 						}
 
-						if (typeof item.target == 'object') {
-							item.target.view.$el
+						if (typeof item.container == 'object') {
+							item.container.view.$el
 								.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
 
 							if (
-								item.target.allowIncomingType(item.moved)
+								item.container.allowIncomingType(item.moved)
 								&&
-								MovedItemTypeClass.prototype.allowDestinationType(item.target.get('type'))
+								MovedItemTypeClass.prototype.allowDestinationType(item.container.get('type'))
 							) {
-								item.target.view.$el
+								item.container.view.$el
 									.addClass('fw-builder-item-allow-incoming-type');
 								return true;
 							} else {
-								item.target.view.$el
+								item.container.view.$el
 									.addClass('fw-builder-item-deny-incoming-type');
 								return false;
 							}
-						} else {
+						} else if (item.container === true) {
 							builder.rootItems.view.$el
 								.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
 
@@ -628,6 +635,58 @@ jQuery(document).ready(function($){
 				},
 				copy: function (el, source) {
 					return _.indexOf(itemTypesContainers, source) != -1;
+				},
+				invalid: function (el) {
+					return el.tagName === 'A';
+				}
+			}).on('shadow', function (el, container, source) {
+				if (
+					_.indexOf(itemTypesContainers, source) == -1
+					||
+					el.attributes['data-thumbnail-html']
+				) {
+					return;
+				}
+
+				var item = {
+					moved: dragulaHelpers.detectMoved(el)
+				};
+
+				if (typeof item.moved != 'string') {
+					return;
+				}
+
+				var MovedItemTypeClass = builder.getRegisteredItemClassByType(item.moved);
+
+				if (!MovedItemTypeClass) {
+					console.warn('Unknown item type');
+					return false;
+				}
+
+				var thumbHtml = el.outerHTML;
+
+				item.moved = new MovedItemTypeClass({}, {$thumb: $(thumbHtml)});
+
+				/**
+				 * Replace shadow attributes and inner elements with item
+				 * without replacing the actual shadow because its reference is used in dragula
+				 */
+				{
+					while (el.attributes.length) el.removeAttributeNode(el.attributes[0]);
+
+					var itemEl = item.moved.view.$el.get(0),
+						$el = $(el),
+						i;
+
+					$el.attr('data-thumbnail-html', thumbHtml).html('');
+
+					for (i = 0; i < itemEl.attributes.length; i++) {
+						$el.attr(itemEl.attributes[i].name, itemEl.attributes[i].value);
+					}
+
+					$el.append(item.moved.view.$el.find('> *'));
+
+					$el.addClass('gu-transit'); // dragula class
 				}
 			}).on('dragend', function(el){
 				builder.rootItems.view.$el
@@ -635,75 +694,27 @@ jQuery(document).ready(function($){
 					.find('.builder-item')
 					.removeClass('fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type');
 			}).on('drop', function(el, target, source, sibling){
-				var temp = null; // often we need a temporary variable
+				var at = $(el).index(); // remember the index before the element is replaced
 
-				{
-					var item = {
-						/**
-						 * object - item instance
-						 * string - item type
-						 */
-						moved: false,
-						/**
-						 * object - item instance
-						 * empty - root items
-						 */
-						target: false
-					};
-
-					if (
-						el.attributes.id
-						&&
-						(temp = el.attributes.id.value)
-						&&
-						(temp = temp.split('-').pop())
-						&&
-						(item.moved = builder.findItemRecursive({cid: temp}))
-					) {
-						// item
-					} else if (
-						el.classList.contains('builder-item-type')
-						&&
-						el.attributes['data-builder-item-type']
-						&&
-						(item.moved = el.attributes['data-builder-item-type'].value)
-					) {
-						// item type (thumbnail)
-					} else {
-						return false; // can't detect
-					}
-
-					if (
-						(temp = $(target).closest('.builder-item').get(0))
-						&&
-						temp.attributes.id
-						&&
-						(temp = temp.attributes.id.value)
-						&&
-						(temp = temp.split('-').pop())
-						&&
-						(item.target = builder.findItemRecursive({cid: temp}))
-					) {
-						// item
-					} else if (target.parentElement.classList.contains('builder-root-items')) {
-						// root items
-					} else {
-						return false; // can't detect
-					}
-
-					if (item.moved === item.target) {
-						return false; // prevent errors in dragula.js
-					}
+				if (el.attributes['data-thumbnail-html']) {
+					el = $($(el).attr('data-thumbnail-html')).get(0);
 				}
 
-				var at = $(el).index();
+				var item = {
+					moved: dragulaHelpers.detectMoved(el),
+					container: dragulaHelpers.detectContainer(target)
+				};
+
+				if (!item.moved || !item.container || item.moved === item.container) {
+					return false;
+				}
 
 				if (typeof item.moved == 'object') {
 					item.moved.view.$el.detach(); // prevent events remove
 					item.moved.collection.remove(item.moved);
 
-					if (typeof item.target == 'object') {
-						item.target.get('_items').add(item.moved, {at: at});
+					if (typeof item.container == 'object') {
+						item.container.get('_items').add(item.moved, {at: at});
 					} else {
 						builder.rootItems.add(item.moved, {at: at});
 					}
@@ -715,14 +726,16 @@ jQuery(document).ready(function($){
 						return false;
 					}
 
-					if (typeof item.target == 'object') {
-						item.target.get('_items').add(
-							new MovedItemTypeClass({}, {$thumb: $(el)}),
+					var $thumb = $(el);
+
+					if (typeof item.container == 'object') {
+						item.container.get('_items').add(
+							new MovedItemTypeClass({}, {$thumb: $thumb}),
 							{at: at}
 						);
 					} else {
 						builder.rootItems.add(
-							new MovedItemTypeClass({}, {$thumb: $(el)}),
+							new MovedItemTypeClass({}, {$thumb: $thumb}),
 							{at: at}
 						);
 					}
@@ -758,23 +771,23 @@ jQuery(document).ready(function($){
 
 				// listen to items changes and update input
 				(function(){
-					function saveBuilderValueToInput() {
-						builder.$input.val(JSON.stringify(builder.rootItems));
-						builder.$input.trigger('fw-builder:input:change');
-						builder.$input.trigger('change');
-					}
-
 					/**
 					 * use timeout to not load browser/cpu when there are many changes at once (for e.g. on .reset())
 					 */
-					var saveTimeout = 0;
+					var saveTimeout = 0,
+						saveBuilderValueToInput = function() {
+							clearTimeout(saveTimeout);
+							saveTimeout = 0; // prevent redundant save of form submit
+
+							builder.$input
+								.val(JSON.stringify(builder.rootItems))
+								.trigger('fw-builder:input:change')
+								.trigger('change');
+						};
 
 					builder.listenTo(builder.rootItems, 'builder:change', function(){
 						clearTimeout(saveTimeout);
-
 						saveTimeout = setTimeout(function(){
-							saveTimeout = 0;
-
 							saveBuilderValueToInput();
 						}, 100);
 					});
@@ -784,9 +797,6 @@ jQuery(document).ready(function($){
 					 */
 					builder.$input.closest('form').on('submit', function(){
 						if (saveTimeout) {
-							clearTimeout(saveTimeout);
-							saveTimeout = 0;
-
 							saveBuilderValueToInput();
 						}
 					});
@@ -1027,9 +1037,7 @@ jQuery(document).ready(function($){
 					if (ItemTypeClass) {
 						if (ItemTypeClass.prototype.allowDestinationType(null)) {
 							builder.rootItems.add(
-								new ItemTypeClass({}, {
-									$thumb: $itemType
-								})
+								new ItemTypeClass({}, {$thumb: $itemType})
 							);
 
 							// animation
