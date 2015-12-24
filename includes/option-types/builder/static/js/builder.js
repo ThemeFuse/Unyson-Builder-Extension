@@ -540,7 +540,7 @@ jQuery(document).ready(function($){
 				}
 			}, itemTypesContainers = options.$itemTypes.parent().toArray();
 			var drake = dragula([this.rootItems.view.$el.get(0)].concat(itemTypesContainers), {
-				direction: 'horizontal',
+				//direction: 'horizontal', // https://github.com/bevacqua/dragula/issues/165#issuecomment-167121099
 				isContainer: function(el){
 					return el.classList.contains('builder-items') || _.indexOf(drake.containers, el) != -1;
 				},
