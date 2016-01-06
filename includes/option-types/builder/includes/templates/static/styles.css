@@ -6,7 +6,7 @@ body.rtl .fw-option-type-builder .template-container {
 	text-decoration: none;
 	background-image: url(img/template.png);
 	background-repeat: no-repeat;
-	padding-left: 14px;
+	padding: 14px;
 	background-position: left center;
 	cursor: pointer;
 }
