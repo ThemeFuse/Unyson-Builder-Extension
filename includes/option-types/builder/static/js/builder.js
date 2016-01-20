@@ -801,19 +801,15 @@ jQuery(document).ready(function($){
 
 				fwEvents.trigger('fw-builder:'+ this.get('type') +':register-items', this);
 
-				// recover saved items from input
+				// load saved items from input
 				{
-					var savedItems = [];
-
 					try {
-						savedItems = JSON.parse(this.$input.val());
+						this.rootItems.reset(JSON.parse(this.$input.val()));
+
+						fwEvents.trigger('fw-builder:'+ this.get('type') +':items-loaded', this);
 					} catch (e) {
 						console.error('Failed to recover items from input', e);
 					}
-
-					this.rootItems.reset(savedItems);
-
-					delete savedItems;
 				}
 
 				// listen to items changes and update input
