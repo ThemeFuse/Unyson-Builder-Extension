@@ -419,7 +419,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	 */
 	protected function _get_value_from_input($option, $input_value)
 	{
-		if (empty($input_value)) {
+		if (empty($input_value) || !is_string($input_value)) {
 			$input_value = $option['value']['json'];
 		}
 
