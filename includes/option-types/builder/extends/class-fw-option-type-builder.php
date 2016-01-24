@@ -180,7 +180,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			 * It's convenient when you have many elements in builder and it's tedious to:
 			 * scroll up -> add element -> scroll down -> configure it -> scroll up -> ...
 			 */
-			'fixed_header' => false,
+			'fixed_header' => false
 		), $option);
 	}
 
@@ -242,7 +242,23 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			wp_enqueue_script(
 				'fw-option-builder-helpers',
 				$this->get_static_uri('/js/helpers.js'),
-				array('fw-option-builder',),
+				array('fw-option-builder'),
+				$version,
+				true
+			);
+
+			wp_enqueue_script(
+				'fw-option-builder-qtips',
+				$this->get_static_uri('/js/qtips.js'),
+				array('fw-option-builder'),
+				$version,
+				true
+			);
+
+			wp_enqueue_script(
+				'fw-option-builder-initialize',
+				$this->get_static_uri('/js/initialize-builder.js'),
+				array('fw-option-builder'),
 				$version,
 				true
 			);
@@ -403,6 +419,10 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 
 			if ($option['fixed_header']) {
 				$option['attr']['data-fixed-header'] = '~';
+			}
+
+			if ($option['drag_and_drop']) {
+				$option['attr']['data-drag-and-drop'] = '~';
 			}
 		}
 
