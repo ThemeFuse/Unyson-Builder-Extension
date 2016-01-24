@@ -180,7 +180,8 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			 * It's convenient when you have many elements in builder and it's tedious to:
 			 * scroll up -> add element -> scroll down -> configure it -> scroll up -> ...
 			 */
-			'fixed_header' => false
+			'fixed_header' => false,
+			'drag_and_drop' => true
 		), $option);
 	}
 

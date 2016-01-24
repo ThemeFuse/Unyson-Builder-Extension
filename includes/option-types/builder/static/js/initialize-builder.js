@@ -101,9 +101,155 @@ window.FWBuilderInitialize = (function () {
 		}
 	};
 
+
 	return {
 		init: init
 	};
+
+	/**
+	* Loop recursive through all items in given collection
+	*/
+	function forEachItemRecursive(collection, callback) {
+		collection.each(function(item){
+			callback(item);
+
+			forEachItemRecursive(item.get('_items'), callback);
+		});
+	}
+
+	function initDraggable ($this, builder, id) {
+		$this.find('> .builder-items-types .builder-item-type').draggable({
+			connectToSortable: '#'+ id +' .builder-root-items .builder-items',
+			helper: 'clone',
+			distance: 10,
+			placeholder: 'fw-builder-placeholder',
+			start: function(event, ui) {
+				var movedType = ui.helper.attr('data-builder-item-type');
+
+				if (!movedType) {
+					return;
+				}
+
+				var MovedTypeClass = builder.getRegisteredItemClassByType(movedType);
+
+				if (!MovedTypeClass) {
+					return;
+				}
+
+				/**
+				* add "allowed" classes to items vies where allowIncomingType(movedType) returned true
+				* else add "denied" class
+				*/
+				{
+					{
+						if (MovedTypeClass.prototype.allowDestinationType(null)) {
+							builder.rootItems.view.$el.addClass('fw-builder-item-allow-incoming-type');
+						} else {
+							builder.rootItems.view.$el.addClass('fw-builder-item-deny-incoming-type');
+						}
+					}
+
+					forEachItemRecursive(builder.rootItems, function(item){
+						if (
+							item.allowIncomingType(movedType)
+							&&
+							MovedTypeClass.prototype.allowDestinationType(item.get('type'))
+						) {
+							item.view.$el.addClass('fw-builder-item-allow-incoming-type');
+						} else {
+							item.view.$el.addClass('fw-builder-item-deny-incoming-type');
+						}
+					});
+				}
+			},
+			stop: function() {
+				// remove "allowed" and "denied" classes from all items
+				{
+					builder.rootItems.view.$el.removeClass(
+						'fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type'
+					);
+
+					forEachItemRecursive(builder.rootItems, function(item){
+						item.view.$el.removeClass(
+							'fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type'
+						);
+					});
+				}
+			}
+		});
+
+		/**
+		* Add item on thumbnail click
+		*/
+		$this.find('.builder-items-types').on('click', '.builder-item-type', function(){
+			var $itemType = $(this);
+
+			var itemType = $itemType.attr('data-builder-item-type');
+
+			if (itemType) {
+				var ItemTypeClass = builder.getRegisteredItemClassByType(itemType);
+
+				if (ItemTypeClass) {
+					if (ItemTypeClass.prototype.allowDestinationType(null)) {
+						builder.rootItems.add(
+							new ItemTypeClass({}, {
+								$thumb: $itemType
+							})
+						);
+
+						// animation
+						{
+							// stop previous animation
+							{
+								clearTimeout($itemType.attr('data-animation-timeout-id'));
+								$itemType.removeClass('fw-builder-animation-item-type-add');
+							}
+
+							$itemType.addClass('fw-builder-animation-item-type-add');
+
+							$itemType.attr('data-animation-timeout-id',
+								setTimeout(function(){
+									$itemType.removeClass('fw-builder-animation-item-type-add');
+								}, 500)
+							);
+						}
+
+						// scroll to the bottom of the builder
+						setTimeout(function(){
+							var $builderOption = $this,
+								$scrollParent = $builderOption.scrollParent();
+
+							if ($scrollParent.get(0) === document || $scrollParent.get(0) === document.body) {
+								$scrollParent = $(window);
+							}
+
+							if ($builderOption.height() <= $scrollParent.height() + 300) {
+								/**
+								* Do not scroll if the builder can fit or is almost entirely visible
+								* To prevent "jumping" https://github.com/ThemeFuse/Unyson/issues/815
+								*/
+								return;
+							}
+
+							$scrollParent.scrollTop(
+								$builderOption.offset().top
+								+
+								$builderOption.outerHeight()
+								-
+								$scrollParent.height()
+							);
+						}, 0);
+					} else {
+						console.warn('Item type "'+ itemType +'" is not allowed as first level item');
+					}
+				} else {
+					console.error('Unregistered item type: '+ itemType);
+				}
+			} else {
+				console.error('Cannot extract item type from element', $itemType);
+			}
+		});
+	}
 
 	function init (Builder) {
 		fwEvents.on('fw:options:init', function (data) {
@@ -120,9 +266,10 @@ window.FWBuilderInitialize = (function () {
 			});
 
 			$options.each(function(){
-				var $this = $(this),
-					id    = $this.attr('id'),
-					type  = $this.attr('data-builder-option-type');
+				var $this          = $(this),
+					hasDragAndDrop = $this.attr('data-drag-and-drop'),
+					id             = $this.attr('id'),
+					type           = $this.attr('data-builder-option-type');
 
 				/**
 				* Create instance of Builder
@@ -166,138 +313,8 @@ window.FWBuilderInitialize = (function () {
 				* Init draggable thumbnails just if user wants it to be around
 				*/
 				if (hasDragAndDrop) {
-					$this.find('> .builder-items-types .builder-item-type').draggable({
-						connectToSortable: '#'+ id +' .builder-root-items .builder-items',
-						helper: 'clone',
-						distance: 10,
-						placeholder: 'fw-builder-placeholder',
-						start: function(event, ui) {
-							var movedType = ui.helper.attr('data-builder-item-type');
-
-							if (!movedType) {
-								return;
-							}
-
-							var MovedTypeClass = builder.getRegisteredItemClassByType(movedType);
-
-							if (!MovedTypeClass) {
-								return;
-							}
-
-							/**
-							* add "allowed" classes to items vies where allowIncomingType(movedType) returned true
-							* else add "denied" class
-							*/
-							{
-								{
-									if (MovedTypeClass.prototype.allowDestinationType(null)) {
-										builder.rootItems.view.$el.addClass('fw-builder-item-allow-incoming-type');
-									} else {
-										builder.rootItems.view.$el.addClass('fw-builder-item-deny-incoming-type');
-									}
-								}
-
-								forEachItemRecursive(builder.rootItems, function(item){
-									if (
-										item.allowIncomingType(movedType)
-										&&
-										MovedTypeClass.prototype.allowDestinationType(item.get('type'))
-									) {
-										item.view.$el.addClass('fw-builder-item-allow-incoming-type');
-									} else {
-										item.view.$el.addClass('fw-builder-item-deny-incoming-type');
-									}
-								});
-							}
-						},
-						stop: function() {
-							// remove "allowed" and "denied" classes from all items
-							{
-								builder.rootItems.view.$el.removeClass(
-									'fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type'
-								);
-
-								forEachItemRecursive(builder.rootItems, function(item){
-									item.view.$el.removeClass(
-										'fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type'
-									);
-								});
-							}
-						}
-					});
+					initDraggable($this, builder, id);
 				}
-
-				/**
-				* Add item on thumbnail click
-				*/
-				$this.find('.builder-items-types').on('click', '.builder-item-type', function(){
-					var $itemType = $(this);
-
-					var itemType = $itemType.attr('data-builder-item-type');
-
-					if (itemType) {
-						var ItemTypeClass = builder.getRegisteredItemClassByType(itemType);
-
-						if (ItemTypeClass) {
-							if (ItemTypeClass.prototype.allowDestinationType(null)) {
-								builder.rootItems.add(
-									new ItemTypeClass({}, {
-										$thumb: $itemType
-									})
-								);
-
-								// animation
-								{
-									// stop previous animation
-									{
-										clearTimeout($itemType.attr('data-animation-timeout-id'));
-										$itemType.removeClass('fw-builder-animation-item-type-add');
-									}
-
-									$itemType.addClass('fw-builder-animation-item-type-add');
-
-									$itemType.attr('data-animation-timeout-id',
-										setTimeout(function(){
-											$itemType.removeClass('fw-builder-animation-item-type-add');
-										}, 500)
-									);
-								}
-
-								// scroll to the bottom of the builder
-								setTimeout(function(){
-									var $builderOption = $this,
-										$scrollParent = $builderOption.scrollParent();
-
-									if ($scrollParent.get(0) === document || $scrollParent.get(0) === document.body) {
-										$scrollParent = $(window);
-									}
-
-									if ($builderOption.height() <= $scrollParent.height() + 300) {
-										/**
-										* Do not scroll if the builder can fit or is almost entirely visible
-										* To prevent "jumping" https://github.com/ThemeFuse/Unyson/issues/815
-										*/
-										return;
-									}
-
-									$scrollParent.scrollTop(
-										$builderOption.offset().top
-										+
-										$builderOption.outerHeight()
-										-
-										$scrollParent.height()
-									);
-								}, 0);
-							} else {
-								console.warn('Item type "'+ itemType +'" is not allowed as first level item');
-							}
-						} else {
-							console.error('Unregistered item type: '+ itemType);
-						}
-					} else {
-						console.error('Cannot extract item type from element', $itemType);
-					}
-				});
 
 				/**
 				* Add tips to thumbnails

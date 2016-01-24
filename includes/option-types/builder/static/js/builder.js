@@ -358,6 +358,14 @@ jQuery(document).ready(function($){
 							return this;
 						},
 						initSortable: function(){
+							var hasDragAndDrop = builder.rootItems.view.$el
+																		.closest('.fw-option-type-builder')
+																		.attr('data-drag-and-drop');
+
+							if (! hasDragAndDrop) {
+								return;
+							}
+
 							if (this.$el.hasClass('ui-sortable')) {
 								// already initialized
 								return false;
