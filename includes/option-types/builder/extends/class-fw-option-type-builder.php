@@ -181,6 +181,12 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			 * scroll up -> add element -> scroll down -> configure it -> scroll up -> ...
 			 */
 			'fixed_header' => false,
+			/**
+			 * Enable drag and drop manipulation of every collection from Builder.
+			 * Sometimes, when your creating your own builder,
+			 * it's convenient to throw it away in order to wire up your own 
+			 * drag and drop behavior.
+			 */
 			'drag_and_drop' => true
 		), $option);
 	}
