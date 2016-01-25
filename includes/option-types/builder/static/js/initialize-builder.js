@@ -1,6 +1,4 @@
-window.FWBuilderInitialize = (function () {
-	var $ = jQuery;
-
+window.fwExtBuilderInitialize = (function ($) {
 	var fixedHeaderHelpers = {
 		increment: 0,
 		$adminBar: $('#wpadminbar'),
@@ -101,14 +99,13 @@ window.FWBuilderInitialize = (function () {
 		}
 	};
 
-
 	return {
 		init: init
 	};
 
 	/**
-	* Loop recursive through all items in given collection
-	*/
+	 * Loop recursive through all items in given collection
+	 */
 	function forEachItemRecursive(collection, callback) {
 		collection.each(function(item){
 			callback(item);
@@ -137,9 +134,9 @@ window.FWBuilderInitialize = (function () {
 				}
 
 				/**
-				* add "allowed" classes to items vies where allowIncomingType(movedType) returned true
-				* else add "denied" class
-				*/
+				 * add "allowed" classes to items vies where allowIncomingType(movedType) returned true
+				 * else add "denied" class
+				 */
 				{
 					{
 						if (MovedTypeClass.prototype.allowDestinationType(null)) {
@@ -179,8 +176,8 @@ window.FWBuilderInitialize = (function () {
 		});
 
 		/**
-		* Add item on thumbnail click
-		*/
+		 * Add item on thumbnail click
+		 */
 		$this.find('.builder-items-types').on('click', '.builder-item-type', function(){
 			var $itemType = $(this);
 
@@ -225,9 +222,9 @@ window.FWBuilderInitialize = (function () {
 
 							if ($builderOption.height() <= $scrollParent.height() + 300) {
 								/**
-								* Do not scroll if the builder can fit or is almost entirely visible
-								* To prevent "jumping" https://github.com/ThemeFuse/Unyson/issues/815
-								*/
+								 * Do not scroll if the builder can fit or is almost entirely visible
+								 * To prevent "jumping" https://github.com/ThemeFuse/Unyson/issues/815
+								 */
 								return;
 							}
 
@@ -272,8 +269,8 @@ window.FWBuilderInitialize = (function () {
 					type           = $this.attr('data-builder-option-type');
 
 				/**
-				* Create instance of Builder
-				*/
+				 * Create instance of Builder
+				 */
 				{
 					var data = {
 						type:         type,
@@ -286,8 +283,8 @@ window.FWBuilderInitialize = (function () {
 
 					var eventData = $.extend({}, data, {
 						/**
-						* In event you can extend (customize/change) and replace this (property) class
-						*/
+						 * In event you can extend (customize/change) and replace this (property) class
+						 */
 						Builder: Builder
 					});
 
@@ -306,19 +303,19 @@ window.FWBuilderInitialize = (function () {
 
 					builder.rootItems.view.$el.appendTo(data.$rootItems);
 
-					new RootItemsTips(builder.rootItems);
+					new fwExtBuilderRootItemsTips(builder.rootItems);
 				}
 
 				/**
-				* Init draggable thumbnails just if user wants it to be around
-				*/
+				 * Init draggable thumbnails just if user wants it to be around
+				 */
 				if (hasDragAndDrop) {
 					initDraggable($this, builder, id);
 				}
 
 				/**
-				* Add tips to thumbnails
-				*/
+				 * Add tips to thumbnails
+				 */
 				$this.find('.builder-items-types .builder-item-type [data-hover-tip]').each(function(){
 					$(this).qtip({
 						position: {
@@ -340,14 +337,14 @@ window.FWBuilderInitialize = (function () {
 				});
 
 				/**
-				* Make header follow you when you scroll down
-				*/
+				 * Make header follow you when you scroll down
+				 */
 				if ($this.attr('data-fixed-header')) {
 					var fixedHeaderEventsNamespace = '.fw-builder-fixed-header-'+ (++fixedHeaderHelpers.increment),
 						$fixedHeader = $this.find('> .builder-items-types:first'),
 						/**
-						* In OptionsModal we must track the modal scroll not the window scroll
-						*/
+						 * In OptionsModal we must track the modal scroll not the window scroll
+						 */
 						$scrollParent;
 
 					$scrollParent = $this.scrollParent();
@@ -356,8 +353,8 @@ window.FWBuilderInitialize = (function () {
 					}
 
 					/**
-					* Options modal fixed tabs are initialized after options init
-					*/
+					 * Options modal fixed tabs are initialized after options init
+					 */
 					setTimeout(function(){
 						$scrollParent = $this.scrollParent();
 						if ($scrollParent.get(0) === document || $scrollParent.get(0) === document.body) {
@@ -376,33 +373,33 @@ window.FWBuilderInitialize = (function () {
 					}, 0);
 
 					/**
-					* On thumbnails tab change, the new tab may contain more thumbnails that previous
-					* thus having different height
-					*/
+					 * On thumbnails tab change, the new tab may contain more thumbnails that previous
+					 * thus having different height
+					 */
 					$fixedHeader.on('click'+ fixedHeaderEventsNamespace, '.fw-options-tabs-list a, .fullscreen-btn', function(){
 						fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
 
 						/**
-						* When you scroll down to the last items (to the limit when the fixed header stops and begins to go under page)
-						* and you switch to a tab with a bigger height, there are some issues with positioning.
-						* Calling this send time fixes it
-						*/
+						 * When you scroll down to the last items (to the limit when the fixed header stops and begins to go under page)
+						 * and you switch to a tab with a bigger height, there are some issues with positioning.
+						 * Calling this send time fixes it
+						 */
 						fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
 					});
 
 					/**
-					* Listen builder value/items change
-					* For e.g. when you delete an element from the builder (or press undo/redo buttons)
-					* its height is changed and the fixed header needs repositioning
-					*/
+					 * Listen builder value/items change
+					 * For e.g. when you delete an element from the builder (or press undo/redo buttons)
+					 * its height is changed and the fixed header needs repositioning
+					 */
 					builder.$input.on('fw-builder:input:change'+ fixedHeaderEventsNamespace, function(){
 						fixedHeaderHelpers.fix($fixedHeader, $this, $scrollParent);
 					});
 
 					/**
-					* Remove events from external elements
-					* In case the builder is created and remove dynamically multiple times, for e.g. inside fw.OptionsModal
-					*/
+					 * Remove events from external elements
+					 * In case the builder is created and remove dynamically multiple times, for e.g. inside fw.OptionsModal
+					 */
 					$this.on('remove', function(){
 						$scrollParent.off(fixedHeaderEventsNamespace);
 					});
@@ -484,5 +481,5 @@ window.FWBuilderInitialize = (function () {
 			$options.addClass('initialized');
 		});
 	}
-})();
+})(jQuery);
 

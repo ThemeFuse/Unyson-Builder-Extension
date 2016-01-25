@@ -1,12 +1,12 @@
 /**
-* Create qTips for elements with data-hover-tip="Tip Text" attribute
-*/
-window.RootItemsTips = (function(rootItems){
+ * Create qTips for elements with data-hover-tip="Tip Text" attribute
+ */
+window.fwExtBuilderRootItemsTips = (function(rootItems){
 	var $ = jQuery;
 
 	/**
-	* Store all created qTip instances APIs
-	*/
+	 * Store all created qTip instances APIs
+	 */
 	this.tipsAPIs = [];
 
 	this.resetTimeout = 0;

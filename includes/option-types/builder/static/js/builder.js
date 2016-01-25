@@ -359,8 +359,8 @@ jQuery(document).ready(function($){
 						},
 						initSortable: function(){
 							var hasDragAndDrop = builder.rootItems.view.$el
-																		.closest('.fw-option-type-builder')
-																		.attr('data-drag-and-drop');
+								.closest('.fw-option-type-builder')
+								.attr('data-drag-and-drop');
 
 							if (! hasDragAndDrop) {
 								return;
@@ -859,5 +859,5 @@ jQuery(document).ready(function($){
 		}
 	});
 
-	FWBuilderInitialize.init(Builder);
+	fwExtBuilderInitialize.init(Builder);
 });
