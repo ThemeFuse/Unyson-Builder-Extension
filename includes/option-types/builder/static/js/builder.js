@@ -812,7 +812,7 @@ jQuery(document).ready(function($){
 				// load saved items from input
 				{
 					try {
-						this.rootItems.reset(JSON.parse(this.$input.val()));
+						this.rootItems.reset(JSON.parse(this.$input.val() || '[]'));
 
 						fwEvents.trigger('fw-builder:'+ this.get('type') +':items-loaded', this);
 					} catch (e) {
