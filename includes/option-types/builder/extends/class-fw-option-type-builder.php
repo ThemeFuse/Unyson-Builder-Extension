@@ -373,6 +373,35 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 		 */
 		$thumbnails = array();
 
+		/**
+		 * If you want to customize what css class your thumbnails receive
+		 * you can implement `get_thumbnail_class` in your
+		 * FW_Option_Type_Builder subclass. Whatever you return from this
+		 * method is inserted right into html.
+		 *
+		 * You can add additional classes by concatenating them to the
+		 * default class. You receive default class as an argument to the
+		 * method.
+		 *
+		 * class Some_Cool_Builder extends FW_Option_Type_Builder {
+		 *   // initialization
+		 *
+		 *   public function get_thumbnail_class ($default_css_class) {
+		 *     return $default_css_class . ' some-cool-class-that-you-really-need';
+		 *   }
+		 * }
+		 *
+		 * // Don't forget to register your builder
+		 * FW_Option_Type::register('Some_Cool_Builder');
+		 */
+		$item_classes = 'builder-item-type';
+
+		if (method_exists($this, 'get_thumbnail_class')) {
+			$item_classes = $this->get_thumbnail_class($item_classes);
+		}
+
+		$item_classes = esc_attr($item_classes);
+
 		foreach ($this->get_item_types() as $item) {
 			/** @var FW_Option_Type_Builder_Item $item */
 
@@ -393,12 +422,12 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 
 				if ( ! isset( $thumbnails[ $tab_title ][ $key ] ) ) {
 					$thumbnails[$tab_title][$key] =
-						'<div class="builder-item-type" data-builder-item-type="'. esc_attr($item->get_type()) .'">'.
+						'<div class="' . $item_classes . '" data-builder-item-type="'. esc_attr($item->get_type()) .'">'.
 						$thumbnail['html'].
 						'</div>';
 				} else {
 					$thumbnails[$tab_title][] =
-						'<div class="builder-item-type" data-builder-item-type="'. esc_attr($item->get_type()) .'">'.
+						'<div class="' . $item_classes . '" data-builder-item-type="'. esc_attr($item->get_type()) .'">'.
 						$thumbnail['html'].
 						'</div>';
 				}
@@ -408,7 +437,6 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 		foreach ( $thumbnails as &$type ) {
 			ksort($type);
 		}
-
 
 		if (method_exists($this, 'sort_thumbnails')) {
 			$this->sort_thumbnails($thumbnails);
