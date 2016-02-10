@@ -400,6 +400,8 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			$item_classes = $this->get_thumbnail_class($item_classes);
 		}
 
+		$item_classes = esc_attr($item_classes);
+
 		foreach ($this->get_item_types() as $item) {
 			/** @var FW_Option_Type_Builder_Item $item */
 
