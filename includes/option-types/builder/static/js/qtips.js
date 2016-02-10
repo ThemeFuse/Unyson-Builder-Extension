@@ -2,26 +2,22 @@
  * Create qTips for elements with data-hover-tip="Tip Text" attribute
  */
 window.fwExtBuilderRootItemsTips = (function(rootItems){
-	var $ = jQuery;
+	var $ = jQuery,
+		/**
+		 * Store all created qTip instances APIs
+		 */
+		tipsAPIs = [],
+		destroyTips = function(){
+			_.each(tipsAPIs, function(api) { api.destroy(true); });
 
-	/**
-	 * Store all created qTip instances APIs
-	 */
-	this.tipsAPIs = [];
+			tipsAPIs = [];
+		},
+		makeTip = function($el){
+			if ($el.attr('data-hasqtip')) {
+				return;
+			}
 
-	this.resetTimeout = 0;
-
-	this.resetTips = function() {
-		_.each(this.tipsAPIs, function(api) {
-			api.destroy(true);
-		});
-
-		this.tipsAPIs = [];
-
-		var that = this;
-
-		rootItems.view.$el.find('[data-hover-tip]').each(function(){
-			$(this).qtip({
+			$el.qtip({
 				position: {
 					at: 'top center',
 					my: 'bottom center',
@@ -35,28 +31,20 @@ window.fwExtBuilderRootItemsTips = (function(rootItems){
 					}
 				},
 				content: {
-					text: $(this).attr('data-hover-tip')
+					text: $el.attr('data-hover-tip')
 				}
 			});
 
-			that.tipsAPIs.push(
-				$(this).qtip('api')
-			);
-		});
-	};
+			tipsAPIs.push($el.qtip('api'));
 
-	// initialize
-	{
-		this.resetTips();
+			$el.qtip('api').show();
+		};
 
-		var that = this;
+	rootItems.view.$el.on('mouseenter', '[data-hover-tip]', function(){
+		makeTip($(this));
+	});
 
-		rootItems.on('builder:change', function(){
-			clearTimeout(that.resetTimeout);
-
-			that.resetTimeout = setTimeout(function(){
-				that.resetTips();
-			}, 100);
-		});
-	}
+	rootItems.on('builder:change', function(){
+		destroyTips();
+	});
 });
