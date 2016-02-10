@@ -115,6 +115,8 @@ window.fwExtBuilderInitialize = (function ($) {
 	}
 
 	function initDraggable ($this, builder, id) {
+		fwEvents.trigger('fw:options:init:tabs', {$elements: $this.find('> .builder-items-types')});
+
 		$this.find('> .builder-items-types .builder-item-type').draggable({
 			connectToSortable: '#'+ id +' .builder-root-items .builder-items',
 			helper: 'clone',
