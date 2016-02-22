@@ -56,6 +56,8 @@
 		<?php echo fw()->backend->render_options($tabs_options) ?>
 	</div>
 	<div class="builder-root-items"></div>
+
+	<?php do_action('fw_builder:' . $option['type'] . ':content_below_root_items'); ?>
 </div>
 
 <?php
