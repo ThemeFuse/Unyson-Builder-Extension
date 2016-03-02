@@ -184,10 +184,27 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			/**
 			 * Enable drag and drop manipulation of every collection from Builder.
 			 * Sometimes, when your creating your own builder,
-			 * it's convenient to throw it away in order to wire up your own 
+			 * it's convenient to throw it away in order to wire up your own
 			 * drag and drop behavior.
 			 */
-			'drag_and_drop' => true
+			'drag_and_drop' => true,
+			/**
+			 * Builder may be read_only. This may be necessary if we want
+			 * to provide some content to user just for presentation,
+			 * without the user to be able to interact with the items
+			 * or change the way they are alligned.
+			 *
+			 * This is not some magick option that will make your builder
+			 * read-only only by making it true. Every builder is responsible
+			 * to give their read-only experience as they want.
+			 * That's why is turned off by default. You may not need this
+			 * option.
+			 *
+			 * This option will add a data-read-only attribute to the builder
+			 * if it's set to true. You are responsible to handle it
+			 * accordingly in your client-side logic.
+			 */
+			'read_only' => false
 		), $option);
 	}
 
@@ -458,6 +475,10 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 
 			if ($option['drag_and_drop']) {
 				$option['attr']['data-drag-and-drop'] = '~';
+			}
+
+			if ($option['read_only']) {
+				$option['attr']['data-read-only'] = '~';
 			}
 		}
 
