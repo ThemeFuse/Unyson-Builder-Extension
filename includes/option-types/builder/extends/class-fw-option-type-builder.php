@@ -526,8 +526,68 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	/**
 	 * @internal
 	 */
-	public function _get_backend_width_type()
-	{
+	public function _get_backend_width_type() {
 		return 'full';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function _storage_save($id, array $option, $value, array $params) {
+		$value['json'] = json_encode($this->storage_save_recursive(json_decode($value['json'], true), $params));
+
+		return fw_db_option_storage_save($id, $option, $value, $params);
+	}
+
+	protected function storage_save_recursive(array $items, array $params) {
+		/**
+		 * @var FW_Option_Type_Builder_Item[] $item_types
+		 */
+		$item_types = $this->get_item_types();
+
+		foreach ($items as &$atts) {
+			if (!isset($atts['type']) || !isset($item_types[ $atts['type'] ])) {
+				continue; // invalid item
+			}
+
+			$atts = $item_types[ $atts['type'] ]->storage_save($atts, $params);
+
+			if (isset($atts['_items'])) {
+				$atts['_items'] = $this->storage_save_recursive($atts['_items'], $params);
+			}
+		}
+
+		return $items;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function _storage_load($id, array $option, $value, array $params) {
+		$value = fw_db_option_storage_load($id, $option, $value, $params);
+		$value['json'] = json_encode($this->storage_load_recursive(json_decode($value['json'], true), $params));
+
+		return $value;
+	}
+
+	protected function storage_load_recursive(array $items, array $params) {
+		/**
+		 * @var FW_Option_Type_Builder_Item[] $item_types
+		 */
+		$item_types = $this->get_item_types();
+
+		foreach ($items as &$atts) {
+			if (!isset($atts['type']) || !isset($item_types[ $atts['type'] ])) {
+				continue; // invalid item
+			}
+
+			$atts = $item_types[ $atts['type'] ]->storage_load($atts, $params);
+
+			if (isset($atts['_items'])) {
+				$atts['_items'] = $this->storage_load_recursive($atts['_items'], $params);
+			}
+		}
+
+		return $items;
 	}
 }

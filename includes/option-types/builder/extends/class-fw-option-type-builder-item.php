@@ -70,8 +70,61 @@ abstract class FW_Option_Type_Builder_Item
 	 * @param $attributes array Backbone Item (Model) attributes
 	 * @return mixed
 	 */
-	public function get_value_from_attributes($attributes)
-	{
+	public function get_value_from_attributes($attributes) {
 		return $attributes;
+	}
+
+	/**
+	 * @see FW_Option_Type::storage_save()
+	 * @param array $item
+	 * @param array $params
+	 * @return array $item
+	 * @since 1.2.0
+	 */
+	final public function storage_save(array $item, array $params = array()) {
+		if ($this->get_type() === $item['type']) {
+			return $this->_storage_save($item, $params);
+		} else {
+			return $item;
+		}
+	}
+
+	/**
+	 * @see FW_Option_Type::_storage_save()
+	 * @param array $item
+	 * @param array $params
+	 * @return array $item
+	 * @since 1.2.0
+	 * @internal
+	 */
+	protected function _storage_save(array $item, array $params) {
+		return $item;
+	}
+
+	/**
+	 * @see FW_Option_Type::storage_load()
+	 * @param array $item
+	 * @param array $params
+	 * @return array
+	 * @since 1.2.0
+	 */
+	final public function storage_load(array $item, array $params = array()) {
+		if ($this->get_type() === $item['type']) {
+			return $this->_storage_load($item, $params);
+		} else {
+			return $item;
+		}
+	}
+
+	/**
+	 * @see FW_Option_Type::_storage_load()
+	 * @param array $item
+	 * @param array $params
+	 * @return mixed
+	 * @since 1.2.0
+	 * @internal
+	 */
+	protected function _storage_load(array $item, array $params) {
+		return $item;
 	}
 }
