@@ -403,7 +403,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 		 * class Some_Cool_Builder extends FW_Option_Type_Builder {
 		 *   // initialization
 		 *
-		 *   public function get_thumbnail_class ($default_css_class) {
+		 *   public function get_thumbnail_class ($default_css_class, $item) {
 		 *     return $default_css_class . ' some-cool-class-that-you-really-need';
 		 *   }
 		 * }
@@ -411,16 +411,16 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 		 * // Don't forget to register your builder
 		 * FW_Option_Type::register('Some_Cool_Builder');
 		 */
-		$item_classes = 'builder-item-type';
-
-		if (method_exists($this, 'get_thumbnail_class')) {
-			$item_classes = $this->get_thumbnail_class($item_classes);
-		}
-
-		$item_classes = esc_attr($item_classes);
-
 		foreach ($this->get_item_types() as $item) {
 			/** @var FW_Option_Type_Builder_Item $item */
+
+			$item_classes = 'builder-item-type';
+
+			if (method_exists($this, 'get_thumbnail_class')) {
+				$item_classes = $this->get_thumbnail_class($item_classes, $item);
+			}
+
+			$item_classes = esc_attr($item_classes);
 
 			foreach ($item->get_thumbnails() as $key => $thumbnail) {
 				if (!isset($thumbnail['tab'])) {
