@@ -9,8 +9,12 @@ $cfg = array();
  * because it has a filter and users will be able to customize the widths for a specific builder
  *
  * @see fw_ext_builder_get_item_width()
+ * @since 1.2.0
+ *
+ * old $cfg['default_item_widths'] https://github.com/ThemeFuse/Unyson-Builder-Extension/issues/8
+ * https://github.com/ThemeFuse/Unyson-Builder-Extension/blob/v1.1.17/config.php#L13
  */
-$cfg['default_item_widths'] = array(
+$cfg['grid.columns'] = array(
 	'1_6' => array(
 		'title'          => '1/6',
 		'backend_class'  => 'fw-col-sm-2',
@@ -52,3 +56,14 @@ $cfg['default_item_widths'] = array(
 		'frontend_class' => 'fw-col-xs-12',
 	),
 );
+
+/**
+ * @since 1.2.0
+ */
+$cfg['grid.row.class'] = 'fw-row';
+
+/**
+ * @deprecated since 1.2.0
+ * if this is empty fw_ext_builder_get_item_width() will use $cfg['grid.columns']
+ */
+$cfg['default_item_widths'] = false;

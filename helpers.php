@@ -19,9 +19,13 @@ function fw_ext_builder_get_item_width($builder_type, $width_id = null, $default
 
 		$widths = FW_Cache::get($cache_key);
 	} catch (FW_Cache_Not_Found_Exception $e) {
-		$widths = apply_filters('fw_builder_item_widths:'. $builder_type,
-			fw()->extensions->get('builder')->get_config('default_item_widths')
-		);
+		if ($widths = fw()->extensions->get('builder')->get_config('default_item_widths')) {
+			// Custom (old config key) widths are defined in theme (by default $cfg['default_item_widths'] is empty)
+		} else {
+			$widths = fw()->extensions->get('builder')->get_config('grid.columns'); // new config key
+		}
+
+		$widths = apply_filters('fw_builder_item_widths:'. $builder_type, $widths);
 
 		FW_Cache::set($cache_key, $widths);
 	}
