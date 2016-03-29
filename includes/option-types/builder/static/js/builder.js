@@ -814,6 +814,26 @@ jQuery(document).ready(function($){
 					try {
 						this.rootItems.reset(JSON.parse(this.$input.val() || '[]'));
 
+						/**
+						 * Something happened in WP 4.5 and items restored from input
+						 * doesn't have the .collection property
+						 * and it's impossible to remove them from builder (console errors).
+						 * So loop recursive and fix item.collection
+						 */
+						{
+							function _fixItemsCollections(collection) {
+								collection.each(function(item){
+									item.collection = collection;
+
+									_fixItemsCollections(item.get('_items'));
+								});
+							}
+
+							_fixItemsCollections(this.rootItems);
+
+							_fixItemsCollections = undefined;
+						}
+
 						fwEvents.trigger('fw-builder:'+ this.get('type') +':items-loaded', this);
 					} catch (e) {
 						console.error('Failed to recover items from input', e);
