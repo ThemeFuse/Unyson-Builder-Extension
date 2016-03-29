@@ -586,7 +586,10 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 	 */
 	protected function _storage_load($id, array $option, $value, array $params) {
 		$value = fw_db_option_storage_load($id, $option, $value, $params);
-		$value['json'] = json_encode($this->storage_load_recursive(json_decode($value['json'], true), $params));
+
+		$value['json'] = json_decode($value['json'], true);
+		$value['json'] = $this->storage_load_recursive($value['json'] ? $value['json'] : array(), $params);
+		$value['json'] = json_encode($value['json']);
 
 		return $value;
 	}
