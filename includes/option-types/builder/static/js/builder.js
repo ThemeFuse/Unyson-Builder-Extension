@@ -797,6 +797,26 @@ jQuery(document).ready(function($){
 
 			this.rootItems = new this.classes.Items;
 
+			/**
+			 * Something happened in WP 4.5 (or backbone.relational compatibility with latest backbone)
+			 * and items restored from input doesn't have the .collection property
+			 * and it's impossible to remove them from builder (console errors).
+			 * So loop recursive and fix item.collection
+			 */
+			{
+				function _fixItemsCollections(collection) {
+					collection.each(function(item){
+						item.collection = collection;
+
+						_fixItemsCollections(item.get('_items'));
+					});
+				}
+
+				this.rootItems.on('reset', _.bind(function () {
+					_fixItemsCollections(this.rootItems);
+				}, this));
+			}
+
 			// prepare this.$input
 			{
 				if (typeof options.$input == 'undefined') {
@@ -813,26 +833,6 @@ jQuery(document).ready(function($){
 				{
 					try {
 						this.rootItems.reset(JSON.parse(this.$input.val() || '[]'));
-
-						/**
-						 * Something happened in WP 4.5 and items restored from input
-						 * doesn't have the .collection property
-						 * and it's impossible to remove them from builder (console errors).
-						 * So loop recursive and fix item.collection
-						 */
-						{
-							function _fixItemsCollections(collection) {
-								collection.each(function(item){
-									item.collection = collection;
-
-									_fixItemsCollections(item.get('_items'));
-								});
-							}
-
-							_fixItemsCollections(this.rootItems);
-
-							_fixItemsCollections = undefined;
-						}
 
 						fwEvents.trigger('fw-builder:'+ this.get('type') +':items-loaded', this);
 					} catch (e) {
