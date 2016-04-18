@@ -812,9 +812,9 @@ jQuery(document).ready(function($){
 					});
 				}
 
-				this.rootItems.on('reset', _.bind(function () {
-					_fixItemsCollections(this.rootItems);
-				}, this));
+				this.rootItems.on('reset add', _.bind(function(){
+					_fixItemsCollections(this);
+				}, this.rootItems));
 			}
 
 			// prepare this.$input
