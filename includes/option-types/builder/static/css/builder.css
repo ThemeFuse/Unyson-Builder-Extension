@@ -36,6 +36,9 @@
 .fw-option-type-builder .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {
 	padding: 0 16px;
 }
+.fw-modal .fw-option-type-builder .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {
+	padding: 1px 16px; /* 1px vertical padding for thumbnails outline */
+}
 
 .fw-option-type-builder span.fw-ext-builder-icon {
 	font-size: 16px;
