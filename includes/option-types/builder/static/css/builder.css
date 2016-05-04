@@ -112,19 +112,20 @@
 .fw-option-type-builder .builder-item-type {
 	width: 70px;
 	height: 70px;
-	border: 1px solid #e1e1e1;
 	font-size: 11px;
-	margin: 0 5px 5px 0;
 	background-color: #ffffff;
 	float: left;
 	display: table;
+	position: relative;
+	outline: 1px solid #e1e1e1;
+	margin: 0 1px 1px 0;
 
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 
-	-webkit-transition: border-color .1s ease-in;
-	transition: border-color .1s ease-in;
+	-webkit-transition: outline-color .1s ease-in;
+	transition: outline-color .1s ease-in;
 }
 
 body.rtl .fw-option-type-builder .builder-item-type {
@@ -132,7 +133,7 @@ body.rtl .fw-option-type-builder .builder-item-type {
 }
 
 .fw-option-type-builder .builder-item-type:hover {
-	border-color: #8f8f8f;
+	outline-color: #8f8f8f;
 	z-index: 9999;
 	cursor: pointer;
 }
