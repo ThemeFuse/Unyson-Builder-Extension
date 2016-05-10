@@ -804,17 +804,27 @@ jQuery(document).ready(function($){
 			 * So loop recursive and fix item.collection
 			 */
 			{
-				function _fixItemsCollections(collection) {
+				function _fixItemsCollections(collection, c) {
+					if (typeof collection.cid != 'undefined') {
+						// it's a model, the second param is the collection
+						collection = c;
+					}
+
 					collection.each(function(item){
 						item.collection = collection;
 
-						_fixItemsCollections(item.get('_items'));
+						item.collection.off(null, _fixItemsCollections);
+						item.collection.on('reset add', _fixItemsCollections);
+
+						/**
+						 * Sometimes item.get('_items') is empty at this point, wait a few milliseconds
+						 * Bad solution, I home BackboneRelation will be fixed and this code will be removed
+						 */
+						setTimeout(_.bind(function(){ _fixItemsCollections(this.get('_items')); }, item), 0);
 					});
 				}
 
-				this.rootItems.on('reset add', _.bind(function(){
-					_fixItemsCollections(this);
-				}, this.rootItems));
+				this.rootItems.on('reset add', _fixItemsCollections);
 			}
 
 			// prepare this.$input
