@@ -326,19 +326,19 @@ body.rtl .fw-option-type-builder .builder-item-type {
 }
 
 .fw-option-type-builder .builder-items .builder-item.new-item {
-	animation: fwGrowIn .3s ease-in-out;
+	animation: fwDropIn .3s ease-in-out;
 	animation-iteration-count: 1;
 
-	-webkit-animation: fwGrowIn .3s ease-in-out;
+	-webkit-animation: fwDropIn .3s ease-in-out;
 	-webkit-animation-iteration-count: 1;
 
-	-moz-animation: fwGrowIn .3s ease-in-out;
+	-moz-animation: fwDropIn .3s ease-in-out;
 	-moz-animation-iteration-count: 1;
 
-	-o-animation: fwGrowIn .3s ease-in-out;
+	-o-animation: fwDropIn .3s ease-in-out;
 	-o-animation-iteration-count: 1;
 
-	-ms-animation: fwGrowIn .3s ease-in-out;
+	-ms-animation: fwDropIn .3s ease-in-out;
 	-ms-animation-iteration-count: 1;
 }
 
