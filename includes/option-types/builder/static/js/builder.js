@@ -118,7 +118,7 @@ jQuery(document).ready(function($){
 		 * - $input
 		 */
 		initialize: function(attributes, options) {
-			var builder = this;
+			var builder = this, sortTimeout;
 
 			/**
 			 * todo: To be able to extend and customize for e.g. only Item class. To not rewrite entire .initialize()
@@ -643,6 +643,15 @@ jQuery(document).ready(function($){
 
 										collection.add(item, {at: index});
 									}
+								},
+								sort: function( event, ui ) {
+									ui.placeholder.css('display', 'none');
+
+									clearTimeout(sortTimeout);
+									sortTimeout = setTimeout(
+										function(){ this.css('display', ''); }.bind(ui.placeholder),
+										70
+									);
 								}
 							});
 
