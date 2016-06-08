@@ -894,7 +894,6 @@ jQuery(document).ready(function($){
 					$delayedPlaceholder = null,
 					$realPlaceholder = null,
 					updatePlaceholder = function(){
-						$delayedPlaceholder.detach();
 						$delayedPlaceholder.insertBefore($realPlaceholder);
 						$realPlaceholder = null;
 					};
