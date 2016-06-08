@@ -118,7 +118,7 @@ jQuery(document).ready(function($){
 		 * - $input
 		 */
 		initialize: function(attributes, options) {
-			var builder = this, sortTimeout;
+			var builder = this;
 
 			/**
 			 * todo: To be able to extend and customize for e.g. only Item class. To not rewrite entire .initialize()
@@ -643,15 +643,6 @@ jQuery(document).ready(function($){
 
 										collection.add(item, {at: index});
 									}
-								},
-								sort: function( event, ui ) {
-									ui.placeholder.css('display', 'none');
-
-									clearTimeout(sortTimeout);
-									sortTimeout = setTimeout(
-										function(){ this.css('display', ''); }.bind(ui.placeholder),
-										70
-									);
 								}
 							});
 
@@ -895,6 +886,48 @@ jQuery(document).ready(function($){
 					});
 				})();
 			}
+
+			// Delay placeholder position update
+			(function($rootItems){
+				var timeoutId = 0,
+					timeoutTime = 300,
+					$delayedPlaceholder = null,
+					$realPlaceholder = null,
+					updatePlaceholder = function(){
+						$delayedPlaceholder.detach();
+						$delayedPlaceholder.insertBefore($realPlaceholder);
+						$realPlaceholder = null;
+					};
+
+				$rootItems.on({
+					'sortstart.delayedPlaceholder': function(event, ui) { console.log('start');
+						/**
+						 * Execute after item's this.$el.sortable({start:function(){...}});
+						 * because there the placeholder size is set to match item's size
+						 */
+						setTimeout(function(){
+							// Place delayed placeholder near real placeholder
+							($delayedPlaceholder = this.placeholder.clone())
+								.insertBefore(this.placeholder.css('display', 'none'));
+						}.bind(ui), 0);
+					},
+					'sortchange.delayedPlaceholder': function(event, ui) {
+						$realPlaceholder = ui.placeholder;
+
+						clearTimeout(timeoutId);
+						timeoutId = setTimeout(updatePlaceholder, timeoutTime);
+					},
+					'sortbeforestop.delayedPlaceholder': function (event, ui) {
+						if ($delayedPlaceholder) {
+							$delayedPlaceholder.remove();
+							$delayedPlaceholder = null;
+						}
+
+						clearTimeout(timeoutId);
+						timeoutId = 0;
+					}
+				});
+			})(this.rootItems.view.$el);
 		}
 	});
 
