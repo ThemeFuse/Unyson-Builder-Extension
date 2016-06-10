@@ -384,6 +384,8 @@ jQuery(document).ready(function($){
 								});
 							}
 
+							var rearrangeTimeout;
+
 							this.$el.sortable({
 								helper: 'clone',
 								items: '> .builder-item',
@@ -480,6 +482,8 @@ jQuery(document).ready(function($){
 									}
 								},
 								stop: function(event, ui) {
+									clearTimeout(rearrangeTimeout);
+
 									itemsRemoveAllowedDeniedClasses();
 
 									ui.item.parents('.builder-root-items').removeClass('fw-move-simple-item');
@@ -645,6 +649,53 @@ jQuery(document).ready(function($){
 									}
 								}
 							});
+
+							/**
+							 * Delay placeholder possition change to prevent "flicker"
+							 * Fixes https://github.com/ThemeFuse/Unyson-PageBuilder-Extension/issues/25
+							 * Original code https://github.com/jquery/jquery-ui/blob/1.12.0-rc.2/ui/widgets/sortable.js#L1384
+							 * Note: Uses the above `var rearrangeTimeout;`
+							 */
+							this.$el.sortable('instance')._rearrange = function(event, i, a, hardRefresh) {
+								clearTimeout(rearrangeTimeout);
+
+								rearrangeTimeout = setTimeout(function(){
+									/* The Original Code:
+									 a ? a[0].appendChild(this.placeholder[0]) : i.item[0].parentNode.insertBefore(this.placeholder[0], (this.direction === "down" ? i.item[0] : i.item[0].nextSibling));
+									 */
+									if (this.a) {
+										this.a[0].appendChild(this.instance.placeholder[0]);
+									} else {
+										this.i.item[0].parentNode.insertBefore(
+											this.instance.placeholder[0],
+											(this.direction === "down" ? this.i.item[0] : this.i.item[0].nextSibling)
+										);
+									}
+
+									/* The Original Code:
+									 //Various things done here to improve the performance:
+									 // 1. we create a setTimeout, that calls refreshPositions
+									 // 2. on the instance, we have a counter variable, that get's higher after every append
+									 // 3. on the local scope, we copy the counter variable, and check in the timeout, if it's still the same
+									 // 4. this lets only the last addition to the timeout stack through
+									 this.counter = this.counter ? ++this.counter : 1;
+									 var counter = this.counter;
+
+									 this._delay(function() {
+									 if(counter === this.counter) {
+									 this.refreshPositions(!hardRefresh); //Precompute after each DOM insertion, NOT on mousemove
+									 }
+									 });
+									 */
+									this.instance.refreshPositions(!this.hardRefresh);
+								}.bind({
+									instance: this,
+									i: i,
+									a: a,
+									hardRefresh: hardRefresh,
+									direction: this.direction
+								}), 300);
+							};
 
 							return true;
 						}
