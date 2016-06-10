@@ -122,6 +122,7 @@ window.fwExtBuilderInitialize = (function ($) {
 			helper: 'clone',
 			distance: 10,
 			placeholder: 'fw-builder-placeholder',
+			zIndex: 99999,
 			start: function(event, ui) {
 				var movedType = ui.helper.attr('data-builder-item-type');
 
