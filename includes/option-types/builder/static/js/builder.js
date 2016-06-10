@@ -651,7 +651,7 @@ jQuery(document).ready(function($){
 							});
 
 							/**
-							 * Delay placeholder possition change to prevent "flicker"
+							 * Delay placeholder possition change to prevent "jumping"
 							 * Fixes https://github.com/ThemeFuse/Unyson-PageBuilder-Extension/issues/25
 							 * Original code https://github.com/jquery/jquery-ui/blob/1.12.0-rc.2/ui/widgets/sortable.js#L1384
 							 * Note: Uses the above `var rearrangeTimeout;`
