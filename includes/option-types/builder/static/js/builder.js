@@ -886,53 +886,6 @@ jQuery(document).ready(function($){
 					});
 				})();
 			}
-
-			// Delay placeholder position update
-			(function($rootItems){
-				var timeoutId = 0,
-					timeoutTime = 500,
-					$delayedPlaceholder = null,
-					$realPlaceholder = null,
-					updatePlaceholder = function(){
-						$realPlaceholder.css('display', '');
-						$delayedPlaceholder.css('display', 'none');
-						$delayedPlaceholder.insertBefore($realPlaceholder);
-						$realPlaceholder = null;
-					};
-
-				$rootItems.on({
-					'sortstart.delayedPlaceholder': function(event, ui) {
-						/**
-						 * Execute after item's this.$el.sortable({start:function(){...}});
-						 * because there the placeholder size is set to match item's size
-						 */
-						setTimeout(function(){
-							// Place delayed placeholder near real placeholder
-							($delayedPlaceholder = this.placeholder.clone())
-								.css('display', 'none')
-								.insertBefore(this.placeholder);
-						}.bind(ui), 0);
-					},
-					'sortchange.delayedPlaceholder': function(event, ui) {
-						$delayedPlaceholder.css('display', '');
-						ui.placeholder.css('display', 'none'); // todo: do not hide if placeholder is sibling
-
-						$realPlaceholder = ui.placeholder;
-
-						clearTimeout(timeoutId);
-						timeoutId = setTimeout(updatePlaceholder, timeoutTime);
-					},
-					'sortbeforestop.delayedPlaceholder': function (event, ui) {
-						if ($delayedPlaceholder) {
-							$delayedPlaceholder.remove();
-							$delayedPlaceholder = null;
-						}
-
-						clearTimeout(timeoutId);
-						timeoutId = 0;
-					}
-				});
-			})(this.rootItems.view.$el);
 		}
 	});
 
