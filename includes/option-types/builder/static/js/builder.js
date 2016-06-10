@@ -666,10 +666,17 @@ jQuery(document).ready(function($){
 									if (this.a) {
 										this.a[0].appendChild(this.instance.placeholder[0]);
 									} else {
-										this.i.item[0].parentNode.insertBefore(
-											this.instance.placeholder[0],
-											(this.direction === "down" ? this.i.item[0] : this.i.item[0].nextSibling)
-										);
+										if (this.instance.placeholder.parent().length) {
+											this.i.item[0].parentNode.insertBefore(
+												this.instance.placeholder[0],
+												(this.direction === "down" ? this.i.item[0] : this.i.item[0].nextSibling)
+											);
+										} else {
+											/**
+											 * This happens for draggable items
+											 * Do nothing to prevent DOM flood with orphaned placeholders
+											 */
+										}
 									}
 
 									/* The Original Code:
@@ -694,7 +701,7 @@ jQuery(document).ready(function($){
 									a: a,
 									hardRefresh: hardRefresh,
 									direction: this.direction
-								}), 300);
+								}), 200);
 							};
 
 							return true;
