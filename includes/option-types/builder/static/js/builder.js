@@ -285,7 +285,7 @@ jQuery(document).ready(function($){
 								// trigger custom event on rootItems to update input value
 								builder.rootItems.trigger('builder:change');
 
-								//markItemAsNew(item);
+								// markItemAsNew(item); // prevent glitches
 							});
 
 							this.on('remove', function(item) {

@@ -353,7 +353,7 @@ body.rtl .fw-option-type-builder .builder-item-type {
 .fw-option-type-builder > .builder-root-items .fw-builder-placeholder:before {
 	content: ' ';
 	border: 1px dashed #d8d8d8;
-	background-color: rgba(85,85,85,.1);
+	background-color: rgba(85, 85, 85, 0.03);
 	display: block;
 	position: absolute;
 	top: 10px;
