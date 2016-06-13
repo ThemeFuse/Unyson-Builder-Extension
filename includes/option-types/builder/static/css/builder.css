@@ -362,6 +362,10 @@ body.rtl .fw-option-type-builder .builder-item-type {
 	left: 10px;
 }
 
+.fw-option-type-builder > .builder-root-items .fw-builder-placeholder.no-top:before {
+	top: 0;
+}
+
 .fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items > .fw-builder-placeholder {
 	display: none;
 }
@@ -375,6 +379,26 @@ body.rtl .fw-option-type-builder .builder-item-type {
 
 .fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items {
 	background-color: #FFEFE7;
+}
+
+.fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div {
+	position: relative;
+}
+
+.fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items:before {
+	content: ' ';
+	display: block;
+	position: absolute;
+	background: #FFEFE7 url('../img/gradient-slash.png') repeat scroll 0 0;
+	z-index: 1000;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items > div {
+	visibility: hidden;
 }
 
 /* end: allow/deny*/

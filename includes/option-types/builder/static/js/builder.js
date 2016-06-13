@@ -399,8 +399,11 @@ jQuery(document).ready(function($){
 									{
 										ui.placeholder
 											.addClass(ui.item.attr('class'))
-											.css('padding', ui.item.css('padding'))
-											.css('height', ui.item.css('height'));
+											.css('height', ui.helper.outerHeight());
+
+										if (!parseInt(ui.placeholder.css('padding-top'))) {
+											ui.placeholder.addClass('no-top');
+										}
 
 										if (ui.item.hasClass('builder-item-type')) {
 											ui.placeholder
