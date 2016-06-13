@@ -285,7 +285,7 @@ jQuery(document).ready(function($){
 								// trigger custom event on rootItems to update input value
 								builder.rootItems.trigger('builder:change');
 
-								markItemAsNew(item);
+								//markItemAsNew(item);
 							});
 
 							this.on('remove', function(item) {
@@ -701,7 +701,7 @@ jQuery(document).ready(function($){
 									a: a,
 									hardRefresh: hardRefresh,
 									direction: this.direction
-								}), 200);
+								}), 100);
 							};
 
 							return true;

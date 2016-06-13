@@ -370,7 +370,7 @@ body.rtl .fw-option-type-builder .builder-item-type {
 /* allow/deny items in _items */
 
 .fw-option-type-builder .builder-items .builder-item.fw-builder-item-allow-incoming-type > div > .builder-items {
-	background-color: #DDFFD2;
+	/*background-color: #DDFFD2;*/
 }
 
 .fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items {
