@@ -378,7 +378,7 @@ body.rtl .fw-option-type-builder .builder-item-type {
 }
 
 .fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items {
-	background-color: #FFEFE7;
+	/*background-color: #FFEFE7;*/
 }
 
 .fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div {
@@ -389,16 +389,12 @@ body.rtl .fw-option-type-builder .builder-item-type {
 	content: ' ';
 	display: block;
 	position: absolute;
-	background: #FFEFE7 url('../img/gradient-slash.png') repeat scroll 0 0;
-	z-index: 1000;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-}
-
-.fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items > div {
-	visibility: hidden;
+	background: transparent url('../img/gradient-slash.png') repeat scroll 0 0;
+	opacity: 0.65;
 }
 
 /* end: allow/deny*/
