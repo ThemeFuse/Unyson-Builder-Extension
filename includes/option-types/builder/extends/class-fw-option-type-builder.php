@@ -135,11 +135,18 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 		} else {
 			if ($this->item_types_accessed) {
 				/**
-				 * Stop pending items registration if items were already accessed, the registration for this type is done.
+				 * Stop pending items registration if items were already accessed,
+				 * the registration for this type is done.
 				 * It will be wrong if calling this method multiple times will return different results.
 				 */
 			} else {
 				$this->item_types_accessed = true; // prevents register recursion
+
+				/**
+				 * @since 1.2.4
+				 */
+				do_action('fw_option_type_builder:'. $this->get_type() .':register_items');
+
 				self::register_pending_item_types($this->get_type());
 			}
 		}
