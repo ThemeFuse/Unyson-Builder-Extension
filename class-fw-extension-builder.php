@@ -7,7 +7,9 @@ class FW_Extension_Builder extends FW_Extension
 	 */
 	protected function _init()
 	{
-		add_action('fw_option_types_init', array($this, '_action_option_types_init'));
+		add_action('fw_option_types_init', array($this, '_action_option_types_init'),
+			9 // Other option types requires it
+		);
 	}
 
 	public function _action_option_types_init() {
