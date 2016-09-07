@@ -10,9 +10,38 @@ class FW_Extension_Builder extends FW_Extension
 		add_action('fw_option_types_init', array($this, '_action_option_types_init'),
 			9 // Other option types requires it
 		);
+		spl_autoload_register(array($this, '_spl_autoload'));
 	}
 
 	public function _action_option_types_init() {
-		require dirname( __FILE__ ) . '/includes/option-types/builder/builder.php';
+		require_once dirname( __FILE__ ) . '/includes/option-types/builder/builder.php';
+	}
+
+	/**
+	 * Backwards compatibility when builder-types and builder-item-types were registered right away
+	 * @param string $class
+	 */
+	public function _spl_autoload($class) {
+		if ('FW_Option_Type_Builder' === $class) {
+			$this->_action_option_types_init();
+
+			if (is_admin()) {
+				FW_Flash_Messages::add(
+					'builder-option-type-register-wrong',
+					__("Please register builder types on 'fw_option_types_init' action", 'fw'),
+					'warning'
+				);
+			}
+		} elseif ('FW_Option_Type_Builder_Item' === $class) {
+			require dirname( __FILE__ ) . '/includes/option-types/builder/extends/class-fw-option-type-builder-item.php';
+
+			if (is_admin()) {
+				FW_Flash_Messages::add(
+					'builder-item-type-register-wrong',
+					__("Please register builder item-types on 'fw_option_type_builder:{builder-type}:register_items' action", 'fw'),
+					'warning'
+				);
+			}
+		}
 	}
 }
