@@ -42,16 +42,6 @@ class FW_Extension_Builder extends FW_Extension
 					'warning'
 				);
 			}
-		} elseif ('FW_Option_Type' === $class) {
-			require_once fw_get_framework_directory() .'/core/extends/class-fw-option-type.php';
-
-			if (is_admin()) {
-				FW_Flash_Messages::add(
-					'option-type-register-wrong',
-					__("Please register option-types on 'fw_option_types_init' action", 'fw'),
-					'warning'
-				);
-			}
 		}
 	}
 }
