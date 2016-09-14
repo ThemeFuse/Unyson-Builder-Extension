@@ -259,17 +259,7 @@ window.fwExtBuilderInitialize = (function ($) {
 				return;
 			}
 
-			var collectedPromises = [];
-
-			fwEvents.trigger('fw:option-type:builder:delay-init-promise', collectedPromises);
-
-			if (collectedPromises.length > 0) {
-				jQuery.when(collectedPromises).then(function () {
-					initBuilderDelayed(Builder, data);
-				});
-			} else {
-				initBuilderDelayed(Builder, data);
-			}
+			initBuilderDelayed(Builder, data);
 		});
 	}
 
@@ -278,12 +268,36 @@ window.fwExtBuilderInitialize = (function ($) {
 
 		$options.closest('.fw-backend-option').addClass('fw-backend-option-type-builder');
 
-		fwEvents.trigger('fw:option-type:builder:init', {
-			$elements: $options
+		var triggerInit = _.once(function () {
+			fwEvents.trigger('fw:option-type:builder:init', {
+				$elements: $options
+			});
 		});
 
-		$options.each(function(){
-			var $this          = $(this),
+		$options.each(function () {
+			var $el = $(this);
+			var type = $el.attr('data-builder-option-type');
+
+			var collectedPromises = [];
+
+			fwEvents.trigger('fw:option-type:builder:delay-init-promise', {
+				collectedPromises: collectedPromises,
+				type: type
+			});
+
+			if (collectedPromises.length > 0) {
+				jQuery.when.apply(jQuery, collectedPromises).done(function () {
+					initSingleBuilder($el)
+					triggerInit();
+				});
+			} else {
+				initBuilderDelayed($el);
+				triggerInit();
+			}
+		});
+
+		function initSingleBuilder ($el) {
+			var $this          = $el,
 				hasDragAndDrop = $this.attr('data-drag-and-drop'),
 				id             = $this.attr('id'),
 				type           = $this.attr('data-builder-option-type');
@@ -440,7 +454,7 @@ window.fwExtBuilderInitialize = (function ($) {
 			$this.trigger('fw:option-type:builder:init', $.extend({}, eventData, {
 				builder: builder
 			}));
-		});
+		}
 
 		// add special class for builders that has header tools div
 		$options.find('> .builder-items-types .fw-builder-header-tools:not(.fw-hidden)')
