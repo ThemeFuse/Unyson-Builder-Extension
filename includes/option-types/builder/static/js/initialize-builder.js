@@ -278,22 +278,8 @@ window.fwExtBuilderInitialize = (function ($) {
 			var $el = $(this);
 			var type = $el.attr('data-builder-option-type');
 
-			var collectedPromises = [];
-
-			fwEvents.trigger('fw:option-type:builder:delay-init-promise', {
-				collectedPromises: collectedPromises,
-				type: type
-			});
-
-			if (collectedPromises.length > 0) {
-				jQuery.when.apply(jQuery, collectedPromises).done(function () {
-					initSingleBuilder($el)
-					triggerInit();
-				});
-			} else {
-				initBuilderDelayed($el);
-				triggerInit();
-			}
+			initSingleBuilder($el);
+			triggerInit();
 		});
 
 		function initSingleBuilder ($el) {
