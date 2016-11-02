@@ -43,9 +43,15 @@ FwBuilderComponents.ItemView.WidthChanger = Backbone.View.extend({
 	tagName: 'div',
 	className: 'fw-builder-item-width-changer',
 	template: _.template(
-		'<a href="#" class="decrease-width dashicons dashicons-arrow-left-alt2" onclick="return false;"></a>'+
-			' <span class="current-width fw-wp-link-color"><%- title %></span> '+
-		'<a href="#" class="increase-width dashicons dashicons-arrow-right-alt2" onclick="return false;"></a>'
+		'<a href="#" class="decrease-width dashicons '+ (
+			jQuery(document.body).hasClass('rtl') ? 'dashicons-arrow-right-alt2' : 'dashicons-arrow-left-alt2'
+		) +'"'+
+		/**//**/' onclick="return false;"></a>'+
+		' <span class="current-width fw-wp-link-color"><%- title %></span> '+
+		'<a href="#" class="increase-width dashicons '+ (
+			jQuery(document.body).hasClass('rtl') ? 'dashicons-arrow-left-alt2' : 'dashicons-arrow-right-alt2'
+		) +'"'+
+		/**//**/' onclick="return false;"></a>'
 	),
 	events: {
 		'click .decrease-width': 'decreaseWidth',
