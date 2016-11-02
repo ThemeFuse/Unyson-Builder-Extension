@@ -33,11 +33,13 @@ How to overwrite this file http://manual.unyson.io/en/latest/extension/builder/i
 	margin-right: auto;
 }
 
-.pull-right {
+.pull-right,
+body.rtl .pull-left {
 	float: right !important;
 }
 
-.pull-left {
+.pull-left,
+body.rtl .pull-right {
 	float: left !important;
 }
 
@@ -218,6 +220,22 @@ embed {
 	.fw-col-sm-12,
 	.fw-col-sm-15 {
 		float: left;
+	}
+
+	body.rtl .fw-col-sm-1,
+	body.rtl .fw-col-sm-2,
+	body.rtl .fw-col-sm-3,
+	body.rtl .fw-col-sm-4,
+	body.rtl .fw-col-sm-5,
+	body.rtl .fw-col-sm-6,
+	body.rtl .fw-col-sm-7,
+	body.rtl .fw-col-sm-8,
+	body.rtl .fw-col-sm-9,
+	body.rtl .fw-col-sm-10,
+	body.rtl .fw-col-sm-11,
+	body.rtl .fw-col-sm-12,
+	body.rtl .fw-col-sm-15 {
+		float: right;
 	}
 
 	.fw-col-sm-15 {
@@ -407,6 +425,22 @@ embed {
 		float: left;
 	}
 
+	body.rtl .fw-col-md-1,
+	body.rtl .fw-col-md-2,
+	body.rtl .fw-col-md-3,
+	body.rtl .fw-col-md-4,
+	body.rtl .fw-col-md-5,
+	body.rtl .fw-col-md-6,
+	body.rtl .fw-col-md-7,
+	body.rtl .fw-col-md-8,
+	body.rtl .fw-col-md-9,
+	body.rtl .fw-col-md-10,
+	body.rtl .fw-col-md-11,
+	body.rtl .fw-col-md-12,
+	body.rtl .fw-col-md-15 {
+		float: right;
+	}
+
 	.fw-col-md-15 {
 		width: 20%;
 	}
@@ -592,6 +626,22 @@ embed {
 	.fw-col-lg-12,
 	.fw-col-lg-15 {
 		float: left;
+	}
+
+	body.rtl .fw-col-lg-1,
+	body.rtl .fw-col-lg-2,
+	body.rtl .fw-col-lg-3,
+	body.rtl .fw-col-lg-4,
+	body.rtl .fw-col-lg-5,
+	body.rtl .fw-col-lg-6,
+	body.rtl .fw-col-lg-7,
+	body.rtl .fw-col-lg-8,
+	body.rtl .fw-col-lg-9,
+	body.rtl .fw-col-lg-10,
+	body.rtl .fw-col-lg-11,
+	body.rtl .fw-col-lg-12,
+	body.rtl .fw-col-lg-15 {
+		float: right;
 	}
 
 	.fw-col-lg-15 {
