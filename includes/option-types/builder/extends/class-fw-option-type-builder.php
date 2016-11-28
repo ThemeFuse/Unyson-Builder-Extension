@@ -195,6 +195,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			 * drag and drop behavior.
 			 */
 			'drag_and_drop' => true,
+
 			/**
 			 * Builder may be read_only. This may be necessary if we want
 			 * to provide some content to user just for presentation,
@@ -204,7 +205,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type
 			 * This is not some magick option that will make your builder
 			 * read-only only by making it true. Every builder is responsible
 			 * to give their read-only experience as they want.
-			 * That's why is turned off by default. You may not need this
+			 * That's why it is turned off by default. You may not need this
 			 * option.
 			 *
 			 * This option will add a data-read-only attribute to the builder
