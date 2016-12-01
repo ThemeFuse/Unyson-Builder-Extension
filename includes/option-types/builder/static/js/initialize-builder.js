@@ -278,8 +278,20 @@ window.fwExtBuilderInitialize = (function ($) {
 			var $el = $(this);
 			var type = $el.attr('data-builder-option-type');
 
-			initSingleBuilder($el);
-			triggerInit();
+			var promises = [];
+
+			fwEvents.trigger(
+				'fw-builder:'+ type + ':collect-async-init-promises',
+				{
+					promises: promises
+				}
+			);
+
+			jQuery.when.apply(jQuery, promises).then(function () {
+				initSingleBuilder($el);
+				triggerInit();
+			});
+
 		});
 
 		function initSingleBuilder ($el) {
