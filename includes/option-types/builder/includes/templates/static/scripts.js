@@ -1,6 +1,4 @@
 (function ($, fwe, _, localized) {
-	// if at least there is one builder init, start listening dom event on body
-	// Add the listener directly, this slows the initialisation down
 	$(document.body).on('fw:option-type:builder:init', function(e, data) {
 		var inst = {
 			$el: {
@@ -73,10 +71,9 @@
 
 					fw.soleModal.show(
 						'fw-builder-templates-error',
-						'<h4>Ajax Error</h4><p class="fw-text-danger">'+ error +'</p>',
-						{showCloseButton:false}
+						'<h4>Ajax Error</h4><p class="fw-text-danger">'+ String(error) +'</p>',
+						{showCloseButton: false}
 					);
-					console.error('Ajax error', error);
 				}, this));
 			}
 		};
