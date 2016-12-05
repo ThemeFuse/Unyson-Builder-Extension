@@ -11,7 +11,7 @@ body.rtl .fw-option-type-builder .template-container {
 	content: "\f135";
 	font-family: dashicons;
 	padding-right: 3px;
-	vertical-align: middle;
+	vertical-align: text-bottom;
 	line-height: normal;
 }
 
