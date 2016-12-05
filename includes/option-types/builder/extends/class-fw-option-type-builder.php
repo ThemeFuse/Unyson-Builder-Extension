@@ -3,27 +3,12 @@
 }
 
 abstract class FW_Option_Type_Builder extends FW_Option_Type {
-	/**
-	 * Store item types for registration of all builder types, until they will be required
-	 * @var array
-	 */
-	private static $item_types_pending_registration = array();
 
 	/**
 	 * Registered item types of the current builder type
 	 * @var array {item-type => item-instance}
 	 */
-	private $item_types = array();
-
-	/**
-	 * @var array {item-type => ~}
-	 */
-	private $processed_item_types = array();
-
-	/**
-	 * @var bool If $this->get_item_types() was called
-	 */
-	private $item_types_accessed = false;
+	private static $item_types = array();
 
 	/**
 	 * @var FW_Access_Key
@@ -32,37 +17,87 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 
 	/**
 	 * @param string|FW_Option_Type_Builder_Item $item_type_class
+	 * @param $type $item_type_class
+	 * @param string $builder_type
 	 */
-	final public static function register_item_type( $item_type_class ) {
-		self::$item_types_pending_registration[] = $item_type_class;
+	public static function register_item_type( $item_type_class, $type = null, $builder_type = null ) {
+		if ( empty( $type ) || empty( $builder_type ) ) {
+
+			if ( ! is_subclass_of( $item_type_class, 'FW_Option_Type_Builder_Item' ) ) {
+				trigger_error( "Invalid builder item type class $item_type_class", E_USER_WARNING );
+
+				return;
+			}
+
+			$instance = $item_type_class instanceof FW_Option_Type_Builder_Item
+				? $item_type_class
+				: self::get_instance( $item_type_class );
+
+			$type         = $instance->get_type();
+			$builder_type = $instance->get_builder_type();
+
+			unset( $instance );
+		}
+
+		if ( ! isset( self::$item_types[ $builder_type ] ) ) {
+			if ( ! is_subclass_of( $item_type_class, 'FW_Option_Type_Builder_Item' ) ) {
+				trigger_error( "Invalid builder type $builder_type", E_USER_WARNING );
+
+				return;
+			}
+		}
+
+		if ( isset( self::$item_types[ $builder_type ][ $type ] ) ) {
+			if ( ! is_subclass_of( $item_type_class, 'FW_Option_Type_Builder_Item' ) ) {
+				trigger_error( "Builder item type $type is already registered", E_USER_WARNING );
+
+				return;
+			}
+		}
+
+		if ( apply_filters(
+			'fw_ext_builder:option_type:' . $builder_type . ':exclude_item_type:' . $type,
+			false
+		) ) {
+			return;
+		}
+
+		self::$item_types[ $builder_type ][ $type ] = $item_type_class;
+	}
+
+	/**
+	 * @param $type
+	 *
+	 * @return FW_Option_Type_Builder_Item
+	 */
+	protected function get_item_type( $type ) {
+		try {
+			return FW_Cache::get( "fw-option-type-builder:{$this->get_type()}:items:$type" );
+		} catch ( FW_Cache_Not_Found_Exception $e ) {
+			$instance = $this->get_item_instance( $type );
+			FW_Cache::set( "fw-option-type-builder:{$this->get_type()}:items:$type", $instance );
+
+			$instance->_call_init( self::get_access_key() );
+
+			return $instance;
+		}
 	}
 
 	/**
 	 * @return FW_Option_Type_Builder_Item[]
 	 */
-	final protected function get_item_types() {
-		if ( empty( self::$item_types_pending_registration ) ) {
-			$this->item_types_accessed = true;
-		} else {
-			if ( $this->item_types_accessed ) {
-				/**
-				 * Stop pending items registration if items were already accessed,
-				 * the registration for this type is done.
-				 * It will be wrong if calling this method multiple times will return different results.
-				 */
-			} else {
-				$this->item_types_accessed = true; // prevents register recursion
+	protected function get_item_types() {
+		static $did_action = false;
 
-				/**
-				 * @since 1.2.4
-				 */
-				do_action( 'fw_option_type_builder:' . $this->get_type() . ':register_items' );
-
-				self::register_pending_item_types( $this->get_type() );
-			}
+		if ( ! $did_action ) {
+			/**
+			 * @since 1.2.4
+			 */
+			do_action( 'fw_option_type_builder:' . $this->get_type() . ':register_items' );
+			$did_action = true;
 		}
 
-		return $this->item_types;
+		return array_map( array( $this, 'get_item_type' ), array_keys( $this->get_items_classes() ) );
 	}
 
 	/**
@@ -104,87 +139,6 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 	 */
 	public function _get_backend_width_type() {
 		return 'full';
-	}
-
-	/**
-	 * @param string $type Builder type
-	 */
-	private static function register_pending_item_types( $type ) {
-		foreach ( self::$item_types_pending_registration as $i => $item_type_class ) {
-			if ( is_string( $item_type_class ) ) {
-				$item_type_instance = new $item_type_class;
-
-				/**
-				 * If the item will not be registered below/now
-				 * this will prevent creating new instance on next call
-				 */
-				self::$item_types_pending_registration[ $i ] = $item_type_instance;
-			} else {
-				$item_type_instance = $item_type_class;
-			}
-
-			unset( $item_type_class );
-
-			if ( ! is_subclass_of( $item_type_instance, 'FW_Option_Type_Builder_Item' ) ) {
-				trigger_error( 'Invalid builder item type class ' . get_class( $item_type_instance ), E_USER_WARNING );
-				continue;
-			}
-
-			/**
-			 * @var FW_Option_Type_Builder_Item $item_type_instance
-			 */
-
-			$builder_type = $item_type_instance->get_builder_type();
-
-			if ( $builder_type !== $type ) {
-				continue;
-			}
-
-			/**
-			 * @var FW_Option_Type_Builder $builder_type_instance
-			 */
-			$builder_type_instance = fw()->backend->option_type( $builder_type );
-
-			if ( ! $builder_type_instance->item_type_is_valid( $item_type_instance ) ) {
-				trigger_error( 'Invalid builder item. (type: ' . $item_type_instance->get_type() . ')',
-					E_USER_WARNING );
-				continue;
-			}
-
-			unset( self::$item_types_pending_registration[ $i ] );
-
-			$builder_type_instance->_register_item_type( $item_type_instance );
-		}
-	}
-
-	/**
-	 * @param FW_Option_Type_Builder_Item $item_type_instance
-	 *
-	 * @return bool If was registered or not
-	 */
-	private function _register_item_type( $item_type_instance ) {
-		if ( isset( $this->processed_item_types[ $item_type_instance->get_type() ] ) ) {
-			trigger_error( 'Builder item already processed (type: ' . $item_type_instance->get_type() . ')',
-				E_USER_ERROR );
-
-			return;
-		}
-
-		$this->processed_item_types[ $item_type_instance->get_type() ] = true;
-
-		if ( apply_filters(
-			'fw_ext_builder:option_type:' . $this->get_type() . ':exclude_item_type:' . $item_type_instance->get_type(),
-			false,
-			$item_type_instance
-		) ) {
-			return false;
-		}
-
-		$this->item_types[ $item_type_instance->get_type() ] = $item_type_instance;
-
-		$item_type_instance->_call_init( self::get_access_key() );
-
-		return true;
 	}
 
 	private function fix_base_defaults( $option = array() ) {
@@ -237,6 +191,55 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 		}
 
 		return self::$access_key;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_items_classes() {
+		return fw_akg( $this->get_type(), self::$item_types, array() );
+	}
+
+	/**
+	 * @param $type
+	 *
+	 * @return string
+	 * @throws FW_Option_Type_Exception_Not_Found
+	 */
+	protected function get_item_class( $type ) {
+		$class = fw_akg( $type, $this->get_items_classes() );
+
+		if ( $class == null ) {
+			throw new FW_Option_Type_Exception_Not_Found();
+		}
+
+		return $class;
+	}
+
+	/**
+	 * @param $type
+	 *
+	 * @return FW_Option_Type_Builder_Item
+	 * @throws FW_Option_Type_Exception_Not_Found
+	 * @throws FW_Option_Type_Exception_Invalid_Class
+	 */
+	protected function get_item_instance( $type ) {
+		$class = $this->get_item_class( $type );
+
+		if ( ! is_subclass_of( $class, 'FW_Option_Type_Builder_Item' ) ) {
+			throw new FW_Option_Type_Exception_Invalid_Class();
+		}
+
+		return $this->get_instance( $class );
+	}
+
+	/**
+	 * @param $class
+	 *
+	 * @return mixed
+	 */
+	private static function get_instance( $class ) {
+		return new $class();
 	}
 
 	/**
