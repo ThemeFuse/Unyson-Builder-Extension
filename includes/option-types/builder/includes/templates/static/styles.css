@@ -4,11 +4,15 @@ body.rtl .fw-option-type-builder .template-container {
 
 .fw-option-type-builder .template-container .template-btn {
 	text-decoration: none;
-	background-image: url(img/template.png);
-	background-repeat: no-repeat;
-	padding: 14px;
-	background-position: left center;
 	cursor: pointer;
+}
+
+.fw-option-type-builder .template-container .template-btn:before {
+	content: "\f135";
+	font-family: dashicons;
+	padding-right: 3px;
+	vertical-align: middle;
+	line-height: normal;
 }
 
 .fw-option-type-builder .template-container a:focus {
@@ -90,7 +94,7 @@ body.rtl .fw-option-type-builder .template-container {
 	font-style: normal;
 	padding-bottom: 10px;
 	margin-bottom: 0px;
-	list-style: disc inside none;
+	list-style-type: none;
 	margin-left: 4px;
 	text-align: left;
 	line-height: 18px;
@@ -98,6 +102,14 @@ body.rtl .fw-option-type-builder .template-container {
 
 .fw-builder-templates-types > .fw-builder-templates-type ul.std li a.template-title {
 	display: block;
+}
+
+.fw-builder-templates-types > .fw-builder-templates-type ul.std li a.template-title:before {
+	content: "•"; /* emulate native list bullet */
+	font-size: 1.6em;
+	vertical-align: sub;
+	line-height: 1px;
+	padding-right: 5px;
 }
 
 .fw-builder-templates-types > .fw-builder-templates-type ul.std li,
