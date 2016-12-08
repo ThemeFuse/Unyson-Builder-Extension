@@ -213,32 +213,6 @@ window.fwExtBuilderInitialize = (function ($) {
 								}, 500)
 							);
 						}
-
-						// scroll to the bottom of the builder
-						setTimeout(function(){
-							var $builderOption = $this,
-								$scrollParent = $builderOption.scrollParent();
-
-							if ($scrollParent.get(0) === document || $scrollParent.get(0) === document.body) {
-								$scrollParent = $(window);
-							}
-
-							if ($builderOption.height() <= $scrollParent.height() + 300) {
-								/**
-								 * Do not scroll if the builder can fit or is almost entirely visible
-								 * To prevent "jumping" https://github.com/ThemeFuse/Unyson/issues/815
-								 */
-								return;
-							}
-
-							$scrollParent.scrollTop(
-								$builderOption.offset().top
-								+
-								$builderOption.outerHeight()
-								-
-								$scrollParent.height()
-							);
-						}, 0);
 					} else {
 						console.warn('Item type "'+ itemType +'" is not allowed as first level item');
 					}
@@ -248,6 +222,43 @@ window.fwExtBuilderInitialize = (function ($) {
 			} else {
 				console.error('Cannot extract item type from element', $itemType);
 			}
+		});
+
+		// scroll to the added element
+		builder.rootItems.on('add', function(el){
+			var $el = el.view.$el;
+
+			clearTimeout($this.attr('data-scroll-bottom-timeout'));
+
+			var timeout = setTimeout(function(){
+				if (!$el.length) {
+					return; // not in DOM already
+				}
+
+				var $builderOption = $this,
+					$scrollParent = $builderOption.scrollParent();
+
+				if ($scrollParent.get(0) === document || $scrollParent.get(0) === document.body) {
+					$scrollParent = $(window);
+				}
+
+				if ($builderOption.height() <= $scrollParent.height() + 300) {
+					/**
+					 * Do not scroll if the builder can fit or is almost entirely visible
+					 * To prevent "jumping" https://github.com/ThemeFuse/Unyson/issues/815
+					 */
+					return;
+				}
+
+				var scrollParentHeight = $scrollParent.height()
+
+				$scrollParent.scrollTop(Math.min( // use min() to not allow scroll to far down hiding the fixed header
+					$el.offset().top - scrollParentHeight / 3,
+					$builderOption.offset().top + $builderOption.outerHeight() - scrollParentHeight
+				));
+			}, 100);
+
+			$this.attr('data-scroll-bottom-timeout', timeout);
 		});
 	}
 
