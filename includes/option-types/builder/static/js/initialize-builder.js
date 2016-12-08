@@ -253,7 +253,7 @@ window.fwExtBuilderInitialize = (function ($) {
 				var scrollParentHeight = $scrollParent.height()
 
 				$scrollParent.scrollTop(Math.min( // use min() to not allow scroll to far down hiding the fixed header
-					$el.offset().top - scrollParentHeight / 3,
+					$el.offset().top - scrollParentHeight / 2,
 					$builderOption.offset().top + $builderOption.outerHeight() - scrollParentHeight
 				));
 			}, 100);
