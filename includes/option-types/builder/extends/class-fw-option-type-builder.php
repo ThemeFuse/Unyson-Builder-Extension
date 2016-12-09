@@ -97,7 +97,13 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 			$did_action = true;
 		}
 
-		return array_map( array( $this, 'get_item_type' ), array_keys( $this->get_items_classes() ) );
+		$items = array();
+
+		foreach ( array_keys( $this->get_items_classes() ) as $type ) {
+			$items[ $type ] = $this->get_item_type( $type );
+		}
+
+		return $items;
 	}
 
 	/**
