@@ -38,8 +38,6 @@ class FW_Extension_Builder extends FW_Extension
 				);
 			}
 		} elseif ('FW_Option_Type_Builder_Item' === $class) {
-			require_once dirname( __FILE__ ) . '/includes/option-types/builder/extends/class-fw-option-type-builder-item.php';
-
 			if (
 				is_admin()
 				&&

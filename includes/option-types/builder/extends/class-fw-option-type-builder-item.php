@@ -1,7 +1,8 @@
-<?php if (!defined('FW')) die('Forbidden');
+<?php if ( ! defined( 'FW' ) ) {
+	die( 'Forbidden' );
+}
 
-abstract class FW_Option_Type_Builder_Item
-{
+abstract class FW_Option_Type_Builder_Item {
 	/**
 	 * Specify which builder type this item type belongs to
 	 * @return string
@@ -42,89 +43,98 @@ abstract class FW_Option_Type_Builder_Item
 	 */
 	abstract public function enqueue_static();
 
-	final public function __construct()
-	{
+	final public function __construct() {
 		// Maybe in the future this method will have some functionality
 	}
 
 	/**
 	 * @param FW_Access_Key $access_key
+	 *
 	 * @internal
 	 * This must be called right after an instance of builder item type has been created
 	 * and was added to the registered array, so it is available through
 	 * builder->get_item_types()
 	 */
-	final public function _call_init($access_key)
-	{
-		if ($access_key->get_key() !== 'fw_ext_builder_option_type') {
-			trigger_error('Method call not allowed', E_USER_ERROR);
+	final public function _call_init( $access_key ) {
+		if ( $access_key->get_key() !== 'fw_ext_builder_option_type' ) {
+			trigger_error( 'Method call not allowed', E_USER_ERROR );
 		}
 
-		if (method_exists($this, '_init')) {
+		if ( method_exists( $this, '_init' ) ) {
 			$this->_init();
 		}
 	}
 
 	/**
-	 * Overwrite this method if you want to change/fix attributes that comes from js
-	 * @param $attributes array Backbone Item (Model) attributes
-	 * @return mixed
-	 */
-	public function get_value_from_attributes($attributes) {
-		return $attributes;
-	}
-
-	/**
 	 * @see FW_Option_Type::storage_save()
+	 *
 	 * @param array $item
 	 * @param array $params
+	 *
 	 * @return array $item
 	 * @since 1.2.0
 	 */
-	final public function storage_save(array $item, array $params = array()) {
-		if ($this->get_type() === $item['type']) {
-			return $this->_storage_save($item, $params);
+	final public function storage_save( array $item, array $params = array() ) {
+		if ( $this->get_type() === $item['type'] ) {
+			return $this->_storage_save( $item, $params );
 		} else {
 			return $item;
 		}
-	}
-
-	/**
-	 * @see FW_Option_Type::_storage_save()
-	 * @param array $item
-	 * @param array $params
-	 * @return array $item
-	 * @since 1.2.0
-	 * @internal
-	 */
-	protected function _storage_save(array $item, array $params) {
-		return $item;
 	}
 
 	/**
 	 * @see FW_Option_Type::storage_load()
+	 *
 	 * @param array $item
 	 * @param array $params
+	 *
 	 * @return array
 	 * @since 1.2.0
 	 */
-	final public function storage_load(array $item, array $params = array()) {
-		if ($this->get_type() === $item['type']) {
-			return $this->_storage_load($item, $params);
+	final public function storage_load( array $item, array $params = array() ) {
+		if ( $this->get_type() === $item['type'] ) {
+			return $this->_storage_load( $item, $params );
 		} else {
 			return $item;
 		}
 	}
 
 	/**
-	 * @see FW_Option_Type::_storage_load()
+	 * Overwrite this method if you want to change/fix attributes that comes from js
+	 *
+	 * @param $attributes array Backbone Item (Model) attributes
+	 *
+	 * @return mixed
+	 */
+	public function get_value_from_attributes( $attributes ) {
+		return $attributes;
+	}
+
+	/**
+	 * @see FW_Option_Type::_storage_save()
+	 *
 	 * @param array $item
 	 * @param array $params
+	 *
+	 * @return array $item
+	 * @since 1.2.0
+	 * @internal
+	 */
+	protected function _storage_save( array $item, array $params ) {
+		return $item;
+	}
+
+	/**
+	 * @see FW_Option_Type::_storage_load()
+	 *
+	 * @param array $item
+	 * @param array $params
+	 *
 	 * @return mixed
 	 * @since 1.2.0
 	 * @internal
 	 */
-	protected function _storage_load(array $item, array $params) {
+	protected function _storage_load( array $item, array $params ) {
 		return $item;
 	}
 }
