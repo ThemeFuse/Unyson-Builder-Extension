@@ -506,7 +506,7 @@ window.fwExtBuilderInitialize = (function ($) {
 						});
 
 				$(this).find('.fw-builder-header-tools:first')
-					.prepend('<span class="pull-right">&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+					.prepend('<span class="pull-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>')
 					.prepend($savePostBuilderButton);
 
 				if (isLocalStorageAvailable()) {
