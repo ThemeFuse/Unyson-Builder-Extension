@@ -448,6 +448,52 @@ window.fwExtBuilderInitialize = (function ($) {
 				});
 			}
 
+			if ($this.attr('data-compression') && window.JSZip) {
+				var compress = {
+					eventsNamespace: '.fw-builder-compress',
+					$getInput: function() {
+						var $input = builder.$input.next('input.fw-builder-compressed-input');
+
+						if (!$input.length) {
+							$input = $('<input>').attr({
+								'type': 'hidden',
+								'class': 'fw-builder-compressed-input'
+							});
+
+							builder.$input.after($input);
+						}
+
+						return $input;
+					},
+					zip: new JSZip(),
+					updateInput: _.debounce(function(){
+						{
+							compress.zip.remove('builder.json');
+							compress.zip.file('builder.json', builder.$input.val());
+							compress.zip.generateAsync({type: 'base64', compression: 'DEFLATE'}).then(function(content) {
+								compress.$getInput().val(content);
+							});
+						}
+
+						$this.closest('form')
+							.off('submit'+ compress.eventsNamespace)
+							.on('submit'+  compress.eventsNamespace, function(){
+								// clear original input and leave only compressed input to be sent in POST
+								compress.$getInput().attr('name', builder.$input.attr('name'));
+								builder.$input.val('').removeAttr('name');
+							});
+					}, 100)
+				};
+
+				builder.$input.on('fw-builder:input:change'+ compress.eventsNamespace, function(){
+					compress.updateInput();
+				});
+
+				$this.one('fw:option-type:builder:init', function () {
+					compress.updateInput();
+				});
+			}
+
 			$this.on('fw:option-type:builder:dump-json', function(e, data){
 				if (typeof data != 'undefined' && typeof data.cid != 'undefined') {
 					console.log('[Builder JSON Dump] Item '+ data.cid +'\n\n'+

@@ -182,7 +182,13 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 			 * if it's set to true. You are responsible to handle it
 			 * accordingly in your client-side logic.
 			 */
-			'read_only'       => false
+			'read_only'       => false,
+
+			/**
+			 * Option-type html input json value will be compressed.
+			 * Prevent max_post_size error when builder contains a lot of elements.
+			 */
+			'compress_form_value' => false,
 		),
 			$option );
 	}
@@ -271,6 +277,53 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 	}
 
 	/**
+	 * @param array $option
+	 * @return bool
+	 * @since 1.2.8
+	 */
+	protected function compression_is_enabled($option) {
+		return isset($option['compress_form_value']) && $option['compress_form_value'] && class_exists('ZipArchive');
+	}
+
+	/**
+	 * @param string $input_value
+	 * @param array $option
+	 * @return string
+	 * @since 1.2.8
+	 */
+	protected function maybe_decompress($input_value, $option) {
+		if (!$this->compression_is_enabled($option) || $input_value{0} === '[') {
+			return $input_value;
+		}
+
+		$file = get_temp_dir() .'fw-builder-'. getmypid() .'.zip';
+		$zip = new ZipArchive();
+
+		if (
+			false !== file_put_contents($file, base64_decode($input_value))
+			&&
+			true === $zip->open($file)
+		) {
+			$input_value = $zip->getFromIndex(0);
+
+			unlink($file);
+			$zip->close();
+		} else {
+			$input_value = $option['value']['json'];
+
+			FW_Flash_Messages::add(
+				'fw-builder-uncompress',
+				__('Failed to uncompress builder value', 'fw'),
+				'error'
+			);
+		}
+
+		unset($file, $zip);
+
+		return $input_value;
+	}
+
+	/**
 	 * @internal
 	 * {@inheritdoc}
 	 */
@@ -283,6 +336,14 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 				'option'  => $option,
 				'version' => $version,
 			) );
+
+		wp_register_script(
+			'jszip',
+			$this->get_static_uri('/lib/jszip.min.js'),
+			array(),
+			$version,
+			true
+		);
 
 		{
 			wp_enqueue_style(
@@ -312,6 +373,14 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 
 		wp_enqueue_media();
 
+		wp_enqueue_script(
+			'fw-option-builder-initialize',
+			$this->get_static_uri( '/js/initialize-builder.js' ),
+			array( 'fw-option-builder', 'jszip' ),
+			$version,
+			true
+		);
+
 		{
 			wp_enqueue_style(
 				'fw-option-builder-helpers',
@@ -331,14 +400,6 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 			wp_enqueue_script(
 				'fw-option-builder-qtips',
 				$this->get_static_uri( '/js/qtips.js' ),
-				array( 'fw-option-builder' ),
-				$version,
-				true
-			);
-
-			wp_enqueue_script(
-				'fw-option-builder-initialize',
-				$this->get_static_uri( '/js/initialize-builder.js' ),
 				array( 'fw-option-builder' ),
 				$version,
 				true
@@ -537,6 +598,10 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 			if ( $option['read_only'] ) {
 				$option['attr']['data-read-only'] = '~';
 			}
+
+			if ($this->compression_is_enabled($option)) {
+				$option['attr']['data-compression'] = '~';
+			}
 		}
 
 		return fw_render_view( dirname( __FILE__ ) . '/../view.php',
@@ -554,18 +619,16 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 	protected function _get_value_from_input( $option, $input_value ) {
 		if ( empty( $input_value ) || ! is_string( $input_value ) ) {
 			$input_value = $option['value']['json'];
+		} else {
+			$input_value = $this->maybe_decompress($input_value, $option);
 		}
 
-		$items = json_decode( $input_value, true );
-
-		if ( ! $items ) {
+		if ( ! ($items = json_decode( $input_value, true )) ) {
 			$items = array();
 		}
 
 		return array(
-			'json' => json_encode(
-				$this->get_value_from_items( $items )
-			),
+			'json' => json_encode($this->get_value_from_items( $items )),
 		);
 	}
 
