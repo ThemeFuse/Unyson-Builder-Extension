@@ -454,9 +454,10 @@ window.fwExtBuilderInitialize = (function ($) {
 					isBusy: false,
 					listenFormSubmit: function () {
 						$this.closest('form').on('submit'+  compress.eventsNamespace, function(e){
-							var $form = $(this);
+							var $form = $(this),
+								$submitButton = $form.find('input[type="submit"]:focus');
 
-							if ($form.find(':focus').is('#post-preview')) {
+							if (!$submitButton.length && $form.find(':focus').is('#post-preview')) {
 								// Do nothing on "Preview Changes" button press
 								return;
 							}
@@ -478,7 +479,8 @@ window.fwExtBuilderInitialize = (function ($) {
 
 								fw.loading.hide();
 								$form.off('submit'+ compress.eventsNamespace);
-								$form.submit();
+								($submitButton.length ? $submitButton : $form.find('#publish'))
+									.focus().trigger('click'); // do not $form.submit()
 							});
 						});
 					}

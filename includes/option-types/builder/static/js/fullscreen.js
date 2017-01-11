@@ -117,7 +117,7 @@
 					e.preventDefault();
 					utils.selectBackdrop($builder).removeClass('fw-hidden');
 					utils.setStorageItem().done(function () {
-						elements.$saveButton.trigger('click');
+						elements.$saveButton.focus().trigger('click');
 					});
 				});
 
