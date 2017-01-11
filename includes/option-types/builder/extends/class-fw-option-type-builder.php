@@ -282,7 +282,65 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 	 * @since 1.2.8
 	 */
 	protected function compression_is_enabled($option) {
-		return isset($option['compress_form_value']) && $option['compress_form_value'] && class_exists('ZipArchive');
+		return isset($option['compress_form_value']) && $option['compress_form_value'] && function_exists('gzinflate');
+	}
+
+	/**
+	 * @param $ZIPContentStr
+	 *
+	 * @return string
+	 * @source http://stackoverflow.com/a/15966905
+	 */
+	private function decompress_first_file_from_zip( $ZIPContentStr ) {
+		// Input: ZIP archive - content of entire ZIP archive as a string
+		// Output: decompressed content of the first file packed in the ZIP archive
+		// let's parse the ZIP archive
+		// (see 'http://en.wikipedia.org/wiki/ZIP_%28file_format%29' for details)
+		// parse 'local file header' for the first file entry in the ZIP archive
+		if ( strlen( $ZIPContentStr ) < 102 ) {
+			// any ZIP file smaller than 102 bytes is invalid
+			printf( "error: input data too short<br />\n" );
+
+			return '';
+		}
+
+		$CompressedSize   = $this->binstrtonum( substr( $ZIPContentStr, 18, 4 ) );
+		$UncompressedSize = $this->binstrtonum( substr( $ZIPContentStr, 22, 4 ) );
+		$FileNameLen      = $this->binstrtonum( substr( $ZIPContentStr, 26, 2 ) );
+		$ExtraFieldLen    = $this->binstrtonum( substr( $ZIPContentStr, 28, 2 ) );
+		$Offs             = 30 + $FileNameLen + $ExtraFieldLen;
+		$ZIPData          = substr( $ZIPContentStr, $Offs, $CompressedSize );
+		$Data             = gzinflate( $ZIPData );
+
+		if ( strlen( $Data ) != $UncompressedSize ) {
+			printf( "error: uncompressed data have wrong size<br />\n" );
+
+			return '';
+		} else {
+			return $Data;
+		}
+	}
+
+	/**
+	 * @param $Str
+	 * @return int
+	 * @see decompress_first_file_from_zip()
+	 */
+	private function binstrtonum( $Str ) {
+		// Returns a number represented in a raw binary data passed as string.
+		// This is useful for example when reading integers from a file,
+		// when we have the content of the file in a string only.
+		// Examples:
+		// chr(0xFF) will result as 255
+		// chr(0xFF).chr(0xFF).chr(0x00).chr(0x00) will result as 65535
+		// chr(0xFF).chr(0xFF).chr(0xFF).chr(0x00) will result as 16777215
+		$Num = 0;
+		for ( $TC1 = strlen( $Str ) - 1; $TC1 >= 0; $TC1 -- ) { // go from most significant byte
+			$Num <<= 8; // shift to left by one byte (8 bits)
+			$Num |= ord( $Str[ $TC1 ] ); // add new byte
+		}
+
+		return $Num;
 	}
 
 	/**
@@ -294,33 +352,9 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 	protected function maybe_decompress($input_value, $option) {
 		if (!$this->compression_is_enabled($option) || $input_value{0} === '[') {
 			return $input_value;
-		}
-
-		$file = get_temp_dir() .'fw-builder-'. getmypid() .'.zip';
-		$zip = new ZipArchive();
-
-		if (
-			false !== file_put_contents($file, base64_decode($input_value))
-			&&
-			true === $zip->open($file)
-		) {
-			$input_value = $zip->getFromIndex(0);
-
-			unlink($file);
-			$zip->close();
 		} else {
-			$input_value = $option['value']['json'];
-
-			FW_Flash_Messages::add(
-				'fw-builder-uncompress',
-				__('Failed to uncompress builder value', 'fw'),
-				'error'
-			);
+			return $this->decompress_first_file_from_zip(base64_decode($input_value));
 		}
-
-		unset($file, $zip);
-
-		return $input_value;
 	}
 
 	/**
