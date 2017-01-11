@@ -479,8 +479,10 @@ window.fwExtBuilderInitialize = (function ($) {
 
 								fw.loading.hide();
 								$form.off('submit'+ compress.eventsNamespace);
-								($submitButton.length ? $submitButton : $form.find('#publish'))
-									.focus().trigger('click'); // do not $form.submit()
+
+								$submitButton.length
+									? $submitButton.focus().trigger('click')
+									: $form.submit();
 							});
 						});
 					}
