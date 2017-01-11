@@ -472,10 +472,7 @@ window.fwExtBuilderInitialize = (function ($) {
 
 								fw.loading.hide();
 								$form.off('submit'+ compress.eventsNamespace);
-
-								setTimeout(function () {
-									$form.submit();
-								}, 1000);
+								$form.submit();
 							});
 						});
 					}
