@@ -454,6 +454,13 @@ window.fwExtBuilderInitialize = (function ($) {
 					isBusy: false,
 					listenFormSubmit: function () {
 						$this.closest('form').on('submit'+  compress.eventsNamespace, function(e){
+							var $form = $(this);
+
+							if ($form.find(':focus').is('#post-preview')) {
+								// Do nothing on "Preview Changes" button press
+								return;
+							}
+
 							e.preventDefault();
 
 							if (compress.isBusy) {
@@ -463,8 +470,7 @@ window.fwExtBuilderInitialize = (function ($) {
 								compress.isBusy = true;
 							}
 
-							var $form = $(this),
-								zip = new JSZip();
+							var zip = new JSZip();
 
 							zip.file('builder.json', builder.$input.val());
 							zip.generateAsync({type: 'base64', compression: 'DEFLATE'}).then(function(content) {
