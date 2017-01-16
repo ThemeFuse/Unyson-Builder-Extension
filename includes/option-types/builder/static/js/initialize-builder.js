@@ -463,7 +463,7 @@ window.fwExtBuilderInitialize = (function ($) {
 							}
 
 							var builderValue = builder.$input.val();
-							if (builderValue.length < 300000) {
+							if (builderValue.length < 200000) {
 								// compress only when builder has a lot of elements
 								return;
 							}
