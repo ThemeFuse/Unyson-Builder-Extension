@@ -462,6 +462,12 @@ window.fwExtBuilderInitialize = (function ($) {
 								return;
 							}
 
+							var builderValue = builder.$input.val();
+							if (builderValue.length < 300000) {
+								// compress only when builder has a lot of elements
+								return;
+							}
+
 							e.preventDefault();
 
 							if (compress.isBusy) {
@@ -473,7 +479,7 @@ window.fwExtBuilderInitialize = (function ($) {
 
 							var zip = new JSZip();
 
-							zip.file('builder.json', builder.$input.val());
+							zip.file('builder.json', builderValue);
 							zip.generateAsync({type: 'base64', compression: 'DEFLATE'}).then(function(content) {
 								builder.$input.val(content);
 
