@@ -11,6 +11,11 @@ class FW_Extension_Builder extends FW_Extension
 			9 // Other option types requires it
 		);
 		spl_autoload_register(array($this, '_spl_autoload'));
+
+		add_filter(
+			'fw:options-default-values:skip-types',
+			array($this, '_filter_skip_builder_option_types_default_value_process')
+		);
 	}
 
 	public function _action_option_types_init() {
@@ -51,5 +56,25 @@ class FW_Extension_Builder extends FW_Extension
 				);
 			}
 		}
+	}
+
+	/**
+	 * Skip Builders from default value extract via $option_type->get_value_from_input() because it's process intensive
+	 * @param array $types
+	 * @return array
+	 * @since 1.2.9
+	 */
+	public function _filter_skip_builder_option_types_default_value_process(array $types) {
+		if (version_compare(fw()->manifest->get_version(), '2.6.11', '<')) {
+			return $types; // fw()->backend->get_option_types() is not available
+		}
+
+		foreach (fw()->backend->get_option_types() as $type) {
+			if (fw()->backend->option_type($type) instanceof FW_Option_Type_Builder) {
+				$types[$type] = true;
+			}
+		}
+
+		return $types;
 	}
 }
