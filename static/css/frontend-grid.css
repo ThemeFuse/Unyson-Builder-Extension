@@ -83,6 +83,10 @@ embed {
 	max-width: 100%;
 }
 
+img {
+	height: auto;
+}
+
 .map img,
 .fw-shortcode-map-wrapper img {
 	max-width: none !important;
