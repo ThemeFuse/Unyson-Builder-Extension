@@ -394,6 +394,7 @@ jQuery(document).ready(function($){
 								opacity: 0.6,
 								scrollSpeed: 10,
 								placeholder: 'fw-builder-placeholder',
+                grid: [ 10, 10 ],
 								tolerance: 'pointer',
 								start: function(event, ui) {
 									{

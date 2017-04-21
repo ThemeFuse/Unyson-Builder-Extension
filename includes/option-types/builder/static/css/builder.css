@@ -13,6 +13,7 @@
 	width: 100%;
 	z-index: 1;
 }
+
 .fw-option-type-builder.fixed-header.has-header-tools > .builder-items-types {
 	margin-bottom: 0;
 	border-bottom: 1px solid #eeeeee;
@@ -36,6 +37,7 @@
 .fw-option-type-builder .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {
 	padding: 0 16px;
 }
+
 .fw-modal .fw-option-type-builder .fw-option-type-builder-thumbnails-tab > .fw-backend-option-type-html {
 	padding: 1px 16px; /* 1px vertical padding for thumbnails outline */
 }
@@ -49,7 +51,6 @@
 	/* dashicons are smaller than font grid (it's like padding), I don't know why the font was created like that */
 	font-size: 20px;
 }
-
 
 /* tabs */
 
@@ -108,7 +109,6 @@
 }
 
 /* end: tabs */
-
 
 /* builder-item-type */
 
@@ -186,7 +186,6 @@ body.rtl .fw-option-type-builder .builder-item-type {
 	padding-top: 5px;
 }
 
-
 /* builder builder-item-type add animation */
 
 @-webkit-keyframes fwBuilderItemTypeAdd {
@@ -255,7 +254,6 @@ body.rtl .fw-option-type-builder .builder-item-type {
 
 /* end: builder-item-type */
 
-
 .fw-option-type-builder > .builder-root-items {
 	padding-top: 0px;
 }
@@ -299,6 +297,7 @@ body.rtl .fw-option-type-builder .builder-item-type {
 	display: inline-block;
 	vertical-align: top;
 	padding: 10px;
+	margin: 0;
 }
 
 .fw-option-type-builder .builder-items .builder-item .controls > * {
@@ -342,34 +341,69 @@ body.rtl .fw-option-type-builder .builder-item-type {
 	-ms-animation-iteration-count: 1;
 }
 
+.fw-option-type-builder > .builder-root-items .builder-item.ui-sortable-handle {
+	display: inline-block !important;
+}
+
 .fw-option-type-builder > .builder-root-items .fw-builder-placeholder {
 	display: inline-block;
 	float: none;
-	padding: 10px;
+	padding: 0 !important;
+	margin: 0;
 	min-height: 50px;
 	position: relative;
+	width: 0;
+	top: 10px;
+	height: 55px !important;
 }
 
 .fw-option-type-builder > .builder-root-items .fw-builder-placeholder:before {
 	content: ' ';
-	border: 1px dashed #d8d8d8;
-	background-color: rgba(85, 85, 85, 0.03);
 	display: block;
 	position: absolute;
-	top: 10px;
-	right: 10px;
-	bottom: 10px;
-	left: 10px;
+	width: 100%;
+	height: 100%;
+	border: 2px none red;
+	border-right-style: dashed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+.fw-option-type-builder > .builder-root-items > .builder-items > .fw-builder-placeholder {
+	height: 120px !important;
 }
 
 .fw-option-type-builder > .builder-root-items .fw-builder-placeholder.no-top:before {
 	top: 0;
 }
 
-.fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items > .fw-builder-placeholder {
-	display: none;
+.fw-option-type-builder > .builder-root-items .builder-item .fw-builder-placeholder:first-child,
+.fw-option-type-builder > .builder-root-items .builder-item .fw-builder-placeholder:last-child,
+.fw-option-type-builder > .builder-root-items .builder-item:not([class*="fw-col-sm-"]) + .fw-builder-placeholder {
+	display: block !important;
+	width: 100%;
+	height: 0 !important;
+	min-height: 0;
+	top: 0;
 }
 
+.fw-option-type-builder > .builder-root-items .builder-item .fw-builder-placeholder:first-child:before,
+.fw-option-type-builder > .builder-root-items .builder-item .fw-builder-placeholder:last-child:before,
+.fw-option-type-builder > .builder-root-items .builder-item:not([class*="fw-col-sm-"]) + .fw-builder-placeholder:before {
+	border-right: none;
+	border-bottom-style: dashed;
+	top: 0;
+}
+
+.fw-option-type-builder > .builder-root-items .builder-item .builder-item:not([class*="fw-col-sm-"]) + .fw-builder-placeholder:before {
+	top: -6px;
+}
+
+.fw-option-type-builder .builder-items .builder-item.fw-builder-item-deny-incoming-type > div > .builder-items > .fw-builder-placeholder {
+	display: none !important;
+}
 
 /* allow/deny items in _items */
 
@@ -399,7 +433,6 @@ body.rtl .fw-option-type-builder .builder-item-type {
 
 /* end: allow/deny*/
 
-
 /* backend fixes */
 
 .fw-backend-option-type-builder {
@@ -416,7 +449,6 @@ body.rtl .fw-option-type-builder .builder-item-type {
 }
 
 /* end: backend fixes */
-
 
 /* qtip */
 
