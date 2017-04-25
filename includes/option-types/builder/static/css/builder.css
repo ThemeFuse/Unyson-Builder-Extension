@@ -290,6 +290,9 @@ body.rtl .fw-option-type-builder .builder-item-type {
 
 .fw-option-type-builder .builder-items {
 	padding: 10px;
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .fw-option-type-builder .builder-items .builder-item {
@@ -462,3 +465,60 @@ body.rtl .fw-option-type-builder .builder-item-type {
 }
 
 /* end: qtip */
+
+/******* Droppable *******/
+.fw-builder-droppable {
+	display: block;
+	position: absolute;
+	width: 20px;
+	top: 0;
+	bottom: 0;
+	left: -10px;
+	background-color: transparent;
+	transition: background-color .3s;
+}
+
+.fw-builder-droppable.over {
+	background-color: green;
+}
+
+.fw-builder-droppable.after {
+	right: -10px;
+	left: auto;
+}
+
+.fw-builder-droppable.top,
+.fw-builder-droppable.bottom {
+	left: 10px;
+	right: 10px;
+	width: auto;
+}
+
+.fw-builder-droppable.top {
+	height: 20px;
+	top: -10px;
+	bottom: auto;
+}
+
+.fw-builder-droppable.bottom {
+	top: auto;
+	height: 10px;
+	bottom: 0;
+}
+
+.fw-builder-droppable.top:nth-last-child(3) {
+	height: 100%;
+}
+
+.fw-builder-droppable.placeholder {
+	position: relative;
+	bottom: 10px;
+	flex: 1 1 auto;
+}
+
+.fw-builder-droppable.top + .fw-builder-droppable.placeholder,
+.fw-builder-droppable.top + .fw-builder-droppable.placeholder + .fw-builder-droppable.bottom {
+	display: none;
+}
+
+/******* Droppable end *******/

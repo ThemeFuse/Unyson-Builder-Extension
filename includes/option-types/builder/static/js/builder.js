@@ -383,8 +383,69 @@ jQuery(document).ready(function($){
 									);
 								});
 							}
+              function getDroppable (type) {
+								return '<span class="fw-builder-droppable ' + type + '"></span>';
+              }
+              function makeDroppable (e) {
+								return $(e).droppable({
+                  tolerance: "pointer",
+									over : function () {
+										$(this).addClass('over')
+                  },
+									out : function () {
+                    $(this).removeClass('over')
+                  },
+									drop : function () {
+                    $(this).removeClass('over')
+                  }
+                })
+              }
+              function makeBefore(e){
+								return makeDroppable(e).on('drop', function( e, ui ) {
+                  ui.helper.insertBefore($(this).closest('.builder-item'))
+                })
+							}
+              function makeAfter(e){
+                return makeDroppable(e).on('drop', function( e, ui ) {
+                  ui.helper.insertAfter($(this).closest('.builder-item'))
+                })
+              }
+              function makeStart(e){
+                return makeDroppable(e).on('drop', function( e, ui ) {
+                  ui.helper.insertAfter($(this))
+                })
+              }
+              function makePlaceholder(e){
+                return makeDroppable(e).on('drop', function( e, ui ) {
+                  ui.helper.insertBefore($(this))
+                })
+              }
+              function makeEnd(e){
+                return makeDroppable(e).on('drop', function( e, ui ) {
+                  ui.helper.insertBefore($(this).prev())
+                })
+              }
 
-							var rearrangeTimeout;
+							this.$el.find('.builder-item').each(function () {
+                $(this).draggable({
+                  revert: 'invalid',
+                  delay: 300,
+                  stop: function () {
+                    $(this).removeAttr('style')//todo: remove the added styles in a more clever way
+                  },
+                })
+                makeBefore($(getDroppable('before')).prependTo(this))
+                makeBefore($(getDroppable('before top')).prependTo(this))
+                makeAfter($(getDroppable('after')).appendTo(this))
+              })
+
+              this.$el.find('.builder-items').each(function () {
+                makeStart($(getDroppable('start top')).prependTo(this))
+                makePlaceholder($(getDroppable('placeholder')).appendTo(this))
+                makeEnd($(getDroppable('end bottom')).appendTo(this))
+              })
+
+              return true;
 
 							this.$el.sortable({
 								helper: 'clone',

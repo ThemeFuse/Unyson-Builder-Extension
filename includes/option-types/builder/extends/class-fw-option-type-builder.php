@@ -394,7 +394,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 				$this->get_static_uri( '/js/builder.js' ),
 				array(
 					'jquery-ui-draggable',
-					'jquery-ui-sortable',
+					'jquery-ui-droppable',
 					'fw',
 					'fw-events',
 					'backbone',
