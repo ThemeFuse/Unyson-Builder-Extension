@@ -1,15 +1,15 @@
-jQuery(document).ready(function($){
+jQuery(document).ready(function ($) {
 	/** Some functions */
 	{
 		/**
 		 * Loop recursive through all items in given collection
 		 */
-		function forEachItemRecursive(collection, callback) {
-			collection.each(function(item){
-				callback(item);
+		function forEachItemRecursive (collection, callback) {
+			collection.each(function (item) {
+				callback(item)
 
-				forEachItemRecursive(item.get('_items'), callback);
-			});
+				forEachItemRecursive(item.get('_items'), callback)
+			})
 		}
 	}
 
@@ -22,44 +22,44 @@ jQuery(document).ready(function($){
 		 * @param {this.classes.Item} ItemClass
 		 * @returns {String}
 		 */
-		getItemClassType: function(ItemClass) {
+		getItemClassType: function (ItemClass) {
 			return (typeof ItemClass.prototype.defaults === 'function')
 				? ItemClass.prototype.defaults().type
-				: ItemClass.prototype.defaults.type;
+				: ItemClass.prototype.defaults.type
 		},
 		/**
 		 * @param {String} type
 		 * @returns {this.classes.Item}
 		 */
-		getRegisteredItemClassByType: function(type) {
-			return this.registeredItemsClasses[type];
+		getRegisteredItemClassByType: function (type) {
+			return this.registeredItemsClasses[type]
 		},
 		/**
 		 * Register Item Class (with unique type)
 		 * @param {this.classes.Item} ItemClass
 		 * @returns {boolean}
 		 */
-		registerItemClass: function(ItemClass) {
+		registerItemClass: function (ItemClass) {
 			if (!(ItemClass.prototype instanceof this.classes.Item)) {
-				console.error('Tried to register Item Type Class that does not extend this.classes.Item', ItemClass);
-				return false;
+				console.error('Tried to register Item Type Class that does not extend this.classes.Item', ItemClass)
+				return false
 			}
 
-			var type = this.getItemClassType(ItemClass);
+			var type = this.getItemClassType(ItemClass)
 
 			if (typeof type != 'string') {
-				console.error('Invalid Builder Item type: '+ type, ItemClass);
-				return false;
+				console.error('Invalid Builder Item type: ' + type, ItemClass)
+				return false
 			}
 
 			if (typeof this.registeredItemsClasses[type] != 'undefined') {
-				console.error('Builder Item type "'+ type +'" already registered', ItemClass);
-				return false;
+				console.error('Builder Item type "' + type + '" already registered', ItemClass)
+				return false
 			}
 
-			this.registeredItemsClasses[type] = ItemClass;
+			this.registeredItemsClasses[type] = ItemClass
 
-			return true;
+			return true
 		},
 		/**
 		 * Find Item instance recursive in Items collection
@@ -69,31 +69,31 @@ jQuery(document).ready(function($){
 		 */
 		findItemRecursive: function (itemAttr, items) {
 			if (arguments.length < 2) {
-				items = this.rootItems;
+				items = this.rootItems
 			}
 
-			var item = items.get(itemAttr);
+			var item = items.get(itemAttr)
 
 			if (item) {
-				return item;
+				return item
 			}
 
-			var that = this;
+			var that = this
 
-			items.each(function(_item){
+			items.each(function (_item) {
 				if (item) {
 					// stop search if item found
-					return false;
+					return false
 				}
 
 				/** @var {builder.classes.Item} _item */
 				item = that.findItemRecursive(
 					itemAttr,
-					_item.get('_items')
-				);
-			});
+					_item.get('_items'),
+				)
+			})
 
-			return item;
+			return item
 		},
 		/**
 		 * ! Do not rewrite this (it's final)
@@ -117,8 +117,8 @@ jQuery(document).ready(function($){
 		 * Hidden input that stores JSON.stringify(this.rootItems)
 		 * - $input
 		 */
-		initialize: function(attributes, options) {
-			var builder = this;
+		initialize: function (attributes, options) {
+			var builder = this
 
 			/**
 			 * todo: To be able to extend and customize for e.g. only Item class. To not rewrite entire .initialize()
@@ -133,7 +133,7 @@ jQuery(document).ready(function($){
 			 * Assign a value to define this property inside this, not in prototype
 			 * Instances of Builder should not share items
 			 */
-			this.registeredItemsClasses = {};
+			this.registeredItemsClasses = {}
 
 			/** Define private functions accessible only within this method */
 			{
@@ -147,80 +147,80 @@ jQuery(document).ready(function($){
 				 * @returns {boolean}
 				 * @private
 				 */
-				function createItemsFromJSON(item, _items) {
+				function createItemsFromJSON (item, _items) {
 					if (!_items) {
-						return false;
+						return false
 					}
 
-					_.each(_items, function(_item) {
-						var ItemClass = builder.getRegisteredItemClassByType(_item['type']);
+					_.each(_items, function (_item) {
+						var ItemClass = builder.getRegisteredItemClassByType(_item['type'])
 
 						if (!ItemClass) {
-							return;
+							return
 						}
 
-						var __items = _item['_items'];
+						var __items = _item['_items']
 
-						delete _item['_items'];
+						delete _item['_items']
 
-						var subItem = new ItemClass(_item);
+						var subItem = new ItemClass(_item)
 
-						item.get('_items').add(subItem);
+						item.get('_items').add(subItem)
 
-						createItemsFromJSON(subItem, __items);
-					});
+						createItemsFromJSON(subItem, __items)
+					})
 
-					return true;
+					return true
 				}
 
 				// Mark new added items with special class, to be able to add css effects to it
 				{
 					var markItemAsNew;
 
-					(function(){
-						var lastNewItem = false;
+					(function () {
+						var lastNewItem = false
 
-						var rootItemsInitialized = false;
+						var rootItemsInitialized = false
 
-						var removeClassTimeout;
-						var removeClassAfter = 700;
+						var removeClassTimeout
+						var removeClassAfter = 700
 
 						markItemAsNew = function (item) {
-							clearTimeout(removeClassTimeout);
+							clearTimeout(removeClassTimeout)
 
 							if (lastNewItem) {
-								lastNewItem.view.$el.removeClass('new-item');
+								lastNewItem.view.$el.removeClass('new-item')
 							}
 
-							item.view.$el.addClass('new-item');
+							item.view.$el.addClass('new-item')
 
-							lastNewItem = item;
+							lastNewItem = item
 
-							removeClassTimeout = setTimeout(function(){
+							removeClassTimeout = setTimeout(function () {
 								if (lastNewItem) {
-									lastNewItem.view.$el.removeClass('new-item');
+									lastNewItem.view.$el.removeClass('new-item')
 								}
-							}, removeClassAfter);
+							}, removeClassAfter)
 
 							if (!rootItemsInitialized) {
-								builder.rootItems.on('builder:change', function(){
+								builder.rootItems.on('builder:change', function () {
 									if (lastNewItem) {
-										lastNewItem.view.$el.removeClass('new-item');
+										lastNewItem.view.$el.removeClass('new-item')
 									}
 
-									lastNewItem = false;
-								});
+									lastNewItem = false
+								})
 
-								rootItemsInitialized = true;
+								rootItemsInitialized = true
 							}
 						}
-					})();
+					})()
 				}
 			}
 
 			/** Define classes */
 			{
-				this.classes = {};
+				this.classes = {}
 
 				/** Items */
 				{
@@ -229,14 +229,14 @@ jQuery(document).ready(function($){
 						 * Guess which item type to create from json
 						 * (usually called on .reset())
 						 */
-						model: function(attrs, options) {
+						model: function (attrs, options) {
 							do {
 								if (typeof attrs == 'function') {
 									// It's a class. Check if has correct type
 									if (builder.getItemClassType(attrs)) {
-										return attrs;
+										return attrs
 									} else {
-										break;
+										break
 									}
 								} else if (typeof attrs == 'object') {
 									/**
@@ -244,56 +244,56 @@ jQuery(document).ready(function($){
 									 * check if has correct type in it (get registered class with this type)
 									 */
 
-									var ItemClass = builder.getRegisteredItemClassByType(attrs['type']);
+									var ItemClass = builder.getRegisteredItemClassByType(attrs['type'])
 
 									if (!ItemClass) {
-										break;
+										break
 									}
 
-									var _items = attrs['_items'];
+									var _items = attrs['_items']
 
-									delete attrs['_items'];
+									delete attrs['_items']
 
-									var item = new ItemClass(attrs);
+									var item = new ItemClass(attrs)
 
-									createItemsFromJSON(item, _items);
+									createItemsFromJSON(item, _items)
 
-									return item;
+									return item
 								}
-							} while(false);
+							} while (false)
 
-							console.error('Cannot detect Item type', attrs, options);
+							console.error('Cannot detect Item type', attrs, options)
 
-							return new builder.classes.Item;
+							return new builder.classes.Item
 						},
 						/**
 						 * View that contains sortable with items views
 						 */
 						view: null,
-						initialize: function() {
-							this.defaultInitialize();
+						initialize: function () {
+							this.defaultInitialize()
 
 							this.view = new builder.classes.ItemsView({
-								collection: this
-							});
+								collection: this,
+							})
 						},
 						/**
 						 * It is required to call this method in .initialize()
 						 */
-						defaultInitialize: function() {
-							this.on('add', function(item) {
+						defaultInitialize: function () {
+							this.on('add', function (item) {
 								// trigger custom event on rootItems to update input value
-								builder.rootItems.trigger('builder:change');
+								builder.rootItems.trigger('builder:change')
 
 								// markItemAsNew(item); // prevent glitches
-							});
+							})
 
-							this.on('remove', function(item) {
+							this.on('remove', function (item) {
 								// trigger custom event on rootItems to update input value
-								builder.rootItems.trigger('builder:change');
-							});
-						}
-					});
+								builder.rootItems.trigger('builder:change')
+							})
+						},
+					})
 
 					this.classes.ItemsView = Backbone.View.extend({
 						// required
@@ -307,205 +307,229 @@ jQuery(document).ready(function($){
 						template: _.template(''),
 						events: {},
 						initSortableTimeout: 0,
-						initialize: function() {
-							this.defaultInitialize();
+						initialize: function () {
+							this.defaultInitialize()
 						},
 						/**
 						 * It is required to call this method in .initialize()
 						 */
-						defaultInitialize: function() {
-							this.listenTo(this.collection, 'add change remove reset', this.render);
+						defaultInitialize: function () {
+							this.listenTo(this.collection, 'add change remove reset', this.render)
 
-							this.render();
+							this.render()
 						},
-						render: function() {
+						render: function () {
 							/**
 							 * First .detach() elements
 							 * to prevent them to be removed (reset) on .html('...') replace
 							 */
 							{
-								this.collection.each(function(item) {
-									item.view.$el.detach();
-								});
+								this.collection.each(function (item) {
+									item.view.$el.detach()
+								})
 							}
 
 							if (this.$el.hasClass('ui-sortable')) {
-								this.$el.sortable('destroy');
+								this.$el.sortable('destroy')
 							}
 
 							this.$el.html(this.template({
-								items: this.collection
-							}));
+								items: this.collection,
+							}))
 
-							var that = this;
+							var that = this
 
-							this.collection.each(function(item) {
-								that.$el.append(item.view.$el);
-							});
+							this.collection.each(function (item) {
+								that.$el.append(item.view.$el)
+							})
 
 							/**
 							 * init sortable with delay, after element added to DOM
 							 * fixes bug: sortable sometimes not initialized if element is not in DOM
 							 */
 							{
-								clearTimeout(this.initSortableTimeout);
+								clearTimeout(this.initSortableTimeout)
 
-								this.initSortableTimeout = setTimeout(function(){
-									that.initSortable();
-								}, 12);
+								this.initSortableTimeout = setTimeout(function () {
+									that.initSortable()
+								}, 12)
 							}
 
-							return this;
+							return this
 						},
-						initSortable: function(){
-							var hasDragAndDrop = builder.rootItems.view.$el
-								.closest('.fw-option-type-builder')
-								.attr('data-drag-and-drop');
+						initSortable: function () {
+							var hasDragAndDrop = builder.rootItems.view.$el.closest('.fw-option-type-builder').attr('data-drag-and-drop')
 
-							if (! hasDragAndDrop) {
-								return;
+							if (!hasDragAndDrop) {
+								return
 							}
 
 							if (this.$el.hasClass('ui-sortable')) {
 								// already initialized
-								return false;
+								return false
 							}
 
 							// remove "allowed" and "denied" classes from all items
-							function itemsRemoveAllowedDeniedClasses() {
+							function itemsRemoveAllowedDeniedClasses () {
 								builder.rootItems.view.$el.removeClass(
-									'fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type'
-								);
+									'fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type',
+								)
 
-								forEachItemRecursive(builder.rootItems, function(item){
+								forEachItemRecursive(builder.rootItems, function (item) {
 									item.view.$el.removeClass(
-										'fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type'
-									);
-								});
+										'fw-builder-item-allow-incoming-type fw-builder-item-deny-incoming-type',
+									)
+								})
 							}
-              function getDroppable (type) {
-								return '<span class="fw-builder-droppable ' + type + '"></span>';
-              }
-              function makeDroppable (e) {
+
+							var droppableClass = 'fw-builder-droppable'
+
+							function hasDroppables (el) {
+								return $(el).children('.' + droppableClass).length > 0
+							}
+
+							function getDroppable (type) {
+								return '<span class="' + droppableClass + ' ' + type + '"></span>'
+							}
+
+							var droppables = (function () {
+								var onOver = function () {
+									$(this).droppable('enable')
+								}
+								var onOut = function () {
+									$(this).droppable('disable')
+								}
+
+								return {
+									enable: function () {
+										$('.fw-builder-droppable').on('mouseenter', onOver).on('mouseleave', onOut)
+									},
+									disable: function () {
+										$('.fw-builder-droppable').droppable('disable').off('mouseenter', onOver).off('mouseleave', onOut)
+									},
+								}
+							})()
+
+							function makeDroppable (e) {
 								return $(e).droppable({
-                  tolerance: "pointer",
-									over : function () {
-										$(this).addClass('over')
-                  },
-									out : function () {
-                    $(this).removeClass('over')
-                  },
-									drop : function () {
-                    $(this).removeClass('over')
-                  }
-                })
-              }
-              function makeBefore(e){
-								return makeDroppable(e).on('drop', function( e, ui ) {
-                  ui.helper.insertBefore($(this).closest('.builder-item'))
-                })
+									tolerance: 'pointer',
+									drop: droppables.disable,
+								}).droppable('disable').on('click', function () {
+									return false
+								})
 							}
-              function makeAfter(e){
-                return makeDroppable(e).on('drop', function( e, ui ) {
-                  ui.helper.insertAfter($(this).closest('.builder-item'))
-                })
-              }
-              function makeStart(e){
-                return makeDroppable(e).on('drop', function( e, ui ) {
-                  ui.helper.insertAfter($(this))
-                })
-              }
-              function makePlaceholder(e){
-                return makeDroppable(e).on('drop', function( e, ui ) {
-                  ui.helper.insertBefore($(this))
-                })
-              }
-              function makeEnd(e){
-                return makeDroppable(e).on('drop', function( e, ui ) {
-                  ui.helper.insertBefore($(this).prev())
-                })
-              }
+
+							function makeBefore (e) {
+								return makeDroppable(e).on('drop', function (e, ui) {
+									ui.helper.insertBefore($(this).closest('.builder-item'))
+								})
+							}
+
+							function makeAfter (e) {
+								return makeDroppable(e).on('drop', function (e, ui) {
+									ui.helper.insertAfter($(this).closest('.builder-item'))
+								})
+							}
+
+							function makeStart (e) {
+								return makeDroppable(e).on('drop', function (e, ui) {
+									ui.helper.insertAfter($(this))
+								})
+							}
+
+							function makeEnd (e) {
+								return makeDroppable(e).on('drop', function (e, ui) {
+									ui.helper.insertBefore($(this))
+								})
+							}
 
 							this.$el.find('.builder-item').each(function () {
-                $(this).draggable({
-                  revert: 'invalid',
-                  delay: 300,
-                  stop: function () {
-                    $(this).removeAttr('style')//todo: remove the added styles in a more clever way
-                  },
-                })
-                makeBefore($(getDroppable('before')).prependTo(this))
-                makeBefore($(getDroppable('before top')).prependTo(this))
-                makeAfter($(getDroppable('after')).appendTo(this))
-              })
+								$(this).draggable({
+									revert: 'invalid',
+									delay: 100,
+									helper: function () {
+										return $(this).addClass('pointerless')
+									},
+									start: droppables.enable,
+									stop: function () {
+										droppables.disable()
+										$(this).removeClass('pointerless')
+										$(this).removeAttr('style')//todo: remove the added styles in a more clever way
+									},
+								})
+								if (hasDroppables(this)) {
+									return
+								}
+								makeBefore($(getDroppable('before')).prependTo(this))
+								makeBefore($(getDroppable('before top')).prependTo(this))
+								makeAfter($(getDroppable('after')).appendTo(this))
+							})
 
-              this.$el.find('.builder-items').each(function () {
-                makeStart($(getDroppable('start top')).prependTo(this))
-                makePlaceholder($(getDroppable('placeholder')).appendTo(this))
-                makeEnd($(getDroppable('end bottom')).appendTo(this))
-              })
+							this.$el.find('.builder-items').each(function () {
+								if (hasDroppables(this)) {
+									return
+								}
+								makeStart($(getDroppable('start top')).prependTo(this))
+								makeEnd($(getDroppable('end bottom')).appendTo(this))
+							})
 
-              return true;
+							return true
 
 							this.$el.sortable({
 								helper: 'clone',
 								items: '> .builder-item',
-								connectWith: '#'+ builder.$input.closest('.fw-option-type-builder').attr('id') +' .builder-root-items .builder-items',
+								connectWith: '#' + builder.$input.closest('.fw-option-type-builder').attr('id') + ' .builder-root-items .builder-items',
 								distance: 10,
 								opacity: 0.6,
 								scrollSpeed: 10,
 								placeholder: 'fw-builder-placeholder',
-                grid: [ 10, 10 ],
+								grid: [10, 10],
 								tolerance: 'pointer',
-								start: function(event, ui) {
+								start: function (event, ui) {
 									{
-										ui.placeholder
-											.addClass(ui.item.attr('class'))
-											.css('height', ui.helper.outerHeight());
+										ui.placeholder.addClass(ui.item.attr('class')).css('height', ui.helper.outerHeight())
 
 										if (!parseInt(ui.placeholder.css('padding-top'))) {
-											ui.placeholder.addClass('no-top');
+											ui.placeholder.addClass('no-top')
 										}
 
 										if (ui.item.hasClass('builder-item-type')) {
-											ui.placeholder
-												.removeClass('builder-item-type')
-												.css('width', '100%');
+											ui.placeholder.removeClass('builder-item-type').css('width', '100%')
 										}
 									}
 
 									// check if it is an exiting item (and create variables)
 									{
 										// extract cid from view id
-										var movedItemCid = ui.item.attr('id');
+										var movedItemCid = ui.item.attr('id')
 
 										if (!movedItemCid) {
 											// not an existing item, it's a thumbnail from draggable
-											return;
+											return
 										}
 
-										movedItemCid = movedItemCid.split('-').pop();
+										movedItemCid = movedItemCid.split('-').pop()
 
 										if (!movedItemCid) {
 											// not an existing item, it's a thumbnail from draggable
-											return;
+											return
 										}
 
-										var movedItem = builder.findItemRecursive({cid: movedItemCid});
+										var movedItem = builder.findItemRecursive({cid: movedItemCid})
 
 										if (!movedItem) {
-											console.warn('Item not found (cid: "'+ movedItemCid +'")');
-											return;
+											console.warn('Item not found (cid: "' + movedItemCid + '")')
+											return
 										}
 
 										// fixme: this is hardcode. need to think a better/general solution
 										if (movedItem.attributes.type != 'column'
 											&& movedItem.attributes.type != 'section') {
-											ui.item.parents('.builder-root-items').addClass('fw-move-simple-item');
+											ui.item.parents('.builder-root-items').addClass('fw-move-simple-item')
 										}
 									}
 
-									var movedItemType = movedItem.get('type');
+									var movedItemType = movedItem.get('type')
 
 									/**
 									 * add "allowed" classes to items vies where allowIncomingType(movedItemType) returned true
@@ -514,16 +538,16 @@ jQuery(document).ready(function($){
 									{
 										{
 											if (movedItem.allowDestinationType(null)) {
-												builder.rootItems.view.$el.addClass('fw-builder-item-allow-incoming-type');
+												builder.rootItems.view.$el.addClass('fw-builder-item-allow-incoming-type')
 											} else {
-												builder.rootItems.view.$el.addClass('fw-builder-item-deny-incoming-type');
+												builder.rootItems.view.$el.addClass('fw-builder-item-deny-incoming-type')
 											}
 										}
 
-										forEachItemRecursive(builder.rootItems, function(item){
+										forEachItemRecursive(builder.rootItems, function (item) {
 											if (item.cid === movedItemCid) {
 												// this is current moved item
-												return;
+												return
 											}
 
 											if (
@@ -531,56 +555,54 @@ jQuery(document).ready(function($){
 												&&
 												movedItem.allowDestinationType(item.get('type'))
 											) {
-												item.view.$el.addClass('fw-builder-item-allow-incoming-type');
+												item.view.$el.addClass('fw-builder-item-allow-incoming-type')
 											} else {
-												item.view.$el.addClass('fw-builder-item-deny-incoming-type');
+												item.view.$el.addClass('fw-builder-item-deny-incoming-type')
 											}
-										});
+										})
 									}
 
 									// Freeze the container height
 									{
-										var container = builder.$input.closest('.fw-option-type-builder')
-											.find( '.builder-root-items > .builder-items');
+										var container = builder.$input.closest('.fw-option-type-builder').find('.builder-root-items > .builder-items')
 
-										container.css('min-height', container.height() +'px' );
+										container.css('min-height', container.height() + 'px')
 									}
 								},
-								stop: function(event, ui) {
-									clearTimeout(rearrangeTimeout);
+								stop: function (event, ui) {
+									clearTimeout(rearrangeTimeout)
 
-									itemsRemoveAllowedDeniedClasses();
+									itemsRemoveAllowedDeniedClasses()
 
-									ui.item.parents('.builder-root-items').removeClass('fw-move-simple-item');
+									ui.item.parents('.builder-root-items').removeClass('fw-move-simple-item')
 
 									// unfreeze the container height
 									{
-										var container = builder.$input.closest('.fw-option-type-builder')
-											.find( '.builder-root-items > .builder-items');
+										var container = builder.$input.closest('.fw-option-type-builder').find('.builder-root-items > .builder-items')
 
-										container.css('min-height', '');
+										container.css('min-height', '')
 									}
 								},
-								receive: function(event, ui) {
+								receive: function (event, ui) {
 									// sometimes the "stop" event is not triggered and classes remains
-									itemsRemoveAllowedDeniedClasses();
+									itemsRemoveAllowedDeniedClasses()
 
 									{
-										var currentItemType = null; // will remain null if it is root collection
-										var currentItem;
+										var currentItemType = null // will remain null if it is root collection
+										var currentItem
 
 										if (this.collection._item) {
-											currentItemType = this.collection._item.get('type');
-											currentItem     = this.collection._item;
+											currentItemType = this.collection._item.get('type')
+											currentItem = this.collection._item
 										}
 									}
 
-									var incomingItemType = ui.item.attr('data-builder-item-type');
+									var incomingItemType = ui.item.attr('data-builder-item-type')
 
 									if (incomingItemType) {
 										// received item type from draggable
 
-										var IncomingItemClass = builder.getRegisteredItemClassByType(incomingItemType);
+										var IncomingItemClass = builder.getRegisteredItemClassByType(incomingItemType)
 
 										if (IncomingItemClass) {
 											if (
@@ -594,41 +616,41 @@ jQuery(document).ready(function($){
 											) {
 												this.collection.add(
 													new IncomingItemClass({}, {
-														$thumb: ui.item
+														$thumb: ui.item,
 													}),
 													{
-														at: this.$el.find('> .builder-item-type').index()
-													}
-												);
+														at: this.$el.find('> .builder-item-type').index(),
+													},
+												)
 											} else {
 												// replace all html, so dragged element will be removed
-												this.render();
+												this.render()
 											}
 										} else {
-											console.error('Unregistered item type: '+ incomingItemType);
+											console.error('Unregistered item type: ' + incomingItemType)
 
-											this.render();
+											this.render()
 										}
 									} else {
 										// received existing item from another sortable
 
 										if (!ui.item.attr('id')) {
-											console.warn('Invalid view id', ui.item);
-											return;
+											console.warn('Invalid view id', ui.item)
+											return
 										}
 
 										// extract cid from view id
-										var incomingItemCid = ui.item.attr('id').split('-').pop();
+										var incomingItemCid = ui.item.attr('id').split('-').pop()
 
-										var incomingItem = builder.findItemRecursive({cid: incomingItemCid});
+										var incomingItem = builder.findItemRecursive({cid: incomingItemCid})
 
 										if (!incomingItem) {
-											console.warn('Item not found (cid: "'+ incomingItemCid +'")');
-											return;
+											console.warn('Item not found (cid: "' + incomingItemCid + '")')
+											return
 										}
 
-										var incomingItemType = incomingItem.get('type');
-										var IncomingItemClass = builder.getRegisteredItemClassByType(incomingItemType);
+										var incomingItemType = incomingItem.get('type')
+										var IncomingItemClass = builder.getRegisteredItemClassByType(incomingItemType)
 
 										if (
 											IncomingItemClass.prototype.allowDestinationType(currentItemType)
@@ -641,40 +663,40 @@ jQuery(document).ready(function($){
 										) {
 											// move item from one collection to another
 											{
-												var at = ui.item.index();
+												var at = ui.item.index()
 
 												// prevent 'remove', that will remove all events from the element
-												incomingItem.view.$el.detach();
+												incomingItem.view.$el.detach()
 
-												incomingItem.collection.remove(incomingItem);
+												incomingItem.collection.remove(incomingItem)
 
 												this.collection.add(incomingItem, {
-													at: at
-												});
+													at: at,
+												})
 											}
 										} else {
-											console.warn('[Builder] Item move denied');
-											ui.sender.sortable('cancel');
+											console.warn('[Builder] Item move denied')
+											ui.sender.sortable('cancel')
 										}
 									}
 								}.bind(this),
 								update: function (event, ui) {
 									if (ui.item.attr('data-ignore-update-once')) {
-										ui.item.removeAttr('data-ignore-update-once');
-										return;
+										ui.item.removeAttr('data-ignore-update-once')
+										return
 									}
 
 									if (ui.item.attr('data-builder-item-type')) {
 										// element just received from draggable, it is not builder item yet, do nothing
-										return;
+										return
 									}
 
 									if (!ui.item.attr('id')) {
-										console.warn('Invalid item, no id');
-										return;
+										console.warn('Invalid item, no id')
+										return
 									}
 
-									if (!$(this).find('> #'+ ui.item.attr('id') +':first').length) {
+									if (!$(this).find('> #' + ui.item.attr('id') + ':first').length) {
 										// Item not in sortable, probably moved to another sortable, do nothing
 
 										/**
@@ -684,36 +706,36 @@ jQuery(document).ready(function($){
 										 * so it is better to ignore next coming 'update'.
 										 * Set a special attribute to ignore 'update' once
 										 */
-										ui.item.attr('data-ignore-update-once', 'true');
+										ui.item.attr('data-ignore-update-once', 'true')
 
-										return;
+										return
 									}
 
 									// extract cid from view id
-									var itemCid = ui.item.attr('id').split('-').pop();
+									var itemCid = ui.item.attr('id').split('-').pop()
 
-									var item = builder.findItemRecursive({cid: itemCid});
+									var item = builder.findItemRecursive({cid: itemCid})
 
 									if (!item) {
-										console.warn('Item not found (cid: "'+ itemCid +'")');
-										return;
+										console.warn('Item not found (cid: "' + itemCid + '")')
+										return
 									}
 
-									var index = ui.item.index();
+									var index = ui.item.index()
 
 									// change item position in collection
 									{
-										var collection = item.collection;
+										var collection = item.collection
 
 										// prevent 'remove', that will remove all events from the element
-										item.view.$el.detach();
+										item.view.$el.detach()
 
-										collection.remove(item);
+										collection.remove(item)
 
-										collection.add(item, {at: index});
+										collection.add(item, {at: index})
 									}
-								}
-							});
+								},
+							})
 
 							/**
 							 * Delay placeholder possition change to prevent "jumping"
@@ -721,21 +743,21 @@ jQuery(document).ready(function($){
 							 * Original code https://github.com/jquery/jquery-ui/blob/1.12.0-rc.2/ui/widgets/sortable.js#L1384
 							 * Note: Uses the above `var rearrangeTimeout;`
 							 */
-							this.$el.sortable('instance')._rearrange = function(event, i, a, hardRefresh) {
-								clearTimeout(rearrangeTimeout);
+							this.$el.sortable('instance')._rearrange = function (event, i, a, hardRefresh) {
+								clearTimeout(rearrangeTimeout)
 
-								rearrangeTimeout = setTimeout(function(){
+								rearrangeTimeout = setTimeout(function () {
 									/* The Original Code:
 									 a ? a[0].appendChild(this.placeholder[0]) : i.item[0].parentNode.insertBefore(this.placeholder[0], (this.direction === "down" ? i.item[0] : i.item[0].nextSibling));
 									 */
 									if (this.a) {
-										this.a[0].appendChild(this.instance.placeholder[0]);
+										this.a[0].appendChild(this.instance.placeholder[0])
 									} else {
 										if (this.instance.placeholder.parent().length) {
 											this.i.item[0].parentNode.insertBefore(
 												this.instance.placeholder[0],
-												(this.direction === "down" ? this.i.item[0] : this.i.item[0].nextSibling)
-											);
+												(this.direction === 'down' ? this.i.item[0] : this.i.item[0].nextSibling),
+											)
 										} else {
 											/**
 											 * This happens for draggable items
@@ -759,19 +781,19 @@ jQuery(document).ready(function($){
 									 }
 									 });
 									 */
-									this.instance.refreshPositions(!this.hardRefresh);
+									this.instance.refreshPositions(!this.hardRefresh)
 								}.bind({
 									instance: this,
 									i: i,
 									a: a,
 									hardRefresh: hardRefresh,
-									direction: this.direction
-								}), 100);
-							};
+									direction: this.direction,
+								}), 100)
+							}
 
-							return true;
-						}
-					});
+							return true
+						},
+					})
 				}
 
 				/** Item */
@@ -781,7 +803,7 @@ jQuery(document).ready(function($){
 
 						defaults: {
 							/** @type {String} Your item unique type (withing the builder) */
-							type: null
+							type: null,
 						},
 
 						/** @type {builder.classes.ItemView} */
@@ -796,25 +818,25 @@ jQuery(document).ready(function($){
 								key: '_items',
 								//relatedModel: builder.classes.Item, // class does not exists at this point, initialized below
 								collectionType: builder.classes.Items,
-								collectionKey: '_item'
-							}
+								collectionKey: '_item',
+							},
 						],
-						initialize: function(){
+						initialize: function () {
 							this.view = new builder.classes.ItemView({
-								id: 'fw-builder-item-'+ this.cid,
-								model: this
-							});
+								id: 'fw-builder-item-' + this.cid,
+								model: this,
+							})
 
-							this.defaultInitialize();
+							this.defaultInitialize()
 						},
 						/**
 						 * It is required to call this method in .initialize()
 						 */
-						defaultInitialize: function() {
+						defaultInitialize: function () {
 							// trigger custom event on rootItems to update input value
-							this.on('change', function() {
-								builder.rootItems.trigger('builder:change');
-							});
+							this.on('change', function () {
+								builder.rootItems.trigger('builder:change')
+							})
 						},
 						/**
 						 * Item decide if allows an incoming item type to be placed inside it's _items
@@ -822,8 +844,8 @@ jQuery(document).ready(function($){
 						 * @param {String} type
 						 * @returns {boolean}
 						 */
-						allowIncomingType: function(type) {
-							return false;
+						allowIncomingType: function (type) {
+							return false
 						},
 						/**
 						 * Item decide if allows to be placed into _items of another item type
@@ -833,13 +855,13 @@ jQuery(document).ready(function($){
 						 * @param {String|null} type String - item type; null - root items
 						 * @returns {boolean}
 						 */
-						allowDestinationType: function(type) {
-							return true;
-						}
-					});
+						allowDestinationType: function (type) {
+							return true
+						},
+					})
 
 					{
-						this.classes.Item.prototype.relations[0].relatedModel = this.classes.Item;
+						this.classes.Item.prototype.relations[0].relatedModel = this.classes.Item
 					}
 
 					this.classes.ItemView = Backbone.View.extend({
@@ -859,66 +881,66 @@ jQuery(document).ready(function($){
 							'<em class="fw-text-muted">Default View</em>',
 							'<a href="#" onclick="return false;" class="dashicons fw-x"></a>',
 							'<div class="builder-items"></div>',
-							'</div>'
+							'</div>',
 						].join('')),
 						events: {
-							'click a.dashicons.fw-x': 'defaultRemove'
+							'click a.dashicons.fw-x': 'defaultRemove',
 						},
-						initialize: function(){
-							this.defaultInitialize();
-							this.render();
+						initialize: function () {
+							this.defaultInitialize()
+							this.render()
 						},
 						/**
 						 * It is required to call this method in .initialize()
 						 */
-						defaultInitialize: function() {
-							this.listenTo(this.model, 'change', this.render);
+						defaultInitialize: function () {
+							this.listenTo(this.model, 'change', this.render)
 						},
-						render: function() {
-							this.defaultRender();
+						render: function () {
+							this.defaultRender()
 						},
-						defaultRender: function(templateData) {
-							var _items = this.model.get('_items');
+						defaultRender: function (templateData) {
+							var _items = this.model.get('_items')
 
 							/**
 							 * First .detach() elements
 							 * to prevent them to be removed (reset) on .html('...') replace
 							 */
-							_items.view.$el.detach();
+							_items.view.$el.detach()
 
 							this.$el.html(
 								this.template(
-									templateData || {}
-								)
-							);
+									templateData || {},
+								),
+							)
 
 							/**
 							 * Sometimes sub items sortable view is not initialized or (destroyed if was initialized)
 							 * Tell it to render and maybe it will fix itself
 							 */
 							if (!_items.view.$el.hasClass('ui-sortable')) {
-								_items.view.render();
+								_items.view.render()
 							}
 
 							/**
 							 * replace <div class="builder-items"> with builder.classes.ItemsView.$el
 							 */
 							this.$el.find('.builder-items:first').replaceWith(
-								_items.view.$el
-							);
+								_items.view.$el,
+							)
 
-							return this;
+							return this
 						},
-						defaultRemove: function() {
-							this.remove();
+						defaultRemove: function () {
+							this.remove()
 
-							this.model.collection.remove(this.model);
-						}
-					});
+							this.model.collection.remove(this.model)
+						},
+					})
 				}
 			}
 
-			this.rootItems = new this.classes.Items;
+			this.rootItems = new this.classes.Items
 
 			/**
 			 * Something happened in WP 4.5 (or backbone.relational compatibility with latest backbone)
@@ -927,90 +949,90 @@ jQuery(document).ready(function($){
 			 * So loop recursive and fix item.collection
 			 */
 			{
-				function _fixItemsCollections(collection, c) {
+				function _fixItemsCollections (collection, c) {
 					if (typeof collection.cid != 'undefined') {
 						// it's a model, the second param is the collection
-						collection = c;
+						collection = c
 					}
 
-					collection.each(function(item){
-						item.collection = collection;
+					collection.each(function (item) {
+						item.collection = collection
 
-						item.collection.off(null, _fixItemsCollections);
-						item.collection.on('reset add', _fixItemsCollections);
+						item.collection.off(null, _fixItemsCollections)
+						item.collection.on('reset add', _fixItemsCollections)
 
 						/**
 						 * Sometimes item.get('_items') is empty at this point, wait a few milliseconds
 						 * Bad solution, I home BackboneRelation will be fixed and this code will be removed
 						 */
-						setTimeout(_.bind(function(){ _fixItemsCollections(this.get('_items')); }, item), 0);
-					});
+						setTimeout(_.bind(function () { _fixItemsCollections(this.get('_items')) }, item), 0)
+					})
 				}
 
-				this.rootItems.on('reset add', _fixItemsCollections);
+				this.rootItems.on('reset add', _fixItemsCollections)
 			}
 
 			// prepare this.$input
 			{
 				if (typeof options.$input == 'undefined') {
-					console.warn('$input not specified. Items will no be saved');
+					console.warn('$input not specified. Items will no be saved')
 
-					this.$input = $('<input type="hidden">');
+					this.$input = $('<input type="hidden">')
 				} else {
-					this.$input = options.$input;
+					this.$input = options.$input
 				}
 
-				fwEvents.trigger('fw-builder:'+ this.get('type') +':register-items', this);
+				fwEvents.trigger('fw-builder:' + this.get('type') + ':register-items', this)
 
 				// load saved items from input
 				{
 					try {
-						this.rootItems.reset(JSON.parse(this.$input.val() || '[]'));
+						this.rootItems.reset(JSON.parse(this.$input.val() || '[]'))
 
-						fwEvents.trigger('fw-builder:'+ this.get('type') +':items-loaded', this);
+						fwEvents.trigger('fw-builder:' + this.get('type') + ':items-loaded', this)
 					} catch (e) {
-						console.error('Failed to recover items from input', e);
+						console.error('Failed to recover items from input', e)
 					}
 				}
 
 				// listen to items changes and update input
-				(function(){
-					function saveBuilderValueToInput() {
-						builder.$input.val(JSON.stringify(builder.rootItems));
-						builder.$input.trigger('fw-builder:input:change');
-						builder.$input.trigger('change');
+				(function () {
+					function saveBuilderValueToInput () {
+						builder.$input.val(JSON.stringify(builder.rootItems))
+						builder.$input.trigger('fw-builder:input:change')
+						builder.$input.trigger('change')
 					}
 
 					/**
 					 * use timeout to not load browser/cpu when there are many changes at once (for e.g. on .reset())
 					 */
-					var saveTimeout = 0;
+					var saveTimeout = 0
 
-					builder.listenTo(builder.rootItems, 'builder:change', function(){
-						clearTimeout(saveTimeout);
+					builder.listenTo(builder.rootItems, 'builder:change', function () {
+						clearTimeout(saveTimeout)
 
-						saveTimeout = setTimeout(function(){
-							saveTimeout = 0;
+						saveTimeout = setTimeout(function () {
+							saveTimeout = 0
 
-							saveBuilderValueToInput();
-						}, 100);
-					});
+							saveBuilderValueToInput()
+						}, 100)
+					})
 
 					/**
 					 * Save value to input if there is a pending timeout on form submit
 					 */
-					builder.$input.closest('form').on('submit', function(){
+					builder.$input.closest('form').on('submit', function () {
 						if (saveTimeout) {
-							clearTimeout(saveTimeout);
-							saveTimeout = 0;
+							clearTimeout(saveTimeout)
+							saveTimeout = 0
 
-							saveBuilderValueToInput();
+							saveBuilderValueToInput()
 						}
-					});
-				})();
+					})
+				})()
 			}
-		}
-	});
+		},
+	})
 
-	fwExtBuilderInitialize.init(Builder);
-});
+	fwExtBuilderInitialize.init(Builder)
+})

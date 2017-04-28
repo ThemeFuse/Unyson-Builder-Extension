@@ -256,6 +256,7 @@ body.rtl .fw-option-type-builder .builder-item-type {
 
 .fw-option-type-builder > .builder-root-items {
 	padding-top: 0px;
+	overflow: hidden;
 }
 
 .fw-option-type-builder > .builder-root-items > .builder-items {
@@ -475,16 +476,18 @@ body.rtl .fw-option-type-builder .builder-item-type {
 	bottom: 0;
 	left: -10px;
 	background-color: transparent;
-	transition: background-color .3s;
+	transition: background-color .1s;
+	cursor: default;
 }
 
-.fw-builder-droppable.over {
+.fw-builder-droppable.ui-droppable:not(.ui-droppable-disabled) {
 	background-color: green;
 }
 
 .fw-builder-droppable.after {
-	right: -10px;
-	left: auto;
+	left: 100%;
+	margin-left: -20px;
+	width: 100vw;
 }
 
 .fw-builder-droppable.top,
@@ -506,19 +509,18 @@ body.rtl .fw-option-type-builder .builder-item-type {
 	bottom: 0;
 }
 
-.fw-builder-droppable.top:nth-last-child(3) {
+.fw-builder-droppable.top:nth-last-child(2) {
 	height: 100%;
 }
 
-.fw-builder-droppable.placeholder {
-	position: relative;
-	bottom: 10px;
-	flex: 1 1 auto;
+.fw-builder-droppable.top + .fw-builder-droppable.bottom {
+	display: none;
 }
 
-.fw-builder-droppable.top + .fw-builder-droppable.placeholder,
-.fw-builder-droppable.top + .fw-builder-droppable.placeholder + .fw-builder-droppable.bottom {
-	display: none;
+.pointerless {
+	pointer-events: none;
+	z-index: 100000;
+	opacity: .3;
 }
 
 /******* Droppable end *******/
