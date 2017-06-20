@@ -318,7 +318,7 @@ window.fwExtBuilderInitialize = (function ($) {
 				var data = {
 					type:         type,
 					$option:      $this,
-					$input:       $this.find('> input:first'),
+					$input:       $this.find('> [data-fw-option-type="hidden"]:first > input'),
 					$types:       $this.find('.builder-items-types:first'),
 					$rootItems:   $this.find('.builder-root-items:first'),
 					$headerTools: $('<div class="fw-builder-header-tools fw-clearfix fw-hidden"></div>')
