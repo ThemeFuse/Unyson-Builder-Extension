@@ -90,7 +90,13 @@ final class FW_Ext_Builder_Templates
 	 */
 	public static function _action_builder_enqueue($data)
 	{
-		if (!$data['option']['template_saving']) {
+		if (!
+			apply_filters(
+				'fw_builder_has_template_saving_feature',
+				$data['option']['template_saving'],
+				$data['option']
+			)
+		) {
 			return;
 		}
 
