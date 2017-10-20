@@ -405,10 +405,12 @@ jQuery(document).ready(function($){
 											ui.placeholder.addClass('no-top');
 										}
 
-										if (ui.item.hasClass('builder-item-type')) {
-											ui.placeholder
-												.removeClass('builder-item-type')
-												.css('width', '100%');
+										if ( ui.item.hasClass( 'builder-item-type' ) ) {
+											if ( ui.item.attr( 'data-builder-item-type' ) === 'column' ) {
+												ui.placeholder.removeClass( 'builder-item-type' ).addClass( FW_GRID[ ui.item.find( '.item-data' ).attr( 'data-width' ) ].backend_class );
+											} else {
+												ui.placeholder.removeClass( 'builder-item-type' ).css( 'width', '100%' );
+											}
 										}
 									}
 
