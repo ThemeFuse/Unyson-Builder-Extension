@@ -403,6 +403,8 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 				$version,
 				true
 			);
+
+			wp_localize_script( 'fw-option-builder', 'FW_GRID', fw_ext( 'builder' )->get_config( 'grid.columns' ) );
 		}
 
 		wp_enqueue_media();
