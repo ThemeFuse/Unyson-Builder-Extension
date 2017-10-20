@@ -387,7 +387,7 @@ jQuery(document).ready(function($){
 							var rearrangeTimeout;
 
 							this.$el.sortable({
-								helper: 'clone',
+								helper: 'original',
 								items: '> .builder-item',
 								connectWith: '#'+ builder.$input.closest('.fw-option-type-builder').attr('id') +' .builder-root-items .builder-items',
 								distance: 10,
