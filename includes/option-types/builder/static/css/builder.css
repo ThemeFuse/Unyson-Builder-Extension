@@ -401,6 +401,11 @@ body.rtl .fw-option-type-builder .builder-item-type {
 
 
 /* backend fixes */
+[class*="-collapsed"] .builder-items,
+[class*="-collapsed"] .builder-items * {
+	height:0;
+	display:none;
+}
 
 .fw-backend-option-type-builder {
 	padding: 0;
