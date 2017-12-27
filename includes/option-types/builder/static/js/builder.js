@@ -907,6 +907,10 @@ jQuery( document ).ready( function ( $ ) {
 				}
 
 				fwEvents.trigger( 'fw-builder:' + this.get( 'type' ) + ':register-items', this );
+				/**
+				 * @since 1.2.11
+				 */
+				fwEvents.trigger( 'fw-builder:' + this.get( 'type' ) + ':after-register-items', this );
 
 				// load saved items from input
 				{
