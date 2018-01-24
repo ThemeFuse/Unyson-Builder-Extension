@@ -18,7 +18,7 @@
 				'class' => 'fw-option-type-builder-thumbnails-tab',
 			),
 			'options' => array(
-				'random-'. fw_unique_increment() => array(
+				fw_rand_md5() => array(
 					'type'  => 'html',
 					'label' => false,
 					'desc'  => false,
