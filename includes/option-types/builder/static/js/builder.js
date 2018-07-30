@@ -392,9 +392,16 @@ jQuery( document ).ready( function ( $ ) {
 
 							var rearrangeTimeout;
 
-							this.$el.sortable( {
-								helper: 'original',
+							var additionalSortableOptions = {}
+
+							fwEvents.trigger(
+								'fw-builder:'+ builder.get('type') +':sortable-additional-options',
+								additionalSortableOptions
+							)
+
+							this.$el.sortable(_.extend({
 								items: '> .builder-item',
+								helper: 'original',
 								connectWith: '#' + builder.$input.closest( '.fw-option-type-builder' ).attr( 'id' ) + ' .builder-root-items .builder-items',
 								distance: 10,
 								opacity: 0.6,
@@ -501,6 +508,10 @@ jQuery( document ).ready( function ( $ ) {
 										                       .find( '.builder-root-items > .builder-items' );
 
 										container.css( 'min-height', '' );
+									}
+
+									if (ui.helper) {
+										$(ui.helper).remove()
 									}
 								},
 								receive: function ( event, ui ) {
@@ -655,7 +666,7 @@ jQuery( document ).ready( function ( $ ) {
 										collection.add( item, {at: index} );
 									}
 								}
-							} );
+							}, additionalSortableOptions) );
 
 							/**
 							 * Delay placeholder possition change to prevent "jumping"
