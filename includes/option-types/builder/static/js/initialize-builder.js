@@ -117,7 +117,14 @@ window.fwExtBuilderInitialize = (function ($) {
 	function initDraggable ($this, builder, id) {
 		fwEvents.trigger('fw:options:init:tabs', {$elements: $this.find('> .builder-items-types')});
 
-		$this.find('> .builder-items-types .builder-item-type').draggable({
+		var additionalSortableOptions = {}
+
+		fwEvents.trigger(
+			'fw-builder:'+ builder.get('type') +':toolbar-sortable-additional-options',
+			additionalSortableOptions
+		)
+
+		$this.find('> .builder-items-types .builder-item-type').draggable(_.extend({
 			connectToSortable: '#'+ id +' .builder-root-items .builder-items',
 			helper: 'clone',
 			distance: 10,
@@ -176,7 +183,7 @@ window.fwExtBuilderInitialize = (function ($) {
 					});
 				}
 			}
-		});
+		}, additionalSortableOptions));
 
 		/**
 		 * Add item on thumbnail click
