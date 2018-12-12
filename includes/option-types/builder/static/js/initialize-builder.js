@@ -3,17 +3,25 @@ window.fwExtBuilderInitialize = (function ($) {
 		increment: 0,
 		$adminBar: $('#wpadminbar'),
 		getAdminBarHeight: function() {
+			var height = 0;
+
 			if (this.$adminBar.length && this.$adminBar.css('position') === 'fixed') {
-				return this.$adminBar.height();
-			} else {
-				return 0;
+				height = this.$adminBar.height();
 			}
+
+			var gutenbergContainer = $( '#editor.block-editor__container' );
+
+			if ( gutenbergContainer.length > 0 ) {
+				height += gutenbergContainer.find( '.edit-post-header' ).outerHeight() + gutenbergContainer.find( '.components-notice-list' ).height();
+			}
+
+			return height;
 		},
 		fix: function($header, $builder, $scrollParent){
 			var topSpace = this.getAdminBarHeight(),
 				scrollParentHeight = $scrollParent.height(),
-				scrollParentScrollTop = $scrollParent.scrollTop(),
-				scrollParentOffset = $scrollParent.offset(),
+				scrollParentScrollTop = $( document ).scrollTop(),
+				scrollParentOffset = $( document ).offset(),
 				builderHeight = $builder.get(0).clientHeight,
 				builderOffsetTop = $builder.offset().top,
 				headerHeight = $header.get(0).clientHeight;
@@ -582,4 +590,3 @@ window.fwExtBuilderInitialize = (function ($) {
 		$options.addClass('initialized');
 	}
 })(jQuery);
-
