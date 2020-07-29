@@ -350,7 +350,7 @@ abstract class FW_Option_Type_Builder extends FW_Option_Type {
 	 * @since 1.2.8
 	 */
 	protected function maybe_decompress($input_value, $option) {
-		if (!$this->compression_is_enabled($option) || $input_value{0} === '[') {
+		if (!$this->compression_is_enabled($option) || $input_value[0] === '[') {
 			return $input_value;
 		} else {
 			return $this->decompress_first_file_from_zip(base64_decode($input_value));
