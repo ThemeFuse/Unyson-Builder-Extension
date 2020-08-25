@@ -553,7 +553,7 @@ window.fwExtBuilderInitialize = (function ($) {
 						}
 					},
 					localStorageKey = 'fw-ext-builder-save-scroll-position',
-					$savePostButton = $postForm.find('input#publish'),
+					$savePostButton = $postForm.find('#publishing-action #publish'),
 					$savePostBuilderButton = $(
 						'<button'+
 							' type="button"'+
